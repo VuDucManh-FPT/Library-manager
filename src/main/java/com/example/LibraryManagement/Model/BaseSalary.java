@@ -16,7 +16,7 @@ public class BaseSalary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int baseSalaryId;
     @ManyToOne
-    @JoinColumn(name = "staffID")
+    @JoinColumn(name = "staffID", nullable = false,foreignKey = @ForeignKey(name = "FK_BaseSalary_Staff"))
     private Staff staff;
     @JoinColumn(name = "startDate")
     private Date startDate;

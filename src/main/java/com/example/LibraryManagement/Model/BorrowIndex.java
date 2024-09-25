@@ -17,20 +17,26 @@ public class BorrowIndex {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int borrowIndexId;
     @ManyToOne
-    @JoinColumn(name = "studentID")
+    @JoinColumn(name = "studentID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Student"))
     private Student student;
+    @ManyToOne
+    @JoinColumn(name = "staffID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Staff"))
+    private Staff staff;
     @OneToMany
     @JoinColumn(name = "bookID")
     private List<Book> books;
-    @OneToMany
-    @JoinColumn(name = "bookConditionBefore")
-    private List<BookCondition> bookConditionsBe;
-    @OneToMany
-    @JoinColumn(name = "bookConditionAfter")
-    private List<BookCondition> bookConditionsAf;
+    @ManyToOne
+    @JoinColumn(name = "bookConditionBefore",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Be"))
+    private BookCondition conditionBefore;
+    @ManyToOne
+    @JoinColumn(name = "bookConditionAfter",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Af"))
+    private BookCondition conditionAfter;
     @JoinColumn(name = "estimateDate")
     private Date estimateDate;
     @JoinColumn(name = "returnDate")
     private Date returnDate;
-
+    @OneToMany(mappedBy = "borrowIndex")
+    private List<BookFeedBack> feedbacks;
+    @OneToMany(mappedBy = "borrowIndex")
+    private List<BorrowFine> fines;
 }

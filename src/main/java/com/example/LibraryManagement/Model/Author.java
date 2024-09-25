@@ -7,18 +7,18 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "Publisher")
+@Table(name = "Author")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Publisher {
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int publisherId;
-    @JoinColumn(name = "name")
-    private String publisherName;
-    @JoinColumn(name = "note")
-    private String publisherNote;
-    @OneToMany(mappedBy = "publisher")
+    private Long id;
+    @Column(name = "name")
+    private String authorName;
+    @Column(name="description")
+    private String authorDescription;
+    @ManyToMany(mappedBy = "authors")
     private List<Book> books;
 }

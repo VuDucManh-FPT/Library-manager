@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 @Entity
 @Table(name = "Staff")
 @Data
@@ -21,4 +24,9 @@ public class Staff {
     @OneToOne
     @JoinColumn(name = "roleID")
     private Role role;
+    @OneToMany(mappedBy = "staff")
+    private List<BaseSalary> baseSalaries;
+    @OneToOne
+    @JoinColumn(name = "stateID", referencedColumnName = "stateID")
+    private AccountState accountStates;
 }

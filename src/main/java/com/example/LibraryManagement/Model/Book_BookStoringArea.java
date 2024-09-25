@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 public class Book_BookStoringArea {
     @Id
     @ManyToOne
-    @JoinColumn(name="bookID")
+    @JoinColumn(name="bookID", nullable=false,foreignKey = @ForeignKey(name = "FK_Book_BookStoringArea_Book"))
     private Book book;
     @ManyToOne
-    @JoinColumn(name = "bookStoringAreaID")
+    @JoinColumn(name = "bookStoringAreaID",nullable = false,foreignKey = @ForeignKey(name = "FK_Book_BookStoringArea_BookStoringArea"))
     private BookStoringArea bookStoringArea;
     @JoinColumn(name = "quantity")
     private int quantity;

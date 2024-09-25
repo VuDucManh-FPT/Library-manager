@@ -19,9 +19,11 @@ public class Student {
     @Column(name = "name")
     private String studentName;
     @Column(name = "email")
-    private String studentMail;
+    private String studentEmail;
     @Column(name="password")
     private String password;
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AccountState> accountStates;
+    @OneToOne
+    @JoinColumn(name = "stateID", referencedColumnName = "stateID")
+    private AccountState accountStates;
+
 }

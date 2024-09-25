@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 @Entity
 @Table(name = "BookStoringArea")
 @Data
@@ -16,4 +19,7 @@ public class BookStoringArea {
     private String bookStoringAreaName;
     @JoinColumn(name = "description")
     private String bookStoringAreaDescription;
+    @OneToMany(mappedBy = "bookStoringArea")
+    private List<Book_BookStoringArea> books;
+
 }
