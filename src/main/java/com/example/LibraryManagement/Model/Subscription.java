@@ -17,8 +17,11 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int subscriptionId;
     @ManyToOne
-    @JoinColumn(name = "studentID",nullable = false)
+    @JoinColumn(name = "studentID",nullable = false,foreignKey = @ForeignKey(name = "FK_Subscription_Student"))
     private Student student;
+    @ManyToOne
+    @JoinColumn(name = "membershipID",nullable = false,foreignKey = @ForeignKey(name = "FK_Subscription_MembershipInfo"))
+    private MembershipInfo membershipInfo;
     @JoinColumn(name = "startDate")
     private Date startDate;
     @JoinColumn(name = "endDate")

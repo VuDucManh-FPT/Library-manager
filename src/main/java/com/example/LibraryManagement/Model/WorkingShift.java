@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "WorkingShift")
@@ -19,4 +20,6 @@ public class WorkingShift {
     private Date startDate;
     @JoinColumn(name = "endDate")
     private Date endDate;
+    @OneToMany(mappedBy = "workingShift")
+    private List<WorkingSchedule> workingSchedules;
 }

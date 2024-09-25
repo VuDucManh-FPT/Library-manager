@@ -3,6 +3,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 @Entity
 @Table(name = "MembershipInfo")
 @Data
@@ -17,4 +20,8 @@ public class MembershipInfo {
     private String memName;
     @JoinColumn(name = "description")
     private String description;
+    @OneToMany(mappedBy = "membershipInfo")
+    private List<Subscription> subscriptions;
+    @OneToMany(mappedBy = "membershipInfo")
+    private List<MembershipPayment> membershipPayments;
 }

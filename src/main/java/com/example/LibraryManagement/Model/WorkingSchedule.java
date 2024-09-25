@@ -16,8 +16,11 @@ public class WorkingSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int workScheduleId;
     @ManyToOne
-    @JoinColumn(name = "workingShiftID")
+    @JoinColumn(name = "workingShiftID", nullable = false, foreignKey = @ForeignKey(name = "FK_WorkingSchedule_WorkingShift"))
     private WorkingShift workingShift;
     @JoinColumn(name = "workingDate")
     private Date workingDate;
+    @ManyToOne
+    @JoinColumn(name = "staffID", nullable = false,foreignKey = @ForeignKey(name = "FK_WorkingSchedule_Staff"))
+    private Staff staff;
 }
