@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<!-- HEADER -->
+<header th:fragment="header" class="header" data-behavior="scroll_header open_menu" style="background-color: #ffa500c9">
+  <div class="header__branding"> <a href="/" title="Home">
+    <img style ="height:58px" src="https://upload.wikimedia.org/wikipedia/vi/thumb/2/2d/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg/1074px-Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg.png?20240228115915" alt=""/> </a> </div>
+  <div class="icon icon__hamburger--white"></div>
+  <section class="header__nav-container">
+    <nav class="header__menu--nav">
+      <ul class="header-menu">
+        <div class="menu-top-menu-left-container">
+          <ul id="menu-top-menu-left" class="primary-menu">
+            <li id="menu-item-7085" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7085"><a
+
+                    href="/books" class="link--white">Books</a></li>
+            <li id="menu-item-7084" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7084"><a
+
+                    href="/writers" class="link--white">Writers</a></li>
+            <li id="menu-item-7086" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7086"><a
+
+                    href="/news-and-views" class="link--white">News &amp;
+              Views</a></li>
+          </ul>
+        </div>
+      </ul>
+    </nav>
+    <nav class="header__menu--tools">
+      <ul class="header-menu">
+        <div class="menu-top-menu-right-container">
+          <ul id="menu-top-menu-right" class="secondary-menu">
+            <li id="menu-item-83" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-83"><a
+
+                    href="https://www.loa.org/support/" class="link--white">Service</a></li>
+            <li id="menu-item-82" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-82"><a
+
+                    href="https://www.loa.org/about/" class="link--white">Register</a></li>
+            <li id="menu-item-7090" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7090"><a
+
+                    href="https://submemb.loa.org/account" class="link--white">Sign
+              In</a></li>
+            <li id="menu-item-88" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88"><a
+
+                    href="https://cart.loa.org/shop/cart" class="link--white">Cart</a></li>
+          </ul>
+        </div>
+      </ul>
+    </nav>
+    <form class="site-search" id="searchform" action="https://www.loa.org/search"
+
+          autocomplete="off" data-behavior="header_site_search" data-search-url="/search"
+
+          accept-charset="UTF-8" method="get"> <input class="site-search__field"
+
+                                                      name="keywords" id="searchInput" onkeyup="updateSearchPreview()" placeholder="Search..."
+
+                                                      type="text"> <span class="icon icon__search--white" id="open-search"></span>
+      <span class="icon icon__search--grey"></span> <span class="icon icon__close--white"></span>
+      <span id="clear-input-val"> </span>
+      <div class="site-search__results-container" id="search-target-container"
+
+           style="height: auto;">
+        <div id="searchPreview" class="site-search__results" style="visibility: visible;"></div>
+      </div>
+    </form>
+  </section>
+</header>
+
+<!-- FOOTER -->
+<footer th:fragment="footer" class="site-footer">
+  <style>
+    .site-footer__share-links a.icon__spotify--white {
+      margin-top: 6px !important;
+    }
+
+    .site-footer__share-links a.icon__youtube--white {
+      margin-top: 6px !important;
+    }
+
+    .icon__threads--white {
+      background-image: url(/wp-content/themes/loa/assets/images/fallback/threads-app-icon-svg.png);
+      background-repeat: no-repeat;
+      margin-top: 4px;
+    }
+
+    .icon__threads--white:hover {
+      background-image: url(@{/wp-content/themes/loa/assets/images/fallback/threads-app-icon-svg-red.png});
+      background-repeat: no-repeat;
+    }
+  </style>
+  <div class="site-footer__legal">
+    <div class="footer-container">
+      <nav class="site-footer__share-links "> <span href="#">FOLLOW US</span>
+        <br>
+        <a target="_blank" href="https://www.threads.net/@libraryofamerica"
+
+           class="icon icon__threads--white"></a> <a target="_blank" href="https://www.facebook.com/libraryofamerica"
+
+                                                     class="icon icon__facebook--white"></a> <a target="_blank" href="https://instagram.com/libraryofamerica/"
+
+                                                                                                class="icon icon__instagram--white"></a> <a target="_blank" href="https://open.spotify.com/show/5u0e9mL85E8aEklJW5jprv"
+
+                                                                                                                                            class="icon icon__spotify--white"></a> <a href="https://www.youtube.com/@libraryofamerica"
+
+                                                                                                                                                                                      class="icon icon__youtube--white"></a> </nav>
+      <nav class="site-footer__legal-links">
+        <ul class="site-footer__link-group--legal site-footer__link-list">
+          <li><a class="link--grey" href="/contact-us">Contact Us</a></li>
+          <li><a class="link--grey" href="/rights-permissions/">Rights
+            &amp; Permissions</a></li>
+          <li><a class="link--grey" href="/customer-faq">Customer Service</a></li>
+          <li><a class="link--grey" href="/privacy">Privacy Policy</a></li>
+          <li><a class="link--grey" href="/contact-us">Media Inquiries</a></li>
+        </ul>
+        <span class="site-footer__link-group--legal site-footer__copywrite">©
+                Literary Classics of the United States, Inc. <a href="https://www.gocelerate.com/"
+
+                                                                class="link--grey" title="Area 17">Site by Celerate</a></span>
+      </nav>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

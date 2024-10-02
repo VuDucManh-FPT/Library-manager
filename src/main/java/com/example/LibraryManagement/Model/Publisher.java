@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -20,5 +21,6 @@ public class Publisher {
     @JoinColumn(name = "note")
     private String publisherNote;
     @OneToMany(mappedBy = "publisher")
+    @ToString.Exclude
     private List<Book> books;
 }

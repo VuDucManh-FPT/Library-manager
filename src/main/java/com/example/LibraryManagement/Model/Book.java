@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,5 +45,6 @@ public class Book {
             joinColumns = @JoinColumn(name = "bookID",foreignKey = @ForeignKey(name = "FK_Book_Author_Book")),
             inverseJoinColumns = @JoinColumn(name = "authorID",foreignKey = @ForeignKey(name = "FK_Book_Author_Author"))
     )
+    @ToString.Exclude
     private Set<Author> authors = new HashSet<>();
 }
