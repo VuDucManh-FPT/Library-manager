@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profile</title>
+</head>
+<body>
+
+<h5>Profile Details</h5>
+<hr class="mt-0 mb-3"/>
+<form id="profileForm" th:action="@{/update-profile}" method="POST">
+    <table>
+        <tr>
+            <th>Email</th>
+            <td>
+                <input type="text" name="email" th:value="${student.email}" />
+            </td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>
+                <input type="text" name="name" th:value="${student.name}" />
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Save</button>
+</form>
+
+<a href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</a>
+
+<!-- Modal for Change Password -->
+<div class="modal fade" id="changePasswordModal">
+    <form th:action="@{/update-password}" method="POST">
+        <label>Old Password</label>
+        <input type="password" name="oldPass"/>
+        <label>New Password</label>
+        <input type="password" name="newPass"/>
+        <label>Re-enter New Password</label>
+        <input type="password" name="reNewPass"/>
+        <button type="submit">Update Password</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -24,7 +24,7 @@ public class AuthController {
         if (!model.containsAttribute("error")) {
             model.addAttribute("error", "");
         }
-        return "/home/forgotPassword";
+        return "forgotPassword";
     }
     @PostMapping("/forgotPassword")
     public String forgotPass(@ModelAttribute ForgotPassRequest forgotPassRequest, RedirectAttributes redirectAttributes) {
