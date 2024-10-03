@@ -20,50 +20,60 @@ public class StudentController {
     @Autowired
     private StudentServiceImpl studentServiceImpl;
 
-    @GetMapping("/profile")
-    public String getProfilePage(HttpServletRequest request, Model model) {
-        Student studentRequesting = studentServiceImpl.getStudentRequesting(request);
-        model.addAttribute("student", studentRequesting);
-        return "profile";
-    }
+    @GetMapping("/profile/{id}")
+    public String getStudentProfile(@PathVariable("id") int id, Model model) {
+        Student student = studentServiceImpl.getStudentById(id);
 
-    @PostMapping("/update-profile")
-    public String updateProfile(HttpServletRequest http, Model model,
-                                @Valid @ModelAttribute("name") String name,
-                                @Valid @ModelAttribute("email") String email,
-                                RedirectAttributes redirectAttributes, BindingResult result) {
-        Student studentRequesting = studentServiceImpl.getStudentRequesting(http);
-        studentRequesting.setStudentName(name);
-        studentRequesting.setStudentEmail(email);
-        studentServiceImpl.save(studentRequesting);
-        model.addAttribute("student", studentRequesting);
-        String successMessage = "Updated information successfully!";
-        redirectAttributes.addFlashAttribute("successMessage", successMessage);
-        return "redirect:/profile";
-    }
-
-    @PostMapping("/update-password")
-    public String updatePassword(HttpServletRequest request, Model model,
-                                 @RequestParam("oldPass") String oldPass,
-                                 @RequestParam("newPass") String newPass,
-                                 @RequestParam("reNewPass") String reNewPass,
-                                 RedirectAttributes redirectAttributes) {
-        Student student = studentServiceImpl.getStudentRequesting(request);
-
-        if (!oldPass.equals(student.getPassword())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Old password is incorrect.");
-            return "redirect:/profile?changePassword=true";
+        if (student == null) {
+            return "error";  // Hoặc bạn có thể điều hướng đến một trang lỗi nếu không tìm thấy sinh viên
         }
 
-        if (!newPass.equals(reNewPass)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
-            return "redirect:/profile?changePassword=true";
+        model.addAttribute("student", student);
+        return "student_profile";
+    }
+
+    @GetMapping("/update-profile/{id}")
+    public String showUpdateProfile(@PathVariable("id") int id, Model model) {
+        Student student = studentServiceImpl.getStudentById(id);
+        model.addAttribute("student", student);
+        return "updateProfile";
+    }
+
+    // Xử lý khi người dùng submit update profile
+    @PostMapping("/update/{id}")
+    public String updateProfile(@PathVariable("id")int id, @ModelAttribute Student student) {
+        studentServiceImpl.updateProfile(id, student);
+        return "redirect:/student/profile/" + id;
+    }
+
+    @GetMapping("/change-password/{id}")
+    public String showChangePassword(@PathVariable("id") int id, Model model) {
+        Student student = studentServiceImpl.getStudentById(id);
+        model.addAttribute("studentId", student.getStudentId());
+        return "changePassword";
+    }
+
+    // Xử lý khi người dùng submit form đổi mật khẩu
+    @PostMapping("/reset-password/{id}")
+    public String resetPassword(@PathVariable("id") int id,
+                                @RequestParam("oldPassword") String oldPassword,
+                                @RequestParam("newPassword") String newPassword,
+                                @RequestParam("confirmPassword") String confirmPassword,
+                                Model model) {
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New password and confirm password do not match.");
+            return "changePassword";
         }
 
-        student.setPassword(newPass);
-        studentServiceImpl.save(student);
-        redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully!");
-        return "redirect:/profile";
+        boolean success = studentServiceImpl.changePassword(id, oldPassword, newPassword);
+        if (!success) {
+            model.addAttribute("error", "Old password is incorrect.");
+            return "changePassword";
+        }
+
+        return "redirect:/student/profile/" + id;
     }
+
+
 
 }
