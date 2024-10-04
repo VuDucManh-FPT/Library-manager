@@ -22,9 +22,9 @@ public class BorrowIndex {
     @ManyToOne
     @JoinColumn(name = "staffID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Staff"))
     private Staff staff;
-    @OneToOne
-    @JoinColumn(name = "bookID", nullable = false, foreignKey = @ForeignKey(name = "FK_BorrowIndex_Book"))
-    private Book book;
+    @OneToMany
+    @JoinColumn(name = "bookID")
+    private List<Book> books;
     @ManyToOne
     @JoinColumn(name = "bookConditionBefore",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Be"))
     private BookCondition conditionBefore;

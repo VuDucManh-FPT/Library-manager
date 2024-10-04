@@ -30,7 +30,6 @@ public class Book {
     private List<BookImage> bookImages;
     @OneToMany(mappedBy = "book")
     private List<Book_BookStoringArea> storingAreas;
-
     @ManyToMany
     @JoinTable(
             name = "Genre_Book",
