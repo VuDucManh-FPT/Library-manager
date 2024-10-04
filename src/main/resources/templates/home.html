@@ -758,14 +758,14 @@
                 <h2>New &amp; Noteworthy</h2>
                 <section class="content-section content-list content-list--books columns columns--5x">
                     <div th:each="item : ${books}" class="content-listing content-listing--book col"><a
-                            href="https://www.loa.org/books/black-writers-of-the-founding-era/">
+                            href="https://www.loa.org/books/black-introduce-of-the-founding-era/">
                         <img th:src="@{${item.getBookImages().get(0).getImageURL()}}"
 
                              class="content-listing__img wp-post-image" alt="" decoding="async"
 
                              height="346" width="226"> </a>
                         <div class="content-listing__meta"><a
-                                href="https://www.loa.org/books/black-writers-of-the-founding-era/">
+                                href="https://www.loa.org/books/black-introduce-of-the-founding-era/">
                             <b class="content-listing__title" th:text="${item.getBookName()}"> </b> <i class="book-listing__number">LOA
                             N°366</i> </a></div>
                     </div>
@@ -774,17 +774,17 @@
             </section>
             <section class="content-section__container homepage__books-container">
                 <h2>Featured
-                    &amp; Writers</h2>
+                    &amp; Introduce</h2>
                 <section class="content-section content-list content-list--books columns columns--5x">
                     <div th:each="item : ${author}" class="content-listing content-listing--book col"><a
-                            href="https://www.loa.org/books/black-writers-of-the-founding-era/">
+                            href="https://www.loa.org/books/black-introduce-of-the-founding-era/">
                         <img th:src="@{${item.getAuthorImageURL()}}"
 
                              class="content-listing__img wp-post-image" alt="" decoding="async"
 
                              height="346" width="226"> </a>
                         <div class="content-listing__meta"><a
-                                href="https://www.loa.org/books/black-writers-of-the-founding-era/">
+                                href="https://www.loa.org/books/black-introduce-of-the-founding-era/">
                             <b class="content-listing__title" th:text="${item.getAuthorName()}"> </b> <i class="book-listing__number">LOA
                             N°366</i> </a></div>
                     </div>
@@ -803,9 +803,7 @@
                                              class="word-list__word link--black"> Hollywood </a></div>
             </section>
         </div>
-        <div class="about-subfooter"><a href="https://www.loa.org" title="Home"
-
-                                        class="icon icon__logo--footer"></a> <a href="https://www.loa.org"
+        <div class="about-subfooter"><a th:href="@{library/home}"
 
                                                                                 title="Home"
                                                                                 class="about-subfooter__name">Welcome to FPTU Library</a>
