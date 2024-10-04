@@ -6,7 +6,7 @@
 <body>
 <!-- HEADER -->
 <header th:fragment="header" class="header" data-behavior="scroll_header open_menu" style="background-color: #ffa500c9">
-  <div class="header__branding"> <a href="/" title="Home">
+  <div class="header__branding"> <a th:href="@{library/home}" title="Home">
     <img style ="height:58px" src="https://upload.wikimedia.org/wikipedia/vi/thumb/2/2d/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg/1074px-Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg.png?20240228115915" alt=""/> </a> </div>
   <div class="icon icon__hamburger--white"></div>
   <section class="header__nav-container">
@@ -19,11 +19,10 @@
                     href="/books" class="link--white">Books</a></li>
             <li id="menu-item-7084" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7084"><a
 
-                    href="/writers" class="link--white">Writers</a></li>
+                    href="/introduce" class="link--white">Introduce</a></li>
             <li id="menu-item-7086" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7086"><a
 
-                    href="/news-and-views" class="link--white">News &amp;
-              Views</a></li>
+                    href="/regulation" class="link--white">Regulation</a></li>
           </ul>
         </div>
       </ul>
