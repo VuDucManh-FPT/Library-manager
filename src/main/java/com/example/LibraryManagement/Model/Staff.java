@@ -26,7 +26,7 @@ public class Staff {
     private Role role;
     @OneToMany(mappedBy = "staff")
     private List<BaseSalary> baseSalaries;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "stateID", referencedColumnName = "stateID")
     private AccountState accountStates;
 }
