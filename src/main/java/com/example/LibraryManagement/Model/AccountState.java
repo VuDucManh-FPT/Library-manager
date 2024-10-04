@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "AccountState")
 @Data
@@ -18,4 +20,8 @@ public class AccountState {
     private String accountStateName;
     @Column(name = "note")
     private String note;
+    @OneToMany(mappedBy = "accountStates")
+    private List<Student> students;
+    @OneToMany(mappedBy = "accountStates")
+    private List<Staff> staffs;
 }
