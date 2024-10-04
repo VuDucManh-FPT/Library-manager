@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/library")
 public class HomeController {
     private final BookService bookService;
     private final AuthorService authorService;
@@ -19,10 +19,20 @@ public class HomeController {
         this.authorService = authorService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
         model.addAttribute("books", bookService.getTop5Book());
         model.addAttribute("author", authorService.findTop5());
         return "home";
     }
+    @GetMapping("/regulation")
+    public String Regulation(Model model) {
+        return "regulation";
+    }
+    @GetMapping("/introduce")
+    public String Introduce(Model model) {
+        return "introduce";
+    }
 }
+
+
