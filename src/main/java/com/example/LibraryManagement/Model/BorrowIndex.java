@@ -20,10 +20,10 @@ public class BorrowIndex {
     @JoinColumn(name = "studentID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Student"))
     private Student student;
     @ManyToOne
-    @JoinColumn(name = "staffID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Staff"))
+    @JoinColumn(name = "staffid",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Staff"))
     private Staff staff;
     @OneToOne
-    @JoinColumn(name = "bookID", nullable = false, foreignKey = @ForeignKey(name = "FK_BorrowIndex_Book"))
+    @JoinColumn(name = "bookid", nullable = false, foreignKey = @ForeignKey(name = "FK_BorrowIndex_Book"))
     private Book book;
     @ManyToOne
     @JoinColumn(name = "bookConditionBefore",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Be"))

@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/library/**","/oauth2/**").permitAll()
+                        .requestMatchers("/library/**","/oauth2/**","/staff/rentals/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
                         .anyRequest().permitAll())
@@ -72,10 +72,10 @@ public class SecurityConfig {
 
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
-                        handleRedirectBasedOnAccountState(student.getAccountStates().getAccountStateId(), response);
+                        handleRedirectBasedOnAccountState(student.getAccountStates().getAccountStateId(), response, "STUDENT");
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
-                        handleRedirectBasedOnAccountState(staff.getAccountStates().getAccountStateId(), response);
+                        handleRedirectBasedOnAccountState(staff.getAccountStates().getAccountStateId(), response, "STAFF");
                     } else {
                         log.warn("User '{}' not found in the system after OAuth2 login.", email);
                         response.sendRedirect("/library/login?error=user-not-found");
@@ -85,13 +85,19 @@ public class SecurityConfig {
                     response.sendRedirect("/library/login?error=authentication-failed");
                 }
             }
-            private void handleRedirectBasedOnAccountState(int accountStateId, HttpServletResponse response) throws IOException {
+            private void handleRedirectBasedOnAccountState(int accountStateId, HttpServletResponse response, String role) throws IOException {
             if (accountStateId == 1) {
                 // Chuyển hướng đến trang cập nhật hồ sơ
                 response.sendRedirect("/library/profile-update");
             } else if (accountStateId == 2) {
-                // Chuyển hướng đến trang chủ
-                response.sendRedirect("/library/home");
+                if (role.equals("STUDENT")) {
+                    // Chuyển hướng đến trang chủ cho học sinh
+                    response.sendRedirect("/library/home");
+                } else if (role.equals("STAFF")) {
+                    // Chuyển hướng đến trang dashboard cho nhân viên
+//                    response.sendRedirect("/staff/dashboard");
+                    response.sendRedirect("/staff/rentals");
+                }
             } else {
                 response.sendRedirect("/library/login?error=account-locked");
             }

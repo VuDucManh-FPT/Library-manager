@@ -45,4 +45,7 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "authorID",foreignKey = @ForeignKey(name = "FK_Book_Author_Author"))
     )
     private Set<Author> authors = new HashSet<>();
+
+    @OneToOne(mappedBy = "book")
+    private BorrowIndex borrowIndices;
 }
