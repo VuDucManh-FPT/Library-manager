@@ -1,7 +1,9 @@
 package com.example.LibraryManagement.Security;
 
+import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,10 +20,13 @@ import java.util.Optional;
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
+    private final AdminRepository adminRepository;
 
-    public UserDetailsService(StudentRepository studentRepository, StaffRepository staffRepository) {
+    public UserDetailsService(StudentRepository studentRepository, StaffRepository staffRepository,AdminRepository adminRepository) {
         this.studentRepository = studentRepository;
         this.staffRepository = staffRepository;
+        this.adminRepository = adminRepository;
+
     }
 
     @Override
@@ -39,6 +44,12 @@ public class UserDetailsService implements org.springframework.security.core.use
             Staff staff = staffOpt.get();
             GrantedAuthority authority = new SimpleGrantedAuthority("STAFF");
             return new User(email, staff.getStaffPassword(), Collections.singleton(authority));
+        }
+        Optional<Admin> adminOptional = adminRepository.findAdminByEmail(email);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            GrantedAuthority authority = new SimpleGrantedAuthority("ADMIN");
+            return new User(email, admin.getPassword(), Collections.singleton(authority));
         }
 
         // Ném ra ngoại lệ

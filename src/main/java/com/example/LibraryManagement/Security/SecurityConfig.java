@@ -1,7 +1,9 @@
 package com.example.LibraryManagement.Security;
 
+import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
 import jakarta.servlet.ServletException;
@@ -34,8 +36,12 @@ import java.util.Optional;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
+    private final AdminRepository adminRepository;
+
+
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
@@ -43,11 +49,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/library/**","/oauth2/**","/staff/rentals/**").permitAll()
+                        .requestMatchers("/library/**","/oauth2/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .anyRequest().permitAll())
-         // oauth2
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Thêm bộ lọc JWT
+
+                // oauth2
         .oauth2Login(oauth2 -> oauth2
                 .loginPage("/library/login")
                 .successHandler(customOauth2SuccessHandler())
@@ -69,6 +78,7 @@ public class SecurityConfig {
 
                     Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
                     Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+                    Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
 
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
@@ -76,7 +86,10 @@ public class SecurityConfig {
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
                         handleRedirectBasedOnAccountState(staff.getAccountStates().getAccountStateId(), response, "STAFF");
-                    } else {
+                    }else if (adminOpt.isPresent()) {
+                        Admin admin = adminOpt.get();
+                        response.sendRedirect("/admin/accounts");
+                    }else {
                         log.warn("User '{}' not found in the system after OAuth2 login.", email);
                         response.sendRedirect("/library/login?error=user-not-found");
                     }

@@ -1,6 +1,7 @@
 package com.example.LibraryManagement.Service;
 
 import com.example.LibraryManagement.Model.*;
+import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
 import com.example.LibraryManagement.Request.LoginRequest;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
+    private final AdminRepository adminRepository;
     private AuthenticationManager authenticationManager;
     private JwtProvider jwtProvider;
 
@@ -32,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
         String email = request.getEmail();
         Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
         Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+        Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
         Object user;
         if (studentOpt.isPresent()) {
             user = studentOpt.get();
@@ -49,6 +52,8 @@ public class AuthServiceImpl implements AuthService {
             if (((Staff) user).getAccountStates().getAccountStateId() == 1) {
                 return "Your account never log before!";
             }
+        }else if (adminOpt.isPresent()) {
+            user = adminOpt.get();
         } else {
             return "Username not exist!";
         }

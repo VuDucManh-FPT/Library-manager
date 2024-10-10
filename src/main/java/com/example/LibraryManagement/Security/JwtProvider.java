@@ -1,5 +1,6 @@
 package com.example.LibraryManagement.Security;
 
+import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
 import io.jsonwebtoken.Jwts;
@@ -82,6 +83,8 @@ public class JwtProvider {
             email = ((Student) user).getStudentEmail();
         } else if (user instanceof Staff) {
             email = ((Staff) user).getStaffEmail();
+        }else if (user instanceof Admin) {
+            email = ((Admin) user).getEmail();
         } else {
             throw new IllegalArgumentException("Invalid user type");
         }
