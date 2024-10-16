@@ -46,6 +46,6 @@ public class Book {
     )
     private Set<Author> authors = new HashSet<>();
 
-    @OneToOne(mappedBy = "book")
-    private BorrowIndex borrowIndices;
+    @OneToMany(mappedBy = "book")
+    private List<BorrowIndex> borrowIndices;
 }

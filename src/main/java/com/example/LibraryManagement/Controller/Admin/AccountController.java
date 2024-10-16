@@ -7,6 +7,7 @@ import com.example.LibraryManagement.Repository.BorrowIndexRepository;
 import com.example.LibraryManagement.Service.AdminService;
 import com.example.LibraryManagement.Service.BorrowIndexService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,4 +28,5 @@ public class AccountController {
         model.addAttribute("staffs", staffs);
         return "Admin/accounts";
     }
+
 }

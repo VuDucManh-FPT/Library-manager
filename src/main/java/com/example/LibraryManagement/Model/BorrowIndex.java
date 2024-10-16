@@ -22,7 +22,7 @@ public class BorrowIndex {
     @ManyToOne
     @JoinColumn(name = "staffid",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Staff"))
     private Staff staff;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "bookid", nullable = false, foreignKey = @ForeignKey(name = "FK_BorrowIndex_Book"))
     private Book book;
     @ManyToOne

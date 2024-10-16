@@ -36,29 +36,51 @@ public class AuthServiceImpl implements AuthService {
         Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
         Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
         Object user;
+
         if (studentOpt.isPresent()) {
             user = studentOpt.get();
-            if (((Student) user).getAccountStates().getAccountStateId() == 3) {
-                return "Your account has been locked!";
+
+            // Check if both inactive and banned
+            if (!((Student) user).isActive() && ((Student) user).isIsban()) {
+                return "System error";
             }
-            if (((Student) user).getAccountStates().getAccountStateId() == 1) {
-                return "Your account never log before!";
+
+            // Check if only inactive
+            if (!((Student) user).isActive()) {
+                return "Your account is inactive!";
             }
+
+            // Check if only banned
+            if (((Student) user).isIsban()) {
+                return "Your account has been banned!";
+            }
+
         } else if (staffOpt.isPresent()) {
-            user = staffOpt.get(); // Lấy tài khoản nhân viên
-            if (((Staff) user).getAccountStates().getAccountStateId() == 3) {
-                return "Your account has been locked!";
+            user = staffOpt.get();
+
+            // Check if both inactive and banned
+            if (!((Staff) user).isActive() && ((Staff) user).isIsban()) {
+                return "System error";
             }
-            if (((Staff) user).getAccountStates().getAccountStateId() == 1) {
-                return "Your account never log before!";
+
+            // Check if only inactive
+            if (!((Staff) user).isActive()) {
+                return "Your account is inactive!";
             }
-        }else if (adminOpt.isPresent()) {
+
+            // Check if only banned
+            if (((Staff) user).isIsban()) {
+                return "Your account has been banned!";
+            }
+
+        } else if (adminOpt.isPresent()) {
             user = adminOpt.get();
         } else {
-            return "Username not exist!";
+            return "Username does not exist!";
         }
+
         try {
-            // Tạo UsernamePasswordAuthenticationToken dựa trên email và mật khẩu
+            // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             email,
@@ -69,10 +91,10 @@ public class AuthServiceImpl implements AuthService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtProvider.generateToken(authentication);
 
-            // Tạo cookie cho JWT
+            // Create JWT cookie
             ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
 
-            // Thêm cookie vào phản hồi
+            // Add cookie to the response
             jwtProvider.addCookieToResponse(response, jwtCookie);
         } catch (UsernameNotFoundException e) {
             return "Bad credentials";
@@ -80,6 +102,7 @@ public class AuthServiceImpl implements AuthService {
             return "Bad credentials";
         }
 
-        return "Login success";
+        return "Login successful";
     }
 }
+

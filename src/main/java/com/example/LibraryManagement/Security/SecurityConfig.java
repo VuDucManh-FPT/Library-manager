@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/library/**","/oauth2/**").permitAll()
+                        .requestMatchers("/library/**","/oauth2/**","admin/accounts").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
@@ -82,11 +82,11 @@ public class SecurityConfig {
 
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
-                        handleRedirectBasedOnAccountState(student.getAccountStates().getAccountStateId(), response, "STUDENT");
+                        handleRedirectBasedOnAccountFlags(student.isActive(), student.isIsban(), response, "STUDENT");
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
-                        handleRedirectBasedOnAccountState(staff.getAccountStates().getAccountStateId(), response, "STAFF");
-                    }else if (adminOpt.isPresent()) {
+                        handleRedirectBasedOnAccountFlags(staff.isActive(), staff.isIsban(), response, "STAFF");
+                    } else if (adminOpt.isPresent()) {
                         Admin admin = adminOpt.get();
                         response.sendRedirect("/admin/accounts");
                     }else {
@@ -98,23 +98,25 @@ public class SecurityConfig {
                     response.sendRedirect("/library/login?error=authentication-failed");
                 }
             }
-            private void handleRedirectBasedOnAccountState(int accountStateId, HttpServletResponse response, String role) throws IOException {
-            if (accountStateId == 1) {
-                // Chuyển hướng đến trang cập nhật hồ sơ
-                response.sendRedirect("/library/profile-update");
-            } else if (accountStateId == 2) {
-                if (role.equals("STUDENT")) {
-                    // Chuyển hướng đến trang chủ cho học sinh
-                    response.sendRedirect("/library/home");
-                } else if (role.equals("STAFF")) {
-                    // Chuyển hướng đến trang dashboard cho nhân viên
-//                    response.sendRedirect("/staff/dashboard");
-                    response.sendRedirect("/staff/rentals");
+            private void handleRedirectBasedOnAccountFlags(boolean isActive, boolean isBanned, HttpServletResponse response, String role) throws IOException {
+                if (!isActive && isBanned) {
+                    // Both inactive and banned
+                    response.sendRedirect("/library/login?error=system-error");
+                } else if (!isActive) {
+                    // Inactive account
+                    response.sendRedirect("/library/profile-update");
+                } else if (isBanned) {
+                    // Banned account
+                    response.sendRedirect("/library/login?error=account-banned");
+                } else {
+                    // Redirect based on role
+                    if (role.equals("STUDENT")) {
+                        response.sendRedirect("/library/home");
+                    } else if (role.equals("STAFF")) {
+                        response.sendRedirect("/staff/rentals");
+                    }
                 }
-            } else {
-                response.sendRedirect("/library/login?error=account-locked");
             }
-        }
 };
 }
     @Bean
