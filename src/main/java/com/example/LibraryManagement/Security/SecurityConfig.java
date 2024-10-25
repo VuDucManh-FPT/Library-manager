@@ -7,6 +7,7 @@ import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -28,8 +29,10 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -72,9 +75,19 @@ public class SecurityConfig {
                     OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
 
                     // Lấy email từ các thuộc tính của người dùng
-                    String email = (String) oauth2Token.getPrincipal().getAttributes().get("email");
 
-                    log.info("Attempting to find user with email: {}", email);
+                    Map<String, Object> attributes = oauth2Token.getPrincipal().getAttributes();
+
+                    String email = (String) attributes.get("email");  // Email của người dùng
+                    String fullName = (String) attributes.get("name"); // Tên đầy đủ (tùy thuộc vào nhà cung cấp OAuth2)
+                    String avatar = (String) attributes.get("picture"); // Ảnh đại diện (nếu có thuộc tính này)
+
+                    log.info("Attempting to find user with email: {}, fullName: {}, avatar: {}", email, fullName, avatar);
+                    Cookie emailCookie = new Cookie("userEmail", email);
+                    emailCookie.setPath("/"); // Đặt phạm vi đường dẫn cho cookie
+                    emailCookie.setMaxAge(24 * 60 * 60); // Thời hạn cookie trong 1 ngày (24 giờ)
+                    emailCookie.setHttpOnly(true); // Chỉ cho phép truy cập qua HTTP, không truy cập bằng JavaScript
+                    response.addCookie(emailCookie); // Thêm cookie vào phản hồi
 
                     Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
                     Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
@@ -82,9 +95,25 @@ public class SecurityConfig {
 
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
+                        if (!StringUtils.hasText(student.getStudentName()) || !StringUtils.hasText(student.getAvatar())) {
+                            System.out.println("đang null");
+                            // Nếu fullName hoặc avatar là null, cập nhật giá trị mới
+                            student.setStudentName(fullName != null ? fullName : student.getStudentName());
+                            student.setAvatar(avatar != null ? avatar : student.getAvatar());
+                            studentRepository.save(student);
+                            System.out.println(student.getStudentName()+" "+student.getAvatar());
+                        }else{
+                            System.out.println("not null");
+                            System.out.println(student.getStudentName()+" cong "+student.getAvatar());
+                        }
                         handleRedirectBasedOnAccountFlags(student.isActive(), student.isIsban(), response, "STUDENT");
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
+                        if (!StringUtils.hasText(staff.getStaffName()) || !StringUtils.hasText(staff.getAvatar())) {
+                            staff.setStaffName(fullName != null ? fullName : staff.getStaffName());
+                            staff.setAvatar(avatar != null ? avatar : staff.getAvatar());
+                            staffRepository.save(staff);
+                        }
                         handleRedirectBasedOnAccountFlags(staff.isActive(), staff.isIsban(), response, "STAFF");
                     } else if (adminOpt.isPresent()) {
                         Admin admin = adminOpt.get();
@@ -104,7 +133,7 @@ public class SecurityConfig {
                     response.sendRedirect("/library/login?error=system-error");
                 } else if (!isActive) {
                     // Inactive account
-                    response.sendRedirect("/library/profile-update");
+                    response.sendRedirect("/library/profile");
                 } else if (isBanned) {
                     // Banned account
                     response.sendRedirect("/library/login?error=account-banned");
@@ -117,8 +146,8 @@ public class SecurityConfig {
                     }
                 }
             }
-};
-}
+        };
+    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();

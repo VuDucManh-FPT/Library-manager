@@ -76,9 +76,16 @@ public class AuthController {
         }
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal == null) {
+            System.out.println("principal is null");
+        }
         String role = "";
+        String email ="";
         if (principal instanceof UserDetails) {
             role = ((UserDetails) principal).getAuthorities().toString();
+            email =((UserDetails) principal).getUsername().toString();
+
+            System.out.println("email:"+email);
         } else {
             // Xử lý nếu principal không phải là UserDetails hoặc String
             throw new IllegalStateException("Unexpected principal type: " + principal.getClass());
