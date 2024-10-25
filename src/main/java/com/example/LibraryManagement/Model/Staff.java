@@ -25,7 +25,7 @@ public class Staff {
     @ManyToOne
     @JoinColumn(name = "roleID", nullable = false, foreignKey = @ForeignKey(name = "FK_Staff_Role"))
     private Role role;
-    @OneToMany(mappedBy = "staff")
+    @OneToMany(mappedBy = "staff",fetch = FetchType.EAGER)
     private List<BaseSalary> baseSalaries;
     @Column(name="dob")
     private Date dob;

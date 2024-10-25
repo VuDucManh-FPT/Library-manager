@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -18,8 +19,10 @@ public class BookCondition {
     @JoinColumn(name = "detail")
     private String detail;
     @OneToMany(mappedBy = "conditionBefore")
+    @ToString.Exclude
     private List<BorrowIndex> borrowIndexesBefore;
 
     @OneToMany(mappedBy = "conditionAfter")
+    @ToString.Exclude
     private List<BorrowIndex> borrowIndexesAfter;
 }

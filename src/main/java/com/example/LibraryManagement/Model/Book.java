@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
@@ -25,10 +26,13 @@ public class Book {
     private String bookDescription;
     @ManyToOne
     @JoinColumn(name = "publisherID",nullable = false, foreignKey = @ForeignKey(name = "FK_Book_Publisher"))
+    @ToString.Exclude
     private Publisher publisher;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<BookImage> bookImages;
     @OneToMany(mappedBy = "book")
+    @ToString.Exclude
     private List<Book_BookStoringArea> storingAreas;
 
     @ManyToMany
@@ -37,6 +41,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "bookID", foreignKey = @ForeignKey(name = "FK_Genre_Book_Book")),
             inverseJoinColumns = @JoinColumn(name = "gerneID", foreignKey = @ForeignKey(name = "FK_Genre_Book_Genre"))
     )
+    @ToString.Exclude
     private Set<Genre> genres = new HashSet<>();
     @ManyToMany
     @JoinTable(
@@ -44,8 +49,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "bookID",foreignKey = @ForeignKey(name = "FK_Book_Author_Book")),
             inverseJoinColumns = @JoinColumn(name = "authorID",foreignKey = @ForeignKey(name = "FK_Book_Author_Author"))
     )
+    @ToString.Exclude
     private Set<Author> authors = new HashSet<>();
 
-    @OneToMany(mappedBy = "book")
-    private List<BorrowIndex> borrowIndices;
 }

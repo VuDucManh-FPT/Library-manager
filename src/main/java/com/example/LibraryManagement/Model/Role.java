@@ -3,6 +3,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
+
 @Entity
 @Table(name = "Role")
 @Data
@@ -16,5 +20,7 @@ public class Role {
     private String roleName;
     @JoinColumn(name = "description")
     private String description;
-
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ToString.Exclude
+    private List<Staff> staffList;
 }

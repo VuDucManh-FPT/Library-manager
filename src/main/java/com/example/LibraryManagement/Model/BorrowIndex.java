@@ -29,7 +29,7 @@ public class BorrowIndex {
     @JoinColumn(name = "bookConditionBefore",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Be"))
     private BookCondition conditionBefore;
     @ManyToOne
-    @JoinColumn(name = "bookConditionAfter",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Af"))
+    @JoinColumn(name = "bookConditionAfter",foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Af"))
     private BookCondition conditionAfter;
     @JoinColumn(name = "estimateDate")
     private Date estimateDate;
