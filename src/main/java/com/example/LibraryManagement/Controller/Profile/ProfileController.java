@@ -105,6 +105,8 @@ public class ProfileController {
                                 @RequestParam("phoneNumber") String phoneNumber,
                                 @RequestParam("address") String address,
                                 @RequestParam("avatar") MultipartFile avatarFile,
+                                @RequestParam("age") int age,
+                                @RequestParam("gender") String gender,
                                 HttpServletRequest request, Model model) {
         String email = getUserEmailFromCookie(request);
         Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
@@ -148,6 +150,8 @@ public class ProfileController {
             student.setDob(dob != null ? dob : student.getDob());
             student.setPhoneNumber(phoneNumber.trim().isEmpty() ? student.getPhoneNumber() : phoneNumber);
             student.setAddress(address.trim().isEmpty() ? student.getAddress() : address);
+            student.setAge(age > 0 ? age : student.getAge());
+            student.setGender(gender.trim().isEmpty() ? student.getGender() : gender);
             if (avatarUrl != null) {
                 student.setAvatar(avatarUrl);
             }
@@ -158,6 +162,9 @@ public class ProfileController {
             staff.setDob(dob != null ? dob : staff.getDob());
             staff.setPhoneNumber(phoneNumber.trim().isEmpty() ? staff.getPhoneNumber() : phoneNumber);
             staff.setAddress(address.trim().isEmpty() ? staff.getAddress() : address);
+            staff.setAge(age > 0 ? age : staff.getAge());
+            staff.setGender(gender.trim().isEmpty() ? staff.getGender() : gender);
+
             if (avatarUrl != null) {
                 staff.setAvatar(avatarUrl);
             }
