@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface BorrowIndexRepository extends JpaRepository<BorrowIndex, Integer> {
     @Query("SELECT bi FROM BorrowIndex bi " +
-            "JOIN bi.student s " +
-            "JOIN bi.book b " +
-            "JOIN bi.conditionAfter bc_a " +
-            "JOIN bi.conditionBefore bc_b")
+            "LEFT JOIN bi.student s " +
+            "LEFT JOIN bi.book b " +
+            "LEFT JOIN bi.conditionAfter bc_a " +
+            "LEFT JOIN bi.conditionBefore bc_b")
     List<BorrowIndex> findAllBorrowIndex();
 }

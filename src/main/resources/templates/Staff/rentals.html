@@ -616,7 +616,7 @@
                                         </div>
                                     </a>
                                     <div class=" p-3 d-flex justify-content-center align-items-center">
-                                        <a class="btn btn-primary d-flex align-items-center gap-1" href="/library/logout"
+                                        <a class="btn btn-primary d-flex align-items-center gap-1" th:href="@{/library/logout}"
                                            role="button">Sign out <i class="ph ph-sign-out"></i></a>
                                     </div>
                                 </div>
@@ -638,7 +638,7 @@
                     <h4 class="mb-0">Rental Lists</h4>
                 </div>
                 <div class="iq-card-header-toolbar d-flex align-items-center">
-                    <a href="admin-add-book.html" class="btn btn-primary view-more">Add New Rental</a>
+                    <a th:href="@{/staff/add-rental}" class="btn btn-primary view-more">Add New Rental</a>
                 </div>
             </div>
             <div class="card-body">
@@ -666,10 +666,10 @@
                             <td th:text="${borrowIndex.book.bookName}"></td>
                             <td th:text="${borrowIndex.student.studentName}"></td>
                             <td th:text="${#dates.format(borrowIndex.estimateDate, 'dd/MM/yyyy')}"></td>
-                            <td th:text="${#dates.format(borrowIndex.returnDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${borrowIndex.returnDate != null ? #dates.format(borrowIndex.returnDate, 'dd/MM/yyyy') : 'Not yet returned'}"></td>
                             <td>
                                 <div class="d-flex gap-1 align-items-center list-user-action">
-                                    <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Edit" href="#">
+                                    <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Edit" th:href="@{/staff/update-rental/{id}(id=${borrowIndex.borrowIndexId})}">
                                         <i class="ph ph-pencil-simple text-success custom-ph-icons"></i>
                                     </a>
                                     <a class="bg-danger-subtle delete-btn rounded" data-toggle="tooltip" data-placement="top" title="Delete" href="#">
