@@ -3,25 +3,14 @@ package com.example.LibraryManagement.Controller.Profile;
 import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
-import com.example.LibraryManagement.Repository.AdminRepository;
-import com.example.LibraryManagement.Repository.StaffRepository;
-import com.example.LibraryManagement.Repository.StudentRepository;
-import com.example.LibraryManagement.Security.JwtProvider;
-import com.example.LibraryManagement.Security.SecurityConfig;
-import com.example.LibraryManagement.Service.AuthService;
-import com.example.LibraryManagement.Service.ServiceImpl;
-import com.example.LibraryManagement.Service.UserServiceImpl;
-import jakarta.servlet.http.Cookie;
+import com.example.LibraryManagement.Service.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -29,74 +18,49 @@ import java.util.Optional;
 @RequestMapping("/library")
 @AllArgsConstructor
 public class ProfileController {
-    private final AuthService authService;
-    private final StudentRepository studentRepository;
-    private final StaffRepository staffRepository;
-    private final AdminRepository adminRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ServiceImpl serviceImpl;
-    private final JwtProvider jwtProvider;
-    private final UserServiceImpl userServiceImpl;
-    private final SecurityConfig securityConfig;
+
+    private final ProfileService profileService;
 
     @GetMapping("/profile")
     public String showProfilePage(Model model, HttpServletRequest request) {
+        String email = profileService.getUserEmailFromCookie(request);
+        Optional<Object> userOpt = profileService.getUserByEmail(email);
 
-        String email = getUserEmailFromCookie(request);
-
-        // Lấy thông tin người dùng từ cơ sở dữ liệu
-        Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
-        Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
-        Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
-
-        if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-            model.addAttribute("user", student);
-            model.addAttribute("role", "STUDENT");
-        } else if (staffOpt.isPresent()) {
-            Staff staff = staffOpt.get();
-            model.addAttribute("user", staff);
-            model.addAttribute("role", "STAFF");
-        } else if (adminOpt.isPresent()) {
-            Admin admin = adminOpt.get();
-            model.addAttribute("user", admin);
-            model.addAttribute("role", "ADMIN");
-        } else {
-            model.addAttribute("error", "User not found");
+        if (userOpt.isPresent()) {
+            model.addAttribute("user", userOpt.get());
+            if (userOpt.get() instanceof Student) {
+                model.addAttribute("role", "STUDENT");
+            } else if (userOpt.get() instanceof Staff) {
+                model.addAttribute("role", "STAFF");
+            } else if (userOpt.get() instanceof Admin) {
+                model.addAttribute("role", "ADMIN");
+            }
+            return "/Profile/profile";
         }
 
-        return "/Profile/profile"; // Tên view để hiển thị thông tin
+        model.addAttribute("error", "User not found");
+        return "/error";
     }
 
     @GetMapping("/update-profile")
     public String showProfileUpdate(Model model, HttpServletRequest request) {
+        String email = profileService.getUserEmailFromCookie(request);
+        Optional<Object> userOpt = profileService.getUserByEmail(email);
 
-        String email = getUserEmailFromCookie(request);
-
-        // Lấy thông tin người dùng từ cơ sở dữ liệu
-        Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
-        Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
-        Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
-
-        if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-            model.addAttribute("user", student);
-
-            model.addAttribute("role", "STUDENT");
-        } else if (staffOpt.isPresent()) {
-            Staff staff = staffOpt.get();
-            model.addAttribute("user", staff);
-            model.addAttribute("fullName", staff.getStaffName());
-            model.addAttribute("role", "STAFF");
-        } else if (adminOpt.isPresent()) {
-            Admin admin = adminOpt.get();
-            model.addAttribute("user", admin);
-            model.addAttribute("role", "ADMIN");
-        } else {
-            model.addAttribute("error", "User not found");
+        if (userOpt.isPresent()) {
+            model.addAttribute("user", userOpt.get());
+            if (userOpt.get() instanceof Student) {
+                model.addAttribute("role", "STUDENT");
+            } else if (userOpt.get() instanceof Staff) {
+                model.addAttribute("role", "STAFF");
+            } else if (userOpt.get() instanceof Admin) {
+                model.addAttribute("role", "ADMIN");
+            }
+            return "/Profile/update-profile";
         }
 
-        return "/Profile/update-profile";
+        model.addAttribute("error", "User not found");
+        return "/error";
     }
 
     @PostMapping("/update-profile")
@@ -107,86 +71,19 @@ public class ProfileController {
                                 @RequestParam("avatar") MultipartFile avatarFile,
                                 @RequestParam("age") int age,
                                 @RequestParam("gender") String gender,
-                                HttpServletRequest request, Model model) {
-        String email = getUserEmailFromCookie(request);
-        Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
-        Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+                                HttpServletRequest request) {
 
-        String avatarUrl = null;
-//        if (!avatarFile.isEmpty()) {
-//            try {
-//                // Kiểm tra thư mục upload
-//                String uploadDir = "/static/uploads/";
-//                File directory = new File(uploadDir);
-//                if (!directory.exists()) {
-//                    directory.mkdirs(); // Tạo thư mục nếu chưa tồn tại
-//                }
-//
-//                // Lưu file ảnh avatar vào server
-//                String originalFileName = avatarFile.getOriginalFilename();
-//                String newFileName = System.currentTimeMillis() + "_" + originalFileName; // Thêm timestamp vào tên file
-//                File uploadFile = new File(uploadDir + newFileName);
-//                avatarFile.transferTo(uploadFile);
-//
-//                avatarUrl = uploadFile.getPath();
-//                if (avatarUrl.isEmpty()) {
-//                    System.out.println("no avatar found");
-//                } else {
-//                    System.out.println("avatar found");
-//                }
-//            } catch (IOException e) {
-//                model.addAttribute("error", "Lỗi khi upload ảnh: " + e.getMessage());
-//                System.out.println("Lỗi upload ảnh: " + e.getMessage()); // In ra thông tin lỗi chi tiết
-//                return "Profile/update-profile";
-//            }
-//        } else {
-//            System.out.println("no avatar file");
-//        }
+        String email = profileService.getUserEmailFromCookie(request);
+        String avatarUrl = profileService.handleAvatarUpload(avatarFile);
 
-
-        if (studentOpt.isPresent()) {
-            Student student = studentOpt.get();
-            student.setStudentName(fullName.trim().isEmpty() ? student.getStudentName() : fullName);
-            student.setDob(dob != null ? dob : student.getDob());
-            student.setPhoneNumber(phoneNumber.trim().isEmpty() ? student.getPhoneNumber() : phoneNumber);
-            student.setAddress(address.trim().isEmpty() ? student.getAddress() : address);
-            student.setAge(age > 0 ? age : student.getAge());
-            student.setGender(gender.trim().isEmpty() ? student.getGender() : gender);
-            if (avatarUrl != null) {
-                student.setAvatar(avatarUrl);
+        profileService.getUserByEmail(email).ifPresent(user -> {
+            if (user instanceof Student) {
+                profileService.updateStudentProfile((Student) user, fullName, dob, phoneNumber, address, age, gender, avatarUrl);
+            } else if (user instanceof Staff) {
+                profileService.updateStaffProfile((Staff) user, fullName, dob, phoneNumber, address, age, gender, avatarUrl);
             }
-            studentRepository.save(student);
-        } else if (staffOpt.isPresent()) {
-            Staff staff = staffOpt.get();
-            staff.setStaffName(fullName.trim().isEmpty() ? staff.getStaffName() : fullName);
-            staff.setDob(dob != null ? dob : staff.getDob());
-            staff.setPhoneNumber(phoneNumber.trim().isEmpty() ? staff.getPhoneNumber() : phoneNumber);
-            staff.setAddress(address.trim().isEmpty() ? staff.getAddress() : address);
-            staff.setAge(age > 0 ? age : staff.getAge());
-            staff.setGender(gender.trim().isEmpty() ? staff.getGender() : gender);
-
-            if (avatarUrl != null) {
-                staff.setAvatar(avatarUrl);
-            }
-            staffRepository.save(staff);
-        }
+        });
 
         return "redirect:/library/profile";
     }
-    private String getUserEmailFromCookie(HttpServletRequest request) {
-        for (Cookie cookie : request.getCookies()) {
-            if ("userEmail".equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
-//    @GetMapping
-//    ApiResponse<list<UserResponse>>getUsers getUsers(){
-//        var authentication = SecurityContextHolder.getContext().getAuthentication();
-//        log.info("username:{}",authentication.getName());
-//        log.info("role:{}",authentication.getAuthorities().)
-//        return Apiresponse.<->builder().result(userServiceImpl.getUsers()).build();
-//    }
 }
