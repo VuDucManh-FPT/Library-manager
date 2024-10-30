@@ -64,12 +64,12 @@ public class AuthController {
             model.addAttribute("user", request);
             return "/Home/sign-in";
         }
-        if (token.equals("Your account has been locked!")) {
+        if (token.equals("Your account has been banned!")) {
             model.addAttribute("error", "Your account has been blocked!");
             model.addAttribute("user", request);
             return "/Home/sign-in";
         }
-        if (token.equals("Your account never log before!")) {
+        if (token.equals("Your account is inactive!")) {
             model.addAttribute("error", "Your account never log before!Please choose login with google");
             model.addAttribute("user", request);
             return "/Home/sign-in";
@@ -89,7 +89,7 @@ public class AuthController {
         }
         if (role.equals("[ADMIN]")) {
 //            return "redirect:/staff/dashboard";
-            return "redirect:/admin/accounts";
+            return "redirect:/admin/staffs";
         }
         return "redirect:/library/home";
     }
@@ -116,7 +116,7 @@ public class AuthController {
                 return "redirect:/staff/rentals";
             } else if (adminOpt.isPresent()) {
                 // Điều hướng đến trang chính của admin
-                return "redirect:/admin/dashboard";
+                return "redirect:/admin/staffs";
             }
         }
 
@@ -156,7 +156,6 @@ public class AuthController {
         otpCookie.setHttpOnly(true);
         otpCookie.setPath("/");
         response.addCookie(otpCookie);
-        System.out.println(otpCookie);
         if (!student.isPresent() && !staff.isPresent() && !admin.isPresent()){
             redirectAttributes.addFlashAttribute("error","Email did not matched any account! Please try again.");
             return "redirect:/library/forgot-password";
