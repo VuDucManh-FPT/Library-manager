@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -40,6 +41,7 @@ public class SecurityConfig {
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
+    private JwtProvider jwtProvider;
 
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
@@ -49,7 +51,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/library/**","/oauth2/**","admin/accounts").permitAll()
+                        .requestMatchers("/library/**","/oauth2/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
@@ -79,20 +81,29 @@ public class SecurityConfig {
                     Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
                     Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
                     Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
-
+                    Object user = new Object();
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
+                        user = studentOpt.get();
                         handleRedirectBasedOnAccountFlags(student.isActive(), student.isIsban(), response, "STUDENT");
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
+                        user = staffOpt.get();
                         handleRedirectBasedOnAccountFlags(staff.isActive(), staff.isIsban(), response, "STAFF");
                     } else if (adminOpt.isPresent()) {
                         Admin admin = adminOpt.get();
-                        response.sendRedirect("/admin/accounts");
+                        user = adminOpt.get();
+                        response.sendRedirect("/admin/staffs");
                     }else {
                         log.warn("User '{}' not found in the system after OAuth2 login.", email);
                         response.sendRedirect("/library/login?error=user-not-found");
                     }
+                    // Tạo token JWT
+                    String token = jwtProvider.generateToken(authentication);
+                    // Tạo cookie từ token
+                    ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
+                    // Thêm cookie vào response
+                    jwtProvider.addCookieToResponse(response, jwtCookie);
                 } else {
                     log.warn("Authentication is not an instance of OAuth2AuthenticationToken.");
                     response.sendRedirect("/library/login?error=authentication-failed");
@@ -103,6 +114,7 @@ public class SecurityConfig {
                     // Both inactive and banned
                     response.sendRedirect("/library/login?error=system-error");
                 } else if (!isActive) {
+                    //Staff first time vao update profile
                     // Inactive account
                     response.sendRedirect("/library/profile-update");
                 } else if (isBanned) {
