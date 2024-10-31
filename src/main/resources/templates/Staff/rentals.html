@@ -637,6 +637,8 @@
                 <div class="iq-header-title">
                     <h4 class="mb-0">Rental Lists</h4>
                 </div>
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                 <div class="iq-card-header-toolbar d-flex align-items-center">
                     <a th:href="@{/staff/add-rental}" class="btn btn-primary view-more">Add New Rental</a>
                 </div>
@@ -672,7 +674,7 @@
                                     <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Edit" th:href="@{/staff/update-rental/{id}(id=${borrowIndex.borrowIndexId})}">
                                         <i class="ph ph-pencil-simple text-success custom-ph-icons"></i>
                                     </a>
-                                    <a class="bg-danger-subtle delete-btn rounded" data-toggle="tooltip" data-placement="top" title="Delete" href="#">
+                                    <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Complete" th:href="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}">
                                         <i class="ph ph-trash text-danger custom-ph-icons"></i>
                                     </a>
                                 </div>

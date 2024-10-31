@@ -19,4 +19,6 @@ public class NewRentalRequest {
     private int conditionBeforeID;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date estimateDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date startDate;
 }

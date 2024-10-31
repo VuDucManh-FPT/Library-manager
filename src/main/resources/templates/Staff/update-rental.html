@@ -686,26 +686,15 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="conditionAfterID">Condition After:</label>
-                        <select id="conditionAfterID" name="conditionAfterID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
-                            <th:block th:each="bookCondition : ${bookConditionList}">
-                                <option th:value="${bookCondition.bookConditionId}"
-                                        th:text="${bookCondition.detail}">
-                                </option>
-                            </th:block>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="estimateDate">Estimate Date:</label>
                         <input type="date" id="estimateDate" name="estimateDate" th:value="${#dates.format(borrowIndex.estimateDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" required>
                     </div>
                     <div class="form-group">
-                        <label for="returnDate">Return Date:</label>
-                        <input type="date" id="returnDate" name="returnDate" th:value="${#dates.format(borrowIndex.returnDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" th:value="${#dates.format(borrowIndex.startDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border">
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="reset" class="btn btn-danger">Reset</button>
+                        <a th:href="@{/staff/rentals}" type="reset" class="btn btn-danger">Back</a>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>

@@ -2,6 +2,7 @@ package com.example.LibraryManagement.Controller.Staff;
 
 import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.*;
+import com.example.LibraryManagement.Request.CompleteRentalRequest;
 import com.example.LibraryManagement.Request.NewPasswordRequest;
 import com.example.LibraryManagement.Request.NewRentalRequest;
 import com.example.LibraryManagement.Request.UpdateRentalRequest;
@@ -57,7 +58,7 @@ public class RentalManagementController {
             model.addAttribute("error", "Staff not found!");
         }
         List<Student> studentList = borrowIndexService.getAllStudents();
-        List<BookCondition> bookConditionList = borrowIndexService.getAllBookConditions();
+        List<BookCondition> bookConditionList = borrowIndexService.getAllBookConditionsAdd();
         List<Book> bookList = borrowIndexService.getAllBooks();
         model.addAttribute("studentList", studentList);
         model.addAttribute("bookConditionList", bookConditionList);
@@ -74,6 +75,7 @@ public class RentalManagementController {
         int bookId = newRentalRequest.getBookID();
         int conditionBeforeId = newRentalRequest.getConditionBeforeID();
         Date estimateDate = newRentalRequest.getEstimateDate();
+        Date startDate = newRentalRequest.getStartDate();
 
         // Tìm các bản ghi liên quan trong các bảng Staff, Student, Book, BookCondition
         Optional<Staff> staffOpt = staffRepository.findById(staffId);
@@ -88,6 +90,7 @@ public class RentalManagementController {
             newBorrow.setBook(bookOpt.get());
             newBorrow.setConditionBefore(conditionBeforeOpt.get());
             newBorrow.setEstimateDate(estimateDate);
+            newBorrow.setStartDate(startDate);
 
             // Lưu vào cơ sở dữ liệu
             borrowIndexRepository.save(newBorrow);
@@ -106,7 +109,7 @@ public class RentalManagementController {
         // Lấy thông tin từ dịch vụ dựa trên borrowIndexId
         List<Student> studentList = borrowIndexService.getAllStudents();
         BorrowIndex borrowIndex = borrowIndexService.getBorrowIndexById(borrowIndexId);
-        List<BookCondition> bookConditionList = borrowIndexService.getAllBookConditions();
+        List<BookCondition> bookConditionList = borrowIndexService.getAllBookConditionsAdd();
         List<Book> bookList = borrowIndexService.getAllBooks();
         model.addAttribute("studentList", studentList);
         model.addAttribute("bookConditionList", bookConditionList);
@@ -131,9 +134,8 @@ public class RentalManagementController {
             existingBorrowIndex.setStudent(studentRepository.findById(updateRentalRequest.getStudentID()).orElse(null));
             existingBorrowIndex.setBook(bookRepository.findById(updateRentalRequest.getBookID()).orElse(null));
             existingBorrowIndex.setConditionBefore(bookConditionRepository.findById(updateRentalRequest.getConditionBeforeID()).orElse(null));
-            existingBorrowIndex.setConditionAfter(bookConditionRepository.findById(updateRentalRequest.getConditionAfterID()).orElse(null)); // Thêm trường conditionAfter
             existingBorrowIndex.setEstimateDate(updateRentalRequest.getEstimateDate());
-            existingBorrowIndex.setReturnDate(updateRentalRequest.getReturnDate()); // Nếu có trường này trong yêu cầu
+            existingBorrowIndex.setStartDate(updateRentalRequest.getStartDate()); // Nếu có trường này trong yêu cầu
 
             // Lưu thay đổi vào cơ sở dữ liệu
             borrowIndexRepository.save(existingBorrowIndex);
@@ -147,7 +149,45 @@ public class RentalManagementController {
 
         return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
     }
+    @GetMapping("/complete-rental/{id}")
+    public String completeRental(@PathVariable("id") Integer borrowIndexId, Model model){
+        List<Student> studentList = borrowIndexService.getAllStudents();
+        BorrowIndex borrowIndex = borrowIndexService.getBorrowIndexById(borrowIndexId);
+        List<BookCondition> bookConditionList =  borrowIndexService.getAllBookConditionsComplete(borrowIndex.getConditionBefore().getBookConditionId());
+        List<Book> bookList = borrowIndexService.getAllBooks();
+        model.addAttribute("studentList", studentList);
+        model.addAttribute("bookConditionList", bookConditionList);
+        model.addAttribute("bookList", bookList);
+        model.addAttribute("borrowIndex", borrowIndex);
+        return "Staff/complete-rental";
+    }
+    @PostMapping("/complete-rental/{id}")
+    public String updateRental(@PathVariable("id") Integer borrowIndexId,
+                               @ModelAttribute CompleteRentalRequest completeRentalRequest,
+                               RedirectAttributes redirectAttributes) {
+        // Lấy thông tin bản ghi BorrowIndex hiện tại dựa trên ID
+        Optional<BorrowIndex> existingBorrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
+        if (existingBorrowIndexOpt.isPresent()) {
+            BorrowIndex existingBorrowIndex = existingBorrowIndexOpt.get();
+
+            // Cập nhật các thuộc tính của bản ghi BorrowIndex
+            existingBorrowIndex.setStaff(staffRepository.findById(completeRentalRequest.getStaffID()).orElse(null));
+            existingBorrowIndex.setStudent(studentRepository.findById(completeRentalRequest.getStudentID()).orElse(null));
+            existingBorrowIndex.setBook(bookRepository.findById(completeRentalRequest.getBookID()).orElse(null));
+            existingBorrowIndex.setConditionBefore(bookConditionRepository.findById(completeRentalRequest.getConditionAfterID()).orElse(null));
+            existingBorrowIndex.setEstimateDate(completeRentalRequest.getEstimateDate());
+            existingBorrowIndex.setReturnDate(completeRentalRequest.getReturnDate()); // Nếu có trường này trong yêu cầu
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            borrowIndexRepository.save(existingBorrowIndex);
+            redirectAttributes.addFlashAttribute("success", "Rental updated successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Rental not found!");
+        }
+
+        return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
+    }
 
 
 }

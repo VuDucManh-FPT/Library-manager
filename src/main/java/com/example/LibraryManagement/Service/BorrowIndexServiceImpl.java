@@ -31,8 +31,8 @@ public class BorrowIndexServiceImpl implements BorrowIndexService{
     }
 
     @Override
-    public List<BookCondition> getAllBookConditions() {
-        return bookConditionRepository.findAll();
+    public List<BookCondition> getAllBookConditionsAdd() {
+        return bookConditionRepository.findAllByBookConditionIdNot(6);
     }
 
     @Override
@@ -43,6 +43,11 @@ public class BorrowIndexServiceImpl implements BorrowIndexService{
     @Override
     public BorrowIndex getBorrowIndexById(int id) {
         return borrowIndexRepository.findById(id).get();
+    }
+
+    @Override
+    public List<BookCondition> getAllBookConditionsComplete(int id) {
+        return bookConditionRepository.findAllByBookConditionIdGreaterThanEqual(id);
     }
 
 }

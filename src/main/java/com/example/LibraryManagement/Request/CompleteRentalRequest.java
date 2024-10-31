@@ -12,13 +12,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateRentalRequest {
+public class CompleteRentalRequest {
     private int staffID;
     private int studentID;
     private int bookID;
-    private int conditionBeforeID;
+    private int conditionAfterID;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date estimateDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private Date returnDate;
 }

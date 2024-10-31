@@ -35,6 +35,8 @@ public class BorrowIndex {
     private Date estimateDate;
     @JoinColumn(name = "returnDate")
     private Date returnDate;
+    @JoinColumn(name = "startDate")
+    private Date startDate;
     @OneToMany(mappedBy = "borrowIndex")
     private List<BookFeedBack> feedbacks;
     @OneToMany(mappedBy = "borrowIndex")

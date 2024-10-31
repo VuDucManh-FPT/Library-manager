@@ -702,15 +702,7 @@
                                         <i class="ph ph-pencil-simple"></i>
                                     </a>
                                     <a class="btn btn-danger-subtle px-1 py-1 rounded d-flex"
-                                       data-toggle="tooltip" data-placement="top" title="Delete" href="#">
-                                        <i class="ph ph-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <a class="btn btn-danger-subtle px-1 py-1 rounded d-flex"
-                                       data-toggle="tooltip" data-placement="top" title="Delete" th:href="@{/admin/staff/delete/{id}(id=${staff.staffId})}"
+                                       data-toggle="tooltip" data-placement="top" title="Delete" th:href="@{/admin/student/delete/{id}(id=${student.studentId})}"
                                        onclick="return confirm('Are you sure you want to delete this staff member?');">
                                         <i class="ph ph-trash"></i>
                                     </a>

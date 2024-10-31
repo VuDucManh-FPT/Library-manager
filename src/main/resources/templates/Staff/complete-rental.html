@@ -193,7 +193,7 @@
                                 <a
                                         class="nav-link active"
                                         aria-current="page"
-                                        href="staff/rentals">
+                                        href="books.html">
                                     <i class="icon" data-bs-toggle="tooltip" title="Books"
                                        data-bs-placement="right">
                                         <i class="ph-duotone ph-book-bookmark"></i>
@@ -643,38 +643,51 @@
                 </div>
             </div>
             <div class="card-body">
-                <form th:action="@{/staff/add-rental}" method="POST">
+                <form th:action="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}" method="POST">
                     <div class="form-group">
                         <label for="staffName">Staff Name:</label>
-                        <input type="text" id="staffName" name="staffName" th:value="${staffName}"  class="form-control p-2 bg-white border" disabled>
-                        <input type="hidden" id="staffID" name="staffID" th:value="${staffId}">
+                        <input type="text" id="staffName" name="staffName" th:value="${borrowIndex.staff.staffName}" class="form-control p-2 bg-white border" disabled>
+                        <input type="hidden" id="staffID" name="staffID" th:value="${borrowIndex.staff.staffId}">
                     </div>
                     <div class="form-group">
                         <label for="studentID">Student:</label>
                         <select id="studentID" name="studentID" class="select2-basic-single" required>
                             <option value="">Select Student</option>
-                            <!-- Sử dụng Thymeleaf để render danh sách sinh viên -->
                             <th:block th:each="student : ${studentList}">
                                 <option th:value="${student.studentId}"
-                                        th:text="${student.studentEmail}">
+                                        th:text="${student.studentEmail}"
+                                        th:selected="${student.studentId == borrowIndex.student.studentId}">
                                 </option>
                             </th:block>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="bookID">Book ID:</label>
+                        <label for="bookID">Book:</label>
                         <select id="bookID" name="bookID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
+                            <option value="">Select Book</option>
                             <th:block th:each="book : ${bookList}">
                                 <option th:value="${book.bookId}"
-                                        th:text="${book.bookName}">
+                                        th:text="${book.bookName}"
+                                        th:selected="${book.bookId == borrowIndex.book.bookId}">
                                 </option>
                             </th:block>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="conditionBeforeID">Condition Before:</label>
-                        <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" required>
+                        <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" readonly>
+                            <option value="">Select Condition</option>
+                            <th:block th:each="bookCondition : ${bookConditionList}">
+                                <option th:value="${bookCondition.bookConditionId}"
+                                        th:text="${bookCondition.detail}"
+                                        th:selected="${bookCondition.bookConditionId == borrowIndex.conditionBefore.bookConditionId}">
+                                </option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="conditionAfterID">Condition After:</label>
+                        <select id="conditionAfterID" name="conditionAfterID" class="select2-basic-single" required>
                             <option value="">Select Condition</option>
                             <th:block th:each="bookCondition : ${bookConditionList}">
                                 <option th:value="${bookCondition.bookConditionId}"
@@ -684,18 +697,19 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="startDate">Start Date:</label>
-                        <input type="date" id="startDate" name="startDate" class="form-control p-2 bg-white border" readonly>
+                        <label for="estimateDate">Estimate Date:</label>
+                        <input type="date" id="estimateDate" name="estimateDate" th:value="${#dates.format(borrowIndex.estimateDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" required>
                     </div>
                     <div class="form-group">
-                        <label for="estimateDate">Estimate Date:</label>
-                        <input type="date" id="estimateDate" name="estimateDate" class="form-control p-2 bg-white border" required>
+                        <label for="returnDate">Return Date:</label>
+                        <input type="date" id="returnDate" name="returnDate" th:value="${#dates.format(borrowIndex.returnDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border">
                     </div>
                     <div class="d-flex gap-2">
-                        <button type="reset" class="btn btn-danger">Reset</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a th:href="@{/staff/rentals}" type="reset" class="btn btn-danger">Back</a>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
@@ -1225,7 +1239,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const dateInput = document.getElementById("startDate");
+            const dateInput = document.getElementById("returnDate");
             const today = new Date();
 
             // Định dạng ngày hiện tại thành yyyy-MM-dd
@@ -1252,25 +1266,7 @@
             // Gắn thêm class 'wide' cho Select2 của sinh viên
             $('#studentID').next('.select2-container').addClass('wide');
         })();
-        function setEstimateDate() {
-            let today = new Date();
-            let futureDate = new Date(today);
-            futureDate.setDate(today.getDate() + 7); // Cộng thêm 7 ngày
 
-            // Định dạng thành yyyy-MM-dd để hợp lệ với <input type="date">
-            let day = ('0' + futureDate.getDate()).slice(-2);  // Lấy ngày (dd)
-            let month = ('0' + (futureDate.getMonth() + 1)).slice(-2);  // Lấy tháng (MM)
-            let year = futureDate.getFullYear();  // Lấy năm (yyyy)
-
-            // Định dạng final yyyy-MM-dd
-            let formattedDate = `${year}-${month}-${day}`;
-
-            // Đặt giá trị cho input estimateDate
-            document.getElementById('estimateDate').value = formattedDate;
-        }
-
-        // Gọi hàm khi trang được tải
-        window.onload = setEstimateDate;
     </script>
 
 

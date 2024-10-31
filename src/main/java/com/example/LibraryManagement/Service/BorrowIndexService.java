@@ -10,7 +10,8 @@ import java.util.List;
 public interface BorrowIndexService {
     List<BorrowIndex> getAllBorrowIndex();
     List<Student> getAllStudents();
-    List<BookCondition> getAllBookConditions();
+    List<BookCondition> getAllBookConditionsAdd();
     List<Book> getAllBooks();
     BorrowIndex getBorrowIndexById(int id);
+    List<BookCondition> getAllBookConditionsComplete(int id);
 }
