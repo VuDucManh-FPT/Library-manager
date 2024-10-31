@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +33,12 @@ public class BorrowIndex {
     @JoinColumn(name = "bookConditionAfter",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_BookCondition_Af"))
     private BookCondition conditionAfter;
     @JoinColumn(name = "estimateDate")
-    private Date estimateDate;
+    private LocalDate estimateDate;
     @JoinColumn(name = "returnDate")
-    private Date returnDate;
+    private LocalDate returnDate;
+    @JoinColumn(name = "startDate")
+    private LocalDate startDate;
+
     @OneToMany(mappedBy = "borrowIndex")
     private List<BookFeedBack> feedbacks;
     @OneToMany(mappedBy = "borrowIndex")
