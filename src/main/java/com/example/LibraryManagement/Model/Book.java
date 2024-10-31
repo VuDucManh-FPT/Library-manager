@@ -26,8 +26,10 @@ public class Book {
     private String bookDescription;
     @ManyToOne
     @JoinColumn(name = "publisherID",nullable = false, foreignKey = @ForeignKey(name = "FK_Book_Publisher"))
+    @ToString.Exclude
     private Publisher publisher;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<BookImage> bookImages;
     @OneToMany(mappedBy = "book")
     private List<Book_BookStoringArea> storingAreas;

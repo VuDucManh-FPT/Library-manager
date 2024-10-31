@@ -18,8 +18,13 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Author> findTop5() {
-        return authorRepository.findTop5();
+    public List<Author> findTop12() {
+        return authorRepository.findTop12();
+    }
+
+    @Override
+    public List<Author> getAllAuthors() {
+        return authorRepository.findAll();
     }
 
 }

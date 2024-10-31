@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/library")
+@RequestMapping("/")
 public class HomeController {
     private final BookService bookService;
     private final AuthorService authorService;
@@ -21,8 +23,8 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        model.addAttribute("books", bookService.getTop5Book());
-        model.addAttribute("author", authorService.findTop5());
+        model.addAttribute("books", bookService.getTop12Book());
+        model.addAttribute("author", authorService.findTop12());
         return "home";
     }
     @GetMapping("/regulation")
@@ -33,6 +35,7 @@ public class HomeController {
     public String Introduce(Model model) {
         return "introduce";
     }
+
 }
 
 

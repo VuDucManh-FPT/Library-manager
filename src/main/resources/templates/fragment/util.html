@@ -5,122 +5,416 @@
 </head>
 <body>
 <!-- HEADER -->
-<header th:fragment="header" class="header" data-behavior="scroll_header open_menu" style="background-color: #ffa500c9">
-  <div class="header__branding"> <a th:href="@{library/home}" title="Home">
-    <img style ="height:58px" src="https://upload.wikimedia.org/wikipedia/vi/thumb/2/2d/Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg/1074px-Logo_Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_FPT.svg.png?20240228115915" alt=""/> </a> </div>
-  <div class="icon icon__hamburger--white"></div>
-  <section class="header__nav-container">
-    <nav class="header__menu--nav">
-      <ul class="header-menu">
-        <div class="menu-top-menu-left-container">
-          <ul id="menu-top-menu-left" class="primary-menu">
-            <li id="menu-item-7085" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7085"><a
+<div th:fragment="header" class="position-sticky top-0 z-3">
+  <!--Nav Start-->
+  <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar border-bottom">
+    <div class="container-fluid navbar-inner justify-content-between">
+      <a href="/home" class="navbar-brand">
+        <!--Logo start-->
+        <div class="logo-main ">
 
-                    href="/books" class="link--white">Books</a></li>
-            <li id="menu-item-7084" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7084"><a
+          <img class="logo-normal  "
+               src="../static/images/logo.png" height="30" alt="logo">
+          <img class="logo-color  "
+               src="../static/images/logo-white.png" height="30" alt="logo">
+          <img class="logo-mini "
+               src="../static/images/logo-mini.png" alt="logo">
+          <img class="logo-mini-white "
+               src="../static/images/logo-mini-white.png" alt="logo">
 
-                    href="/introduce" class="link--white">Introduce</a></li>
-            <li id="menu-item-7086" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7086"><a
-
-                    href="/regulation" class="link--white">Regulation</a></li>
-          </ul>
         </div>
-      </ul>
-    </nav>
-    <nav class="header__menu--tools">
-      <ul class="header-menu">
-        <div class="menu-top-menu-right-container">
-          <ul id="menu-top-menu-right" class="secondary-menu">
-            <li id="menu-item-83" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-83"><a
-
-                    href="https://www.loa.org/support/" class="link--white">Service</a></li>
-            <li id="menu-item-82" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-82"><a
-
-                    href="https://www.loa.org/about/" class="link--white">Register</a></li>
-            <li id="menu-item-7090" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-7090"><a
-
-                    href="https://submemb.loa.org/account" class="link--white">Sign
-              In</a></li>
-            <li id="menu-item-88" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-88"><a
-
-                    href="https://cart.loa.org/shop/cart" class="link--white">Cart</a></li>
-          </ul>
-        </div>
-      </ul>
-    </nav>
-    <form class="site-search" id="searchform" action="https://www.loa.org/search"
-
-          autocomplete="off" data-behavior="header_site_search" data-search-url="/search"
-
-          accept-charset="UTF-8" method="get"> <input class="site-search__field"
-
-                                                      name="keywords" id="searchInput" onkeyup="updateSearchPreview()" placeholder="Search..."
-
-                                                      type="text"> <span class="icon icon__search--white" id="open-search"></span>
-      <span class="icon icon__search--grey"></span> <span class="icon icon__close--white"></span>
-      <span id="clear-input-val"> </span>
-      <div class="site-search__results-container" id="search-target-container"
-
-           style="height: auto;">
-        <div id="searchPreview" class="site-search__results" style="visibility: visible;"></div>
+        <!--logo End-->
+      </a>
+      <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
+        <i class="icon d-flex">
+          <svg class="icon-20" width="20" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" />
+          </svg>
+        </i>
       </div>
-    </form>
-  </section>
-</header>
+
+      <div class="d-flex align-items-center d-block d-lg-none">
+        <button id="navbar-toggle" class="navbar-toggler px-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                        <span class="navbar-toggler-btn">
+                           <span class="navbar-toggler-icon"></span>
+                        </span>
+        </button>
+      </div>
+      <form action="books" method="post" class="w-25 d-none d-xl-block">
+        <div class="form-group input-group mb-0 search-input w-100">
+                        <span class="input-group-text ps-3 pe-0 border-0">
+                           <i class="ph-duotone ph-magnifying-glass"></i>
+                        </span>
+          <input type="text" name="bookName" class="form-control border-0" placeholder="Search...">
+
+        </div>
+      </form>
+      <div class="collapse flex-grow-0 navbar-collapse" id="navbarSupportedContent">
+        <ul class="mb-2 navbar-nav align-items-center navbar-list mb-lg-0">
+
+          <li class="nav-item dropdown iq-responsive-menu d-block d-xl-none">
+            <div class="btn btn-sm px-0 border-0" id="navbarDropdown-search-11" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                              <span class="input-group-text ps-3 pe-0 border-0 bg-transparent">
+                                 <svg class="icon-20" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round"></circle>
+                                    <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                          stroke-linecap="round" stroke-linejoin="round"></path>
+                                 </svg>
+                              </span>
+            </div>
+            <ul class="dropdown-menu  dropdown-menu-end" aria-labelledby="navbarDropdown-search-11"
+                style="width: 25rem;">
+              <li class="px-3 py-0">
+                <div class="form-group input-group mb-0 search-input w-100 shadow">
+                                    <span class="input-group-text ps-3 pe-0 border-0">
+                                       <svg class="icon-20" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                          <circle cx="11.7669" cy="11.7666" r="8.98856" stroke="currentColor" stroke-width="1.5"
+                                                  stroke-linecap="round" stroke-linejoin="round"></circle>
+                                          <path d="M18.0186 18.4851L21.5426 22" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                       </svg>
+                                    </span>
+                  <input type="text" class="form-control border-0" placeholder="Search...">
+
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+
+            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="notification-drop">
+              <div class="m-0 card-shadow card">
+                <div class="py-3 card-header rounded-top-3 bg-primary mb-0">
+                  <div class="header-title">
+                    <h5 class="mb-0 text-white">All Messages <small
+                            class="badge text-bg-light  float-end pt-1">5</small></h5>
+                  </div>
+                </div>
+                <div class="p-0 card-body">
+                  <a href="#" class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <img class="avatar-40 rounded" src="../static/images/avatars/01.jpg" alt=""
+                           loading="lazy" />
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Barry Emma Watson</h6>
+                        <p class="mb-0 font-size-12">13 june</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a href="#" class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <img class=" avatar-40 rounded" src="../static/images/avatars/02.jpg" alt=""
+                           loading="lazy" />
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Lorem Ipsum Watson</h6>
+                        <p class="mb-0 font-size-12">20 Apr</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a href="#" class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <img class="avatar-40 rounded" src="../static/images/avatars/03.jpg" alt="" ri
+                           loading="lazy" />
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Why do we use it?</h6>
+                        <p class="mb-0 font-size-12">30 Jun</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a href="#" class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <img class=" avatar-40 rounded" src="../static/images/avatars/04.jpg" alt=""
+                           loading="lazy" />
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Variations Passages </h6>
+                        <p class="mb-0 font-size-12">12 Sep</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a href="#" class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <img class=" avatar-40 rounded" src="../static/images/avatars/04.jpg" alt=""
+                           loading="lazy" />
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Lorem Ipsum generators</h6>
+                        <p class="mb-0 font-size-12">5 Dec</p>
+                      </div>
+
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+
+            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end toggle-cart-info"
+                 aria-labelledby="notification-cart">
+              <div class="m-0 card-shadow card">
+                <div class="py-3 card-header rounded-top-3 bg-primary mb-0">
+                  <div class="header-title">
+                    <h5 class="mb-0 text-white">All Carts</h5>
+                  </div>
+                </div>
+                <div class="p-0 card-body ">
+                  <div class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <div>
+                        <img class="rounded" src="../static/images/cart/01.jpg" alt="" loading="lazy" />
+                      </div>
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Night People book</h6>
+                        <p class="mb-0">$56.00</p>
+                      </div>
+                      <button type="button" class="btn btn-icon  text-danger btn-sm">
+                        <i class="ph ph-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <div>
+                        <img class="rounded" src="../static/images/cart/02.jpg" alt="" loading="lazy" />
+                      </div>
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">The Sin Eater Book</h6>
+                        <p class="mb-0">$40</p>
+                      </div>
+                      <button type="button" class="btn btn-icon text-danger btn-sm">
+                                             <span class="btn-inner">
+                                                <i class="ph ph-x"></i>
+                                             </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <div>
+                        <img class="rounded" src="../static/images/cart/03.jpg" alt="" loading="lazy" />
+                      </div>
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">the Orange Tree</h6>
+                        <p class="mb-0">$30</p>
+                      </div>
+                      <button type="button" class="btn btn-icon text-danger btn-sm">
+                                             <span class="btn-inner">
+                                                <i class="ph ph-x"></i>
+                                             </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="iq-sub-card">
+                    <div class="d-flex align-items-center">
+                      <div>
+                        <img class="rounded" src="../static/images/cart/04.jpg" alt="" loading="lazy" />
+                      </div>
+                      <div class="ms-3 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Harsh Reality book</h6>
+                        <p class="mb-0">$25</p>
+                      </div>
+                      <button type="button" class="btn btn-icon text-danger btn-sm">
+                                             <span class="btn-inner">
+                                                <i class="ph ph-x"></i>
+                                             </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2 p-3">
+                    <a class="btn btn-primary" href="#" role="button">View Cart</a>
+                    <a class="btn btn-primary" href="#" role="button">Shop now</a>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </li>
+          <li class="nav-item dropdown" id="itemdropdown1">
+            <a class="py-0 nav-link d-flex gap-3 justity-content-between align-items-center" href="#"
+               id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="icon-50">
+                                 <span class="btn-inner d-inline-block position-relative">
+                                    <img src="../static/images/avatars/1.jpg"
+                                         class="img-fluid rounded-circle object-fit-cover avatar-50" alt="icon">
+                                    <span
+                                            class="bg-success p-1 rounded-circle position-absolute end-0 bottom-0 border border-3 border-white"></span>
+                                 </span>
+
+              </div>
+              <div class="d-none d-lg-block">
+                <h6 class="mb-0 line-height">Barry Tech</h6>
+                <p class="mb-0 text-primary lh-sm">$20.32</p>
+              </div>
+            </a>
+            <div class="p-0 sub-drop dropdown-menu dropdown-menu-end" aria-labelledby="notification-cart">
+              <div class="m-0 card-shadow card">
+                <div class="py-3 card-header rounded-top-3 bg-primary mb-0">
+                  <div class="header-title">
+                    <h5 class="mb-0 text-white">Hello Barry Tech</h5>
+                    <span class="text-white ">Available</span>
+                  </div>
+                </div>
+                <div class="p-0 card-body ">
+                  <a class="iq-sub-card" href="user/user-profile.html">
+                    <div class="d-flex align-items-center">
+                      <div
+                              class="avatar-40 rounded-pill bg-primary-subtle text-primary  d-flex align-items-center justify-content-center ">
+                        <i class="ph ph-user-circle"></i>
+                      </div>
+                      <div class="ms-4 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">My Profile</h6>
+                        <p class="mb-0 font-size-12">View personal profile details.</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a class="iq-sub-card" href="user/user-edit.html">
+                    <div class="d-flex align-items-center">
+                      <div
+                              class="avatar-40 rounded-pill bg-primary-subtle text-primary  d-flex align-items-center justify-content-center">
+                        <i class="ph ph-identification-card"></i>
+                      </div>
+                      <div class="ms-4 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Edit Profile</h6>
+                        <p class="mb-0 font-size-12">Modify your personal details.</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a class="iq-sub-card" href="user/user-account-setting.html">
+                    <div class="d-flex align-items-center">
+                      <div
+                              class="avatar-40 rounded-pill bg-primary-subtle text-primary  d-flex align-items-center justify-content-center ">
+                        <i class="ph ph-user-square"></i>
+                      </div>
+                      <div class="ms-4 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Account Settings</h6>
+                        <p class="mb-0 font-size-12">Manage your account parameters.</p>
+                      </div>
+
+                    </div>
+                  </a>
+                  <a class="iq-sub-card" href="user/user-privacy-setting.html">
+                    <div class="d-flex align-items-center">
+                      <div
+                              class="avatar-40 rounded-pill bg-primary-subtle text-primary  d-flex align-items-center justify-content-center">
+                        <i class="ph ph-lock-key"></i>
+                      </div>
+                      <div class="ms-4 flex-grow-1 text-start">
+                        <h6 class="mb-0 ">Privacy Settings</h6>
+                        <p class="mb-0 font-size-12">Control your privacy parameters.</p>
+                      </div>
+                    </div>
+                  </a>
+                  <div class=" p-3 d-flex justify-content-center align-items-center">
+                    <a class="btn btn-primary d-flex align-items-center gap-1" href="auth/sign-in.html"
+                       role="button">Sign out <i class="ph ph-sign-out"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>            <!--Nav End-->
+</div>
 
 <!-- FOOTER -->
-<footer th:fragment="footer" class="site-footer">
-  <style>
-    .site-footer__share-links a.icon__spotify--white {
-      margin-top: 6px !important;
-    }
 
-    .site-footer__share-links a.icon__youtube--white {
-      margin-top: 6px !important;
-    }
-
-    .icon__threads--white {
-      background-image: url(/wp-content/themes/loa/assets/images/fallback/threads-app-icon-svg.png);
-      background-repeat: no-repeat;
-      margin-top: 4px;
-    }
-
-    .icon__threads--white:hover {
-      background-image: url(@{/wp-content/themes/loa/assets/images/fallback/threads-app-icon-svg-red.png});
-      background-repeat: no-repeat;
-    }
-  </style>
-  <div class="site-footer__legal">
-    <div class="footer-container">
-      <nav class="site-footer__share-links "> <span href="#">FOLLOW US</span>
-        <br>
-        <a target="_blank" href="https://www.threads.net/@libraryofamerica"
-
-           class="icon icon__threads--white"></a> <a target="_blank" href="https://www.facebook.com/libraryofamerica"
-
-                                                     class="icon icon__facebook--white"></a> <a target="_blank" href="https://instagram.com/libraryofamerica/"
-
-                                                                                                class="icon icon__instagram--white"></a> <a target="_blank" href="https://open.spotify.com/show/5u0e9mL85E8aEklJW5jprv"
-
-                                                                                                                                            class="icon icon__spotify--white"></a> <a href="https://www.youtube.com/@libraryofamerica"
-
-                                                                                                                                                                                      class="icon icon__youtube--white"></a> </nav>
-      <nav class="site-footer__legal-links">
-        <ul class="site-footer__link-group--legal site-footer__link-list">
-          <li><a class="link--grey" href="/contact-us">Contact Us</a></li>
-          <li><a class="link--grey" href="/rights-permissions/">Rights
-            &amp; Permissions</a></li>
-          <li><a class="link--grey" href="/customer-faq">Customer Service</a></li>
-          <li><a class="link--grey" href="/privacy">Privacy Policy</a></li>
-          <li><a class="link--grey" href="/contact-us">Media Inquiries</a></li>
-        </ul>
-        <span class="site-footer__link-group--legal site-footer__copywrite">©
-                Literary Classics of the United States, Inc. <a href="https://www.gocelerate.com/"
-
-                                                                class="link--grey" title="Area 17">Site by Celerate</a></span>
-      </nav>
-    </div>
+<!-- Footer Section Start -->
+<footer th:fragment="footer" class="footer">
+  <div class="footer-body">
+    <ul class="left-panel list-inline mb-0 p-0">
+      <li class="list-inline-item fw-500"><a class="footer-link" href="extra-pages/privacy-policy.html">Privacy
+        Policy</a></li>
+      <li class="list-inline-item fw-500"><a class="footer-link" href="extra-pages/terms-of-service.html">Terms
+        of Use</a></li>
+    </ul>
+    <h6 class="right-panel mb-0">
+      ©
+      <script>document.write(new Date().getFullYear())</script>
+      <span data-setting="app_name">Booksto</span>
+      with
+      <span class="text-danger">
+                <svg class="icon-16" width="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M15.85 2.50065C16.481 2.50065 17.111 2.58965 17.71 2.79065C21.401 3.99065 22.731 8.04065 21.62 11.5806C20.99 13.3896 19.96 15.0406 18.611 16.3896C16.68 18.2596 14.561 19.9196 12.28 21.3496L12.03 21.5006L11.77 21.3396C9.48102 19.9196 7.35002 18.2596 5.40102 16.3796C4.06102 15.0306 3.03002 13.3896 2.39002 11.5806C1.26002 8.04065 2.59002 3.99065 6.32102 2.76965C6.61102 2.66965 6.91002 2.59965 7.21002 2.56065H7.33002C7.61102 2.51965 7.89002 2.50065 8.17002 2.50065H8.28002C8.91002 2.51965 9.52002 2.62965 10.111 2.83065H10.17C10.21 2.84965 10.24 2.87065 10.26 2.88965C10.481 2.96065 10.69 3.04065 10.89 3.15065L11.27 3.32065C11.3618 3.36962 11.4649 3.44445 11.554 3.50912C11.6104 3.55009 11.6612 3.58699 11.7 3.61065C11.7163 3.62028 11.7329 3.62996 11.7496 3.63972C11.8354 3.68977 11.9247 3.74191 12 3.79965C13.111 2.95065 14.46 2.49065 15.85 2.50065ZM18.51 9.70065C18.92 9.68965 19.27 9.36065 19.3 8.93965V8.82065C19.33 7.41965 18.481 6.15065 17.19 5.66065C16.78 5.51965 16.33 5.74065 16.18 6.16065C16.04 6.58065 16.26 7.04065 16.68 7.18965C17.321 7.42965 17.75 8.06065 17.75 8.75965V8.79065C17.731 9.01965 17.8 9.24065 17.94 9.41065C18.08 9.58065 18.29 9.67965 18.51 9.70065Z"
+                        fill="currentColor"></path>
+                </svg>
+              </span>
+      By
+      <a href="https://iqonic.design/" target="_blank">IQONIC Design</a>.
+    </h6>
   </div>
 </footer>
+<!-- Footer Section End -->
+
+<aside th:fragment="navbar" class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar"
+       data-sidebar="responsive">
+  <div class="sidebar-header d-flex align-items-center justify-content-start position-relative">
+    <a href="/home" class="navbar-brand">
+      <!--Logo start-->
+      <div class="logo-main ">
+
+        <img class="logo-normal img-fluid "
+             src="../static/images/logo.png" height="30" alt="logo">
+        <img class="logo-color img-fluid "
+             src="../static/images/logo-white.png" height="30" alt="logo">
+        <img class="logo-mini img-fluid"
+             src="../static/images/logo-mini.png" alt="logo">
+        <img class="logo-mini-white img-fluid"
+             src="../static/images/logo-mini-white.png" alt="logo">
+
+      </div>
+      <!--logo End-->        </a>
+    <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
+      <i class="icon">
+        <svg class="icon-20 icon-arrow" width="20" viewBox="0 0 24 24" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M15.5 19L8.5 12L15.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round"></path>
+        </svg>
+      </i>
+    </div>
+  </div>
+  <div class="sidebar-body pt-0 pb-3 data-scrollbar">
+    <div class="sidebar-list">
+      <!-- Sidebar Menu Start -->
+      <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
+
+        <li class="nav-item">
+          <a class="nav-link active"
+             aria-current="page"
+             href="/home">
+            <i class="icon" data-bs-toggle="tooltip" title="Home Page"
+               data-bs-placement="right">
+              <i class="ph-duotone ph-house"></i>
+            </i>
+            <i class="sidenav-mini-icon" data-bs-toggle="tooltip"
+               title="Home Page" data-bs-placement="right">HP</i>
+            <span class="item-name">Home Page</span>
+          </a>
+        </li>
+
+        <!-- Sidebar Menu End -->        </div>
+    <div class="p-3 iq-membership">
+      <img src="../static/images/page-img/side-bkg.png" alt="book" class="img-fluid">
+      <button class="btn w-100 btn-primary mt-4">Become Membership</button>
+    </div>
+  </div>
+
+</aside>
 </body>
 </html>
+

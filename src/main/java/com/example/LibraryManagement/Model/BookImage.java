@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 @Entity
 @Table(name = "BookImage")
@@ -21,6 +22,7 @@ public class BookImage {
     private String imageURL;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "bookID", nullable = false, foreignKey = @ForeignKey(name = "FK_BookImage_Book"))
     private Book book;
 }

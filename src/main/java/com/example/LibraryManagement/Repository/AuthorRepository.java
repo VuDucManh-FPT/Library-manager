@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
-    @Query(value = "SELECT TOP 5 * FROM Author", nativeQuery = true)
-    List<Author> findTop5();
+    @Query(value = "SELECT TOP 12 * FROM Author", nativeQuery = true)
+    List<Author> findTop12();
 }
