@@ -49,4 +49,7 @@ public class Book {
     )
     @ToString.Exclude
     private Set<Author> authors = new HashSet<>();
+
+    @OneToMany(mappedBy = "book")
+    private List<BorrowIndex> borrowIndices;
 }
