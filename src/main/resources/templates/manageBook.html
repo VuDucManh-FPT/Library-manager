@@ -146,11 +146,11 @@
                                         <div class="d-flex gap-1 align-items-center list-user-action">
                                             <a class="bg-success-subtle rounded" data-toggle="tooltip"
                                                data-placement="top"
-                                               title="Edit" href="#">
+                                               title="Edit" th:href="@{/admin/edit-book/{id}(id = ${item.getBookId()})}">
                                                 <i class="ph ph-pencil-simple text-success custom-ph-icons"></i>
                                             </a>
                                             <a class="bg-danger-subtle delete-btn rounded" data-toggle="tooltip"
-                                               data-placement="top" title="Delete" href="#">
+                                               data-placement="top" title="Delete" th:href="@{/admin/delete-book/{id}(id = ${item.getBookId()})}">
                                                 <i class="ph ph-trash text-danger custom-ph-icons"></i>
                                             </a>
                                         </div>

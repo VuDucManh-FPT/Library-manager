@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,18 +31,18 @@ public class Book {
     private Publisher publisher;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<BookImage> bookImages;
-    @OneToMany(mappedBy = "book")
+    private List<BookImage> bookImages = new ArrayList<>();
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Book_BookStoringArea> storingAreas;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "Genre_Book",
             joinColumns = @JoinColumn(name = "bookID", foreignKey = @ForeignKey(name = "FK_Genre_Book_Book")),
             inverseJoinColumns = @JoinColumn(name = "gerneID", foreignKey = @ForeignKey(name = "FK_Genre_Book_Genre"))
     )
     private Set<Genre> genres = new HashSet<>();
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "Book_Author",
             joinColumns = @JoinColumn(name = "bookID",foreignKey = @ForeignKey(name = "FK_Book_Author_Book")),

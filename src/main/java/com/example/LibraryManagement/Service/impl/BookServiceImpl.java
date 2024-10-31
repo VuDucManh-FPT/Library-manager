@@ -2,23 +2,29 @@ package com.example.LibraryManagement.Service.impl;
 
 import com.example.LibraryManagement.Model.Book;
 import com.example.LibraryManagement.Model.BookImage;
+import com.example.LibraryManagement.Model.Genre;
 import com.example.LibraryManagement.Repository.BookImageRepository;
 import com.example.LibraryManagement.Repository.BookRepository;
 import com.example.LibraryManagement.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookImageRepository bookImageRepository;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Autowired
     public BookServiceImpl(BookRepository bookRepository, BookImageRepository bookImageRepository) {
@@ -53,20 +59,32 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book addNew(Book book, List<MultipartFile> images) {
-        Book savedBook = bookRepository.save(book);
-        List<BookImage> listImg = new ArrayList<>();
-        // Process each image and save it
+        if (book.getBookId() != 0) { // Assuming 0 is used for new books
+            Book existingBook = bookRepository.findById(book.getBookId())
+                    .orElseThrow(() -> new RuntimeException("Book not found"));
+            // Retain existing images
+            List<BookImage> existingImages = existingBook.getBookImages();
+
+            // If the existingImages is null, initialize it
+            if (existingImages == null) {
+                existingImages = new ArrayList<>();
+            }
+
+            // Set the existing images back to the book
+            book.setBookImages(existingImages);
+        }
+
+        // Process each new image and create BookImage instances
+        List<BookImage> listImg = book.getBookImages();
         for (MultipartFile image : images) {
-            // Create a new BookImage instance
             BookImage bookImage = new BookImage();
             bookImage.setImageURL(saveImage(image)); // Store the path in the database
             bookImage.setBook(book); // Set the book for the image
-            listImg.add(bookImage);
-            bookImageRepository.save(bookImage);
+            listImg.add(bookImage); // Add new image to the list
         }
-        savedBook.setBookImages(listImg);
 
-        return bookRepository.save(savedBook); // Save the book to the database
+        // Persist the book (and images due to cascade)
+        return bookRepository.save(book); // Save the book, including images
     }
 
     @Override
@@ -81,29 +99,15 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findTopByGenres(book.getGenres(), bookId, PageRequest.of(0, limit));
     }
 
-    private String saveImage(MultipartFile image) {
+    public String saveImage(MultipartFile image) {
         try {
-            // Define an absolute path to an external directory
-            String uploadDir = "D:/uploads/images"; // Update this path as needed
-            File directory = new File(uploadDir);
-
-            // Create the directory if it doesn't exist
-            if (!directory.exists()) {
-                directory.mkdirs(); // Create the directory and any necessary parent directories
-            }
-
-            // Create a unique filename to avoid conflicts
-            String uniqueFileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            String filePath = uploadDir + File.separator + uniqueFileName;
-
-            // Save the file
-            image.transferTo(new File(filePath));
-
-            // Return the file path or URL as needed for use in your application
-            return "D:/uploads/images/" + uniqueFileName; // Adjust this as needed for serving images
+            String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+            Path path = Paths.get(uploadDir, fileName);
+            Files.createDirectories(path.getParent());
+            Files.write(path, image.getBytes());
+            return "/uploads/" + fileName;  // Assuming '/uploads/' is the base URL for your images
         } catch (IOException e) {
-            e.printStackTrace();
-            return null; // Handle error appropriately
+            throw new RuntimeException("Failed to store image", e);
         }
     }
 

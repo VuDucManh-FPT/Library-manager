@@ -101,49 +101,70 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center position-relative">
                         <div class="iq-header-title">
-                            <h4 class="mb-0">Add New Books</h4>
+                            <h4 class="mb-0" th:text="${book.bookId != 0 ? 'Edit Book' : 'Add New Book'}"></h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="addBook" method="post" enctype="multipart/form-data">
+                        <form  th:action="@{${formAction}}"
+                               th:object="${book}"
+                               method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="bookId" th:value="${book.getBookId()}">
                             <div class="form-group">
                                 <label>Book Name:</label>
-                                <input type="text" name="bookName" class="form-control p-2 bg-white border">
+                                <input type="text" th:value="${book.bookName}" name="bookName" class="form-control p-2 bg-white border">
                             </div>
                             <div class="form-group">
                                 <label>Book Category:</label>
 
                                 <select class="select2-basic-single" name="genres">
-                                    <option th:each="item : ${genres}" th:text="${item.getName()}" th:value="${item.getGenreId()}"></option>
+                                    <option
+                                            th:each="item : ${genres}"
+                                            th:text="${item.getName()}"
+                                            th:value="${item.getGenreId()}"
+                                            th:selected="${book.getGenres() != null && book.genres.contains(item)}"
+                                    ></option>
                                 </select>
 
                             </div>
                             <div class="form-group">
                                 <label>Book Authors:</label>
                                 <select class="select2-basic-single" name="authors" multiple>
-                                    <option th:each="item : ${authors}" th:text="${item.getAuthorName()}" th:value="${item.getId()}"></option>
+                                    <option
+                                            th:each="item : ${authors}"
+                                            th:text="${item.getAuthorName()}"
+                                            th:value="${item.getId()}"
+                                            th:selected="${book.authors != null && book.authors.contains(item)}"
+                                    ></option>
 
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Book Publisher:</label>
                                 <select class="select2-basic-single" name="publisher">
-                                    <option th:each="item : ${publishers}" th:text="${item.getPublisherName()}" th:value="${item.getPublisherId()}"></option>
+                                    <option
+                                            th:each="item : ${publishers}"
+                                            th:text="${item.getPublisherName()}"
+                                            th:value="${item.getPublisherId()}"
+                                            th:selected="${book.publisher != null && book.publisher.publisherId == item.publisherId}"
+                                    ></option>
 
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Book Image:</label>
                                 <input type="file" name="bookImagesRaw" class="form-control p-2 bg-white border" multiple required>
+                                <img th:each="item: ${book.getBookImages()}" th:src="${item.getImageURL()}">
                             </div>
 
-                            <div class="form-group">
-                                <label>Book Quantity:</label>
-                                <input type="text" class="form-control p-2 bg-white border">
-                            </div>
+<!--                            <div class="form-group">-->
+<!--                                <label>Book Quantity:</label>-->
+<!--                                <input type="text" class="form-control p-2 bg-white border">-->
+<!--                            </div>-->
                             <div class="form-group">
                                 <label>Book Description:</label>
-                                <textarea type="text" name="bookDescription" class="form-control bg-white border"></textarea>
+                                <textarea type="text"
+                                          th:text="${book.bookDescription}"
+                                          name="bookDescription" class="form-control bg-white border"></textarea>
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-danger">Reset</button>
