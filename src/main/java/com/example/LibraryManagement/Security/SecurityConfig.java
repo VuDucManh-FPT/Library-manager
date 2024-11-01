@@ -91,7 +91,6 @@ public class SecurityConfig {
                         user = staffOpt.get();
                         handleRedirectBasedOnAccountFlags(staff.isActive(), staff.isIsban(), response, "STAFF");
                     } else if (adminOpt.isPresent()) {
-                        Admin admin = adminOpt.get();
                         user = adminOpt.get();
                         response.sendRedirect("/admin/staffs");
                     }else {
@@ -99,11 +98,13 @@ public class SecurityConfig {
                         response.sendRedirect("/library/login?error=user-not-found");
                     }
                     // Tạo token JWT
-                    String token = jwtProvider.generateToken(authentication);
+                    String token = jwtProvider.generateTokenByMail(email);
                     // Tạo cookie từ token
                     ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
                     // Thêm cookie vào response
                     jwtProvider.addCookieToResponse(response, jwtCookie);
+                    log.info("JWT Cookie: {}", jwtCookie.toString());
+
                 } else {
                     log.warn("Authentication is not an instance of OAuth2AuthenticationToken.");
                     response.sendRedirect("/library/login?error=authentication-failed");
@@ -116,7 +117,7 @@ public class SecurityConfig {
                 } else if (!isActive) {
                     //Staff first time vao update profile
                     // Inactive account
-                    response.sendRedirect("/library/profile-update");
+                    response.sendRedirect("/library/active");
                 } else if (isBanned) {
                     // Banned account
                     response.sendRedirect("/library/login?error=account-banned");

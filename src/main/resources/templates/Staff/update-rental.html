@@ -8,10 +8,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title data-setting="app_name" data-rightJoin=" Book store management system">BookSto|Add rental
+    <title data-setting="app_name" data-rightJoin=" Book store management system">BookSto|Update rental
         system</title>
     <meta name="description"
-        content="Booksto is a revolutionary Bootstrap Admin Dashboard Template and UI Components Library. The Admin Dashboard Template and UI Component features 8 modules.">
+        content="BookSto|Update rental">
     <meta name="keywords"
         content="premium, admin, dashboard, template, bootstrap 5, clean ui, Booksto, admin dashboard,responsive dashboard, optimized dashboard,">
     <meta name="author" content="Iqonic Design">
@@ -639,7 +639,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center position-relative">
                 <div class="iq-header-title">
-                    <h4 class="mb-0">Add New Books</h4>
+                    <h4 class="mb-0">Update rental</h4>
                 </div>
             </div>
             <div class="card-body">
@@ -691,7 +691,7 @@
                     </div>
                     <div class="form-group">
                         <label for="startDate">Start Date:</label>
-                        <input type="date" id="startDate" name="startDate" th:value="${#dates.format(borrowIndex.startDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border">
+                        <input type="date" id="startDate" name="startDate" th:value="${#dates.format(borrowIndex.startDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" onchange="updateEstimateDate()" required>
                     </div>
                     <div class="d-flex gap-2">
                         <a th:href="@{/staff/rentals}" type="reset" class="btn btn-danger">Back</a>
@@ -1240,7 +1240,26 @@
             // Gắn thêm class 'wide' cho Select2 của sinh viên
             $('#studentID').next('.select2-container').addClass('wide');
         })();
+        function updateEstimateDate() {
+            const startDateInput = document.getElementById('startDate');
+            const estimateDateInput = document.getElementById('estimateDate');
 
+            // Lấy ngày bắt đầu
+            const startDate = new Date(startDateInput.value);
+
+            // Kiểm tra nếu ngày bắt đầu hợp lệ
+            if (!isNaN(startDate.getTime())) {
+                // Tính toán ngày ước tính (thêm 7 ngày)
+                const estimateDate = new Date(startDate);
+                estimateDate.setDate(startDate.getDate() + 7);
+
+                // Đặt giá trị cho trường estimateDate
+                estimateDateInput.value = estimateDate.toISOString().split('T')[0]; // Chỉ lấy phần ngày
+            } else {
+                // Nếu không có ngày hợp lệ, đặt lại estimateDate
+                estimateDateInput.value = '';
+            }
+        }
     </script>
 
 

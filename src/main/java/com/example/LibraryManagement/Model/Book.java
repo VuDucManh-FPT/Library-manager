@@ -51,5 +51,6 @@ public class Book {
     )
     @ToString.Exclude
     private Set<Author> authors = new HashSet<>();
-
+    @JoinColumn(name = "price")
+    private float price;
 }

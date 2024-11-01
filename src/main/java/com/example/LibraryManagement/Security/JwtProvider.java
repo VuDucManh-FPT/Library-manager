@@ -10,6 +10,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,21 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
     public String generateToken(Authentication authentication) {
         String email = authentication.getName();
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + JwtConstants.EXPIRE_DATE);
+        String token = Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(currentDate)
+                .setExpiration(expireDate)
+                .signWith(keys(), SignatureAlgorithm.HS256)
+                .compact();
+        return token;
+    }
+    public String generateTokenByMail(String email) {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + JwtConstants.EXPIRE_DATE);
         String token = Jwts.builder()
@@ -123,6 +138,7 @@ public class JwtProvider {
         cookie.setHttpOnly(responseCookie.isHttpOnly());
         cookie.setSecure(responseCookie.isSecure());
         response.addCookie(cookie);
+        log.info("Cookie added to response: {}", cookie.toString());
     }
 
     public ResponseCookie getCleanJwtCookie() {

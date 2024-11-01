@@ -39,7 +39,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public String saveStaff(Staff staff) {
         if (staffRepository.existsByStaffEmail(staff.getStaffEmail())) {
-            return "Email already exists";
+            return "Email already exists in staffs.";
+        }
+        if (studentRepository.existsStudentByStudentEmail(staff.getStaffEmail())) {
+            return "Email already exists in students.";
         }
         String password = generateRandomString();
         staff.setStaffPassword(passwordEncoder.encode(password));
@@ -81,7 +84,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public String saveStudent(Student student) {
         if (studentRepository.existsStudentByStudentEmail(student.getStudentEmail())) {
-            return "Email already exists";
+            return "Email already exists in students.";
+        }
+        if (staffRepository.existsByStaffEmail(student.getStudentEmail())) {
+            return "Email already exists in staffs.";
         }
         String password = generateRandomString();
         student.setPassword(passwordEncoder.encode(password));
@@ -102,7 +108,6 @@ public class AdminServiceImpl implements AdminService {
         service.sendMail(request, htmlContent, subject);
         return "Added Successfully";
     }
-
 
     public static String generateRandomString() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}:\"<>?|[];',./`~";

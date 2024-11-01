@@ -19,4 +19,6 @@ public class BorrowFine {
     private String reason;
     @Column(name = "value")
     private int value;
+    @Column(name = "status")
+    private String status;
 }

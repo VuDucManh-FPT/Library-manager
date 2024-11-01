@@ -1,13 +1,7 @@
 package com.example.LibraryManagement.Service;
 
-import com.example.LibraryManagement.Model.Book;
-import com.example.LibraryManagement.Model.BookCondition;
-import com.example.LibraryManagement.Model.BorrowIndex;
-import com.example.LibraryManagement.Model.Student;
-import com.example.LibraryManagement.Repository.BookConditionRepository;
-import com.example.LibraryManagement.Repository.BookRepository;
-import com.example.LibraryManagement.Repository.BorrowIndexRepository;
-import com.example.LibraryManagement.Repository.StudentRepository;
+import com.example.LibraryManagement.Model.*;
+import com.example.LibraryManagement.Repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +14,7 @@ public class BorrowIndexServiceImpl implements BorrowIndexService{
     private StudentRepository studentRepository;
     private BookConditionRepository bookConditionRepository;
     private BookRepository bookRepository;
+    private BorrowFineRepository fineRepository;
 
     public List<BorrowIndex> getAllBorrowIndex() {
         return borrowIndexRepository.findAllBorrowIndex();
@@ -48,6 +43,11 @@ public class BorrowIndexServiceImpl implements BorrowIndexService{
     @Override
     public List<BookCondition> getAllBookConditionsComplete(int id) {
         return bookConditionRepository.findAllByBookConditionIdGreaterThanEqual(id);
+    }
+
+    @Override
+    public BorrowFine getBorrowFineByBorrowIndex(BorrowIndex borrowIndex) {
+        return fineRepository.getBorrowFineByBorrowIndex(borrowIndex);
     }
 
 }

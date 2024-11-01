@@ -2,10 +2,7 @@ package com.example.LibraryManagement.Controller.Staff;
 
 import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.*;
-import com.example.LibraryManagement.Request.CompleteRentalRequest;
-import com.example.LibraryManagement.Request.NewPasswordRequest;
-import com.example.LibraryManagement.Request.NewRentalRequest;
-import com.example.LibraryManagement.Request.UpdateRentalRequest;
+import com.example.LibraryManagement.Request.*;
 import com.example.LibraryManagement.Service.BorrowIndexService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +29,7 @@ public class RentalManagementController {
     private final StudentRepository studentRepository;
     private final BookRepository bookRepository;
     private final BorrowIndexRepository borrowIndexRepository;
+    private final BorrowFineRepository borrowFineRepository;
 
     @GetMapping("rentals")
     public String getAllBorrowIndex(Model model) {
@@ -115,8 +113,6 @@ public class RentalManagementController {
         model.addAttribute("bookConditionList", bookConditionList);
         model.addAttribute("bookList", bookList);
         model.addAttribute("borrowIndex", borrowIndex);
-        // Thêm các danh sách cần thiết khác (sinh viên, sách, điều kiện...)
-
         return "Staff/update-rental";
     }
     @PostMapping("/update-rental/{id}")
@@ -162,7 +158,7 @@ public class RentalManagementController {
         return "Staff/complete-rental";
     }
     @PostMapping("/complete-rental/{id}")
-    public String updateRental(@PathVariable("id") Integer borrowIndexId,
+    public String completeRental(@PathVariable("id") Integer borrowIndexId,
                                @ModelAttribute CompleteRentalRequest completeRentalRequest,
                                RedirectAttributes redirectAttributes) {
         // Lấy thông tin bản ghi BorrowIndex hiện tại dựa trên ID
@@ -175,19 +171,95 @@ public class RentalManagementController {
             existingBorrowIndex.setStaff(staffRepository.findById(completeRentalRequest.getStaffID()).orElse(null));
             existingBorrowIndex.setStudent(studentRepository.findById(completeRentalRequest.getStudentID()).orElse(null));
             existingBorrowIndex.setBook(bookRepository.findById(completeRentalRequest.getBookID()).orElse(null));
-            existingBorrowIndex.setConditionBefore(bookConditionRepository.findById(completeRentalRequest.getConditionAfterID()).orElse(null));
+            existingBorrowIndex.setConditionAfter(bookConditionRepository.findById(completeRentalRequest.getConditionAfterID()).orElse(null));
             existingBorrowIndex.setEstimateDate(completeRentalRequest.getEstimateDate());
-            existingBorrowIndex.setReturnDate(completeRentalRequest.getReturnDate()); // Nếu có trường này trong yêu cầu
-
-            // Lưu thay đổi vào cơ sở dữ liệu
+            existingBorrowIndex.setReturnDate(completeRentalRequest.getReturnDate());
             borrowIndexRepository.save(existingBorrowIndex);
-            redirectAttributes.addFlashAttribute("success", "Rental updated successfully!");
-        } else {
+
+            float value = 0;
+            BookCondition conditionBefore = existingBorrowIndex.getConditionBefore();
+            BookCondition conditionAfter = existingBorrowIndex.getConditionAfter();
+            Book book = existingBorrowIndex.getBook();
+            if (conditionBefore != null && conditionAfter != null) {
+                int conditionDifference = conditionAfter.getBookConditionId() - conditionBefore.getBookConditionId() ;
+                if (conditionDifference > 0) {
+                    value += conditionDifference * 15000; // 15000 cho mỗi mức giảm
+                }
+                if (conditionAfter.getBookConditionId() == 6) {
+                    float price = book.getPrice();
+                    switch (conditionBefore.getBookConditionId()) {
+                        case 1: value += price; break;
+                        case 2: value += price * 85 / 100; break;
+                        case 3: value += price * 70 / 100; break;
+                        case 4: value += price * 55 / 100; break;
+                        case 5: value += price * 40 / 100; break;
+                        default: break;
+                    }
+                }
+                if (value > 0) {
+                    BorrowFine borrowFine = new BorrowFine();
+                    borrowFine.setBorrowIndex(existingBorrowIndex);
+                    borrowFine.setReason("Fine of condition return book or late return.");
+                    borrowFine.setStatus("Unpaid");
+                    borrowFine.setValue((int) value);
+                    borrowFineRepository.save(borrowFine);
+                    redirectAttributes.addFlashAttribute("success", "Fine created successfully! Please check the information.");
+                    return "redirect:/staff/check-fine/"+ borrowIndexId;
+                }
+                redirectAttributes.addFlashAttribute("success", "Rental complete successfully!");
+            }
+        }else {
             redirectAttributes.addFlashAttribute("error", "Rental not found!");
         }
+        return "redirect:/staff/rentals";
 
-        return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
     }
+    @GetMapping("/check-fine/{id}")
+    public String checkFine(@PathVariable("id") Integer borrowIndexId, Model model) {
+        Optional<BorrowIndex> borrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
+
+        if (borrowIndexOpt.isPresent()) {
+            BorrowIndex borrowIndex = borrowIndexOpt.get();
+
+            Optional<BorrowFine> borrowFineOpt = Optional.ofNullable(borrowIndexService.getBorrowFineByBorrowIndex(borrowIndex));
+
+            model.addAttribute("borrowIndex", borrowIndex);
+
+            if (borrowFineOpt.isPresent()) {
+                BorrowFine borrowFine = borrowFineOpt.get();
+                model.addAttribute("borrowFine", borrowFine);
+            } else {
+                model.addAttribute("borrowFine", null);
+            }
+
+            return "Staff/check-fine";
+        } else {
+            model.addAttribute("error", "Borrow Index not found!");
+            return "redirect:/staff/rentals";
+        }
+    }
+    @PostMapping("/check-fine/{id}")
+    public String checkFine(@PathVariable("id") Integer borrowIndexId,
+                                  @ModelAttribute FineRequest fineRequest,
+                                  RedirectAttributes redirectAttributes) {
+        Optional<BorrowIndex> borrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
+
+        if (borrowIndexOpt.isPresent()) {
+            BorrowIndex borrowIndex = borrowIndexOpt.get();
+            BorrowFine borrowFine = borrowIndexService.getBorrowFineByBorrowIndex(borrowIndex);
+            borrowFine.setBorrowIndex(borrowIndex);
+            borrowFine.setReason(fineRequest.getReason());
+            borrowFine.setStatus("Unpaid");
+            borrowFine.setValue(fineRequest.getValue());
+            borrowFineRepository.save(borrowFine);
+            redirectAttributes.addFlashAttribute("success", "Borrow complete successfully! And there is fine added please purchase for it.");
+            return "redirect:/staff/rentals";
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Borrow Index not found!");
+            return "redirect:/staff/rentals";
+        }
+    }
+
 
 
 }

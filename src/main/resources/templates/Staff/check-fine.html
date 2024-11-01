@@ -639,78 +639,47 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center position-relative">
                 <div class="iq-header-title">
-                    <h4 class="mb-0">Complete rental</h4>
+                    <h4 class="mb-0">Check again the fine</h4>
                 </div>
             </div>
             <div class="card-body">
-                <form th:action="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}" method="POST">
+                <form th:action="@{/staff/check-fine/{id}(id=${borrowIndex.borrowIndexId})}" method="POST">
                     <div class="form-group">
                         <label for="staffName">Staff Name:</label>
-                        <input type="text" id="staffName" name="staffName" th:value="${borrowIndex.staff.staffName}" class="form-control p-2 bg-white border" disabled>
-                        <input type="hidden" id="staffID" name="staffID" th:value="${borrowIndex.staff.staffId}">
+                        <input type="text" id="staffName" name="staffName"
+                               th:value="${borrowIndex.staff.staffName}"
+                               class="form-control p-2 bg-white border" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="studentID">Student:</label>
-                        <select id="studentID" name="studentID" class="select2-basic-single" required>
-                            <option value="">Select Student</option>
-                            <th:block th:each="student : ${studentList}">
-                                <option th:value="${student.studentId}"
-                                        th:text="${student.studentEmail}"
-                                        th:selected="${student.studentId == borrowIndex.student.studentId}">
-                                </option>
-                            </th:block>
-                        </select>
+                        <label for="studentName">Student Name:</label>
+                        <input type="text" id="studentName" name="studentName"
+                               th:value="${borrowIndex.student.studentName}"
+                               class="form-control p-2 bg-white border" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="bookID">Book:</label>
-                        <select id="bookID" name="bookID" class="select2-basic-single" required>
-                            <option value="">Select Book</option>
-                            <th:block th:each="book : ${bookList}">
-                                <option th:value="${book.bookId}"
-                                        th:text="${book.bookName}"
-                                        th:selected="${book.bookId == borrowIndex.book.bookId}">
-                                </option>
-                            </th:block>
-                        </select>
+                        <label for="bookName">Book Name:</label>
+                        <input type="text" id="bookName" name="bookName"
+                               th:value="${borrowIndex.book.bookName}"
+                               class="form-control p-2 bg-white border" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="conditionBeforeID">Condition Before:</label>
-                        <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
-                            <th:block th:each="bookCondition : ${bookConditionList}">
-                                <option th:value="${bookCondition.bookConditionId}"
-                                        th:text="${bookCondition.detail}"
-                                        th:selected="${bookCondition.bookConditionId == borrowIndex.conditionBefore.bookConditionId}">
-                                </option>
-                            </th:block>
-                        </select>
+                        <label for="reason">Reason:</label>
+                        <textarea id="reason" name="reason"
+                                  class="form-control p-2 bg-white border"
+                                  rows="3" th:text="${borrowFine.reason}" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="conditionAfterID">Condition After:</label>
-                        <select id="conditionAfterID" name="conditionAfterID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
-                            <th:block th:each="bookCondition : ${bookConditionList}">
-                                <option th:value="${bookCondition.bookConditionId}"
-                                        th:text="${bookCondition.detail}"
-                                        th:selected="${bookCondition.bookConditionId == borrowIndex.conditionAfter.bookConditionId}">
-                                </option>
-                            </th:block>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="estimateDate">Estimate Date:</label>
-                        <input type="date" id="estimateDate" name="estimateDate" th:value="${#dates.format(borrowIndex.estimateDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="returnDate">Return Date:</label>
-                        <input type="date" id="returnDate" name="returnDate" th:value="${#dates.format(borrowIndex.returnDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" required>
+                        <label for="value">Fine Value:</label>
+                        <input type="number" id="value" name="value"
+                               th:value="${borrowFine.value}"
+                               class="form-control p-2 bg-white border" required>
                     </div>
                     <div class="d-flex gap-2">
-                        <a th:href="@{/staff/rentals}" type="reset" class="btn btn-danger">Back</a>
+                        <a th:href="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}"  class="btn btn-danger">Back</a>
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <a th:href="@{/staff/update-rental/{id}(id=${borrowIndex.borrowIndexId})}" class="btn btn-danger">Back</a>
                     </div>
                 </form>
+
 
             </div>
         </div>
@@ -1239,37 +1208,6 @@
     
     <!--Widget Chart -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const dateInput = document.getElementById("returnDate");
-            const today = new Date();
-
-            // Định dạng ngày hiện tại thành yyyy-MM-dd
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
-            const dd = String(today.getDate()).padStart(2, '0');
-
-            // Ghép thành chuỗi ngày theo định dạng yyyy-MM-dd
-            const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-            // Đặt giá trị cho input
-            dateInput.value = formattedDate;
-        });
-        (function() {
-            "use strict";
-
-            // Khởi tạo Select2 cho lựa chọn đơn sinh viên
-            $("#studentID").select2({
-                width: '100%',                     // Đảm bảo Select2 chiếm toàn bộ chiều rộng
-                placeholder: 'Select a student',   // Placeholder cho dropdown
-                allowClear: true                   // Cho phép người dùng xóa lựa chọn
-            });
-
-            // Gắn thêm class 'wide' cho Select2 của sinh viên
-            $('#studentID').next('.select2-container').addClass('wide');
-        })();
-
-    </script>
 
 
 

@@ -4,6 +4,7 @@ import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
+import com.example.LibraryManagement.Request.ActiveRequest;
 import com.example.LibraryManagement.Request.LoginRequest;
 import com.example.LibraryManagement.Security.JwtProvider;
 import jakarta.servlet.http.HttpServletResponse;
@@ -103,6 +104,31 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return "Login successful";
+    }
+    @Override
+    public boolean activateAccount(ActiveRequest activationRequest) {
+        // Logic để lưu thông tin người dùng
+        Optional<Student> studentOpt = studentRepository.findByStudentEmail(activationRequest.getEmail());
+        Optional<Staff> staffOpt = staffRepository.findByStaffEmail(activationRequest.getEmail());
+
+        if (studentOpt.isPresent()) {
+            Student student = studentOpt.get();
+            student.setStudentName(activationRequest.getName());
+            student.setAddress(activationRequest.getAddress());
+            student.setPhoneNumber(activationRequest.getPhoneNumber());
+            student.setDob(activationRequest.getDob());
+            studentRepository.save(student);
+            return true;
+        }
+        if (staffOpt.isPresent()) {
+            Staff staff = staffOpt.get();
+            staff.setStaffName(activationRequest.getName());
+            staff.setAddress(activationRequest.getAddress());
+            staff.setPhoneNumber(activationRequest.getPhoneNumber());
+            staff.setDob(activationRequest.getDob());
+            staffRepository.save(staff);
+        }
+        return false;
     }
 }
 

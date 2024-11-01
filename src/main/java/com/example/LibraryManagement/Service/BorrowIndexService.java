@@ -1,9 +1,6 @@
 package com.example.LibraryManagement.Service;
 
-import com.example.LibraryManagement.Model.Book;
-import com.example.LibraryManagement.Model.BookCondition;
-import com.example.LibraryManagement.Model.BorrowIndex;
-import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Model.*;
 
 import java.util.List;
 
@@ -14,4 +11,5 @@ public interface BorrowIndexService {
     List<Book> getAllBooks();
     BorrowIndex getBorrowIndexById(int id);
     List<BookCondition> getAllBookConditionsComplete(int id);
+    BorrowFine getBorrowFineByBorrowIndex(BorrowIndex borrowIndex);
 }

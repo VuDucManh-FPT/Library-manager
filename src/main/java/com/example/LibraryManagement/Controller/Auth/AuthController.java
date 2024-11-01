@@ -41,13 +41,12 @@ public class AuthController {
         Cookie jwtCookie = new Cookie(JwtConstants.JWT_COOKIE_NAME, null);
         jwtCookie.setMaxAge(0);
         jwtCookie.setPath("/");
-        response.addCookie(jwtCookie); // Thêm cookie vào phản hồi
-        redirectAttributes.addFlashAttribute("message", "Bạn đã đăng xuất thành công!");
+        response.addCookie(jwtCookie);
         return "redirect:/library/login";
     }
 
     @PostMapping("login")
-    public String login(Model model, @ModelAttribute LoginRequest request, HttpServletResponse response) {
+    public String login(Model model, @ModelAttribute LoginRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
         String token = authService.login(model, request, response);
         if (token.equals("Bad credentials")) {
             model.addAttribute("error", "Password is not correct!");
@@ -70,9 +69,8 @@ public class AuthController {
             return "/Home/sign-in";
         }
         if (token.equals("Your account is inactive!")) {
-            model.addAttribute("error", "Your account never log before!Please choose login with google");
-            model.addAttribute("user", request);
-            return "/Home/sign-in";
+            redirectAttributes.addFlashAttribute("user", request);
+            return "redirect:/library/active";
         }
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -95,7 +93,7 @@ public class AuthController {
     }
 
     @GetMapping("login")
-    public String signIn(Model model, HttpServletRequest request) {
+    public String signIn(Model model, HttpServletRequest request,@RequestParam(value = "error", required = false) String error) {
         // Kiểm tra nếu có token JWT trong cookie
         String token = jwtProvider.getJwtFromCookies(request);
 
@@ -117,6 +115,23 @@ public class AuthController {
             } else if (adminOpt.isPresent()) {
                 // Điều hướng đến trang chính của admin
                 return "redirect:/admin/staffs";
+            }
+        }
+        if (error != null) {
+            // Thêm thông báo lỗi vào model để hiển thị trên trang đăng nhập
+            switch (error) {
+                case "user-not-found":
+                    model.addAttribute("error", "Email not found in the system.");
+                    break;
+                case "authentication-failed":
+                    model.addAttribute("error", "Authentication failed.");
+                    break;
+                case "account-banned":
+                    model.addAttribute("error", "Account has been banned.");
+                    break;
+                default:
+                    model.addAttribute("error", "There seems to be an error.");
+                    break;
             }
         }
 
@@ -213,5 +228,41 @@ public class AuthController {
         redirectAttributes.addFlashAttribute("message", "Password had changed successful!");
         return "redirect:/library/login";
     }
+    @PostMapping("/active")
+    public String activateAccount(@ModelAttribute ActiveRequest activationRequest,HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes) {
+
+        boolean isActivated = authService.activateAccount(activationRequest);
+
+        if (isActivated) {
+            String token = jwtProvider.getJwtFromCookies(request);
+            String email = jwtProvider.getEmail(token);
+
+            // Kiểm tra vai trò của người dùng
+            Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
+            Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+            Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
+
+            if (studentOpt.isPresent()) {
+                return "redirect:/library/home";
+            } else if (staffOpt.isPresent()) {
+                return "redirect:/staff/rentals";
+            } else if (adminOpt.isPresent()) {
+                return "redirect:/admin/staffs";
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to activate account. Please try again.");
+            return "redirect:/library/active";
+        }
+        return "";
+    }
+
+    @GetMapping("/active")
+    public String showActivationPage(Model model) {
+        // Add any necessary attributes to the model if needed
+        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return "/Home/active-acount";
+    }
+
 
 }
