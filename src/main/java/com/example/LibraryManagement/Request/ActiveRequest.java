@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -18,8 +19,7 @@ public class ActiveRequest {
     private String email;
     private String address;
     private String phoneNumber;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dob;
+    private LocalDate dob;
     private String passwordConfirm;
     private String profileImage;
 }

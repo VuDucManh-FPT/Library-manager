@@ -60,6 +60,7 @@ public class AdminServiceImpl implements AdminService {
                 "<p>Please log in and change your password immediately.</p>";
         ForgotPassRequest request = new ForgotPassRequest();
         request.setEmail(savedStaff.getStaffEmail());
+        request.setPassword(password);
         service.sendMail(request, htmlContent, subject);
         return "Added Successfully";
     }
@@ -105,6 +106,7 @@ public class AdminServiceImpl implements AdminService {
                 "<p>Please log in and change your password immediately.</p>";
         ForgotPassRequest request = new ForgotPassRequest();
         request.setEmail(save.getStudentEmail());
+        request.setPassword(password);
         service.sendMail(request, htmlContent, subject);
         return "Added Successfully";
     }

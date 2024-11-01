@@ -69,7 +69,7 @@ public class AuthController {
             return "/Home/sign-in";
         }
         if (token.equals("Your account is inactive!")) {
-            redirectAttributes.addFlashAttribute("user", request);
+            redirectAttributes.addFlashAttribute("email", request.getEmail());
             return "redirect:/library/active";
         }
 
@@ -260,7 +260,6 @@ public class AuthController {
     @GetMapping("/active")
     public String showActivationPage(Model model) {
         // Add any necessary attributes to the model if needed
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "/Home/active-acount";
     }
 

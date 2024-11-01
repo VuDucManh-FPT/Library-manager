@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -25,8 +26,7 @@ public class Student {
     @Column(name="password")
     private String password;
     @Column(name="dob")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dob;
+    private LocalDate dob;
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
 
