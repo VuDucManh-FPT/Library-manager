@@ -1,6 +1,7 @@
 package com.example.LibraryManagement.Service;
 
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Request.ForgotPassRequest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +17,15 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ServiceImpl implements Service{
     @Autowired
     JavaMailSender mailSender;
-    public String sendMail(Optional<Student> student, String htmlContent, String subject) {
+    public String sendMail(ForgotPassRequest forgotPassRequest, String htmlContent, String subject) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
 
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(student.get().getStudentEmail());
+            helper.setTo(forgotPassRequest.getEmail());
             helper.setSubject(subject);
 
-            helper.setText("<p>Hello " + student.get().getStudentName() + ",</p>" + htmlContent + "<p>Regards,<br>Library<br>Books is life.</p>", true);
+            helper.setText("<p>Hello  </p>" + htmlContent + "<p>Regards,<br>Library<br>Books is life.</p>", true);
             mailSender.send(message);
             return "Success";
         } catch (MessagingException e) {

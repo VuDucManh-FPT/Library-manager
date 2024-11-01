@@ -1,7 +1,9 @@
 package com.example.LibraryManagement.Security;
 
+import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Repository.AdminRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
 import jakarta.servlet.ServletException;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -34,8 +37,13 @@ import java.util.Optional;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final StudentRepository studentRepository;
     private final StaffRepository staffRepository;
+    private final AdminRepository adminRepository;
+    private JwtProvider jwtProvider;
+
+
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
@@ -46,8 +54,11 @@ public class SecurityConfig {
                         .requestMatchers("/library/**","/oauth2/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .anyRequest().permitAll())
-         // oauth2
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Thêm bộ lọc JWT
+
+                // oauth2
         .oauth2Login(oauth2 -> oauth2
                 .loginPage("/library/login")
                 .successHandler(customOauth2SuccessHandler())
@@ -69,33 +80,56 @@ public class SecurityConfig {
 
                     Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
                     Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
-
+                    Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
+                    Object user = new Object();
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
-                        handleRedirectBasedOnAccountState(student.getAccountStates().getAccountStateId(), response);
+                        user = studentOpt.get();
+                        handleRedirectBasedOnAccountFlags(student.isActive(), student.isIsban(), response, "STUDENT");
                     } else if (staffOpt.isPresent()) {
                         Staff staff = staffOpt.get();
-                        handleRedirectBasedOnAccountState(staff.getAccountStates().getAccountStateId(), response);
-                    } else {
+                        user = staffOpt.get();
+                        handleRedirectBasedOnAccountFlags(staff.isActive(), staff.isIsban(), response, "STAFF");
+                    } else if (adminOpt.isPresent()) {
+                        user = adminOpt.get();
+                        response.sendRedirect("/admin/staffs");
+                    }else {
                         log.warn("User '{}' not found in the system after OAuth2 login.", email);
                         response.sendRedirect("/library/login?error=user-not-found");
                     }
+                    // Tạo token JWT
+                    String token = jwtProvider.generateTokenByMail(email);
+                    // Tạo cookie từ token
+                    ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
+                    // Thêm cookie vào response
+                    jwtProvider.addCookieToResponse(response, jwtCookie);
+                    log.info("JWT Cookie: {}", jwtCookie.toString());
+
                 } else {
                     log.warn("Authentication is not an instance of OAuth2AuthenticationToken.");
                     response.sendRedirect("/library/login?error=authentication-failed");
                 }
             }
-            private void handleRedirectBasedOnAccountState(int accountStateId, HttpServletResponse response) throws IOException {
-            if (accountStateId == 1) {
-                // Chuyển hướng đến trang cập nhật hồ sơ
-                response.sendRedirect("/library/profile-update");
-            } else if (accountStateId == 2) {
-                // Chuyển hướng đến trang chủ
-                response.sendRedirect("/library/home");
-            } else {
-                response.sendRedirect("/library/login?error=account-locked");
+            private void handleRedirectBasedOnAccountFlags(boolean isActive, boolean isBanned, HttpServletResponse response, String role) throws IOException {
+                if (!isActive && isBanned) {
+                    // Both inactive and banned
+                    response.sendRedirect("/library/login?error=system-error");
+                } else if (!isActive) {
+                    //Staff first time vao update profile
+                    // Inactive account
+                    response.sendRedirect("/library/active");
+                } else if (isBanned) {
+                    // Banned account
+                    response.sendRedirect("/library/login?error=account-banned");
+                } else {
+                    // Redirect based on role
+                    if (role.equals("STUDENT")) {
+                        response.sendRedirect("/library/home");
+                    } else if (role.equals("STAFF")) {
+                        response.sendRedirect("/staff/rentals");
+                    }
+                }
             }
-        }
 };
 }
     @Bean
