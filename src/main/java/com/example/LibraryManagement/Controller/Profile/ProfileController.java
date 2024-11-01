@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -65,7 +66,7 @@ public class ProfileController {
 
     @PostMapping("/update-profile")
     public String updateProfile(@RequestParam("fullName") String fullName,
-                                @RequestParam("dob") LocalDate dob,
+                                @RequestParam("dob") Date dob,
                                 @RequestParam("phoneNumber") String phoneNumber,
                                 @RequestParam("address") String address,
                                 @RequestParam("avatar") MultipartFile avatarFile,

@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -73,7 +74,7 @@ public class ProfileService {
         }
         return null;
     }
-    public void updateStudentProfile(Student student, String fullName, LocalDate dob, String phoneNumber, String address, int age, String gender, String avatarUrl) {
+    public void updateStudentProfile(Student student, String fullName, Date dob, String phoneNumber, String address, int age, String gender, String avatarUrl) {
         student.setStudentName(Optional.ofNullable(fullName).filter(name -> !name.trim().isEmpty()).orElse(student.getStudentName()));
         student.setDob(Optional.ofNullable(dob).orElse(student.getDob()));
         student.setPhoneNumber(Optional.ofNullable(phoneNumber).filter(phone -> !phone.trim().isEmpty()).orElse(student.getPhoneNumber()));
@@ -85,7 +86,7 @@ public class ProfileService {
         }
         studentRepository.save(student);
     }
-    public void updateStaffProfile(Staff staff, String fullName, LocalDate dob, String phoneNumber, String address, int age, String gender, String avatarUrl) {
+    public void updateStaffProfile(Staff staff, String fullName, Date dob, String phoneNumber, String address, int age, String gender, String avatarUrl) {
         staff.setStaffName(Optional.ofNullable(fullName).filter(name -> !name.trim().isEmpty()).orElse(staff.getStaffName()));
         staff.setDob(Optional.ofNullable(dob).orElse(staff.getDob()));
         staff.setPhoneNumber(Optional.ofNullable(phoneNumber).filter(phone -> !phone.trim().isEmpty()).orElse(staff.getPhoneNumber()));
