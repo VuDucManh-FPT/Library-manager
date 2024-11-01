@@ -44,4 +44,8 @@ public class Staff {
 
     @Column(name = "isban", columnDefinition = "BIT")
     private boolean isban;
+    @Column(name = "gender")
+    private String gender;
+    @Column(name ="age")
+    private int age;
 }
