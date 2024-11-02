@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<body>
+<h1>Student Profile</h1>
+<p>Name: <span th:text="${student.studentName}"></span></p>
+<p>Email: <span th:text="${student.studentEmail}"></span></p>
+
+
+<a th:href="@{/student/update-profile/{id}(id=${student.studentId})}">Update Profile</a><br/>
+<a th:href="@{/student/change-password/{id}(id=${student.studentId})}">Change Password</a>
+</body>
+</html>
