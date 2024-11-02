@@ -1,4 +1,4 @@
-package com.example.LibraryManagement.Controller.Profile;
+package com.example.LibraryManagement.Controller.profile;
 
 import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
