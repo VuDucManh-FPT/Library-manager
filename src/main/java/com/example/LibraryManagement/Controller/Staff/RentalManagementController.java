@@ -153,6 +153,16 @@ public class RentalManagementController {
 
         return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
     }
+    @PostMapping("/delete-retntal/{id}")
+    public String deleteRental(@PathVariable("id") Integer borrowIndexId, Model model){
+        try {
+            borrowIndexRepository.deleteById(borrowIndexId);
+            model.addAttribute("success", "Rental deleted successfully.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to delete rental: " + e.getMessage());
+        }
+        return "redirect:/staff/rentals";
+    }
     @GetMapping("/complete-rental/{id}")
     public String completeRental(@PathVariable("id") Integer borrowIndexId, Model model){
         List<Student> studentList = borrowIndexService.getAllStudents();

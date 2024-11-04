@@ -694,7 +694,8 @@
                         <input type="date" id="startDate" name="startDate" th:value="${#dates.format(borrowIndex.startDate, 'yyyy-MM-dd')}" class="form-control p-2 bg-white border" onchange="updateEstimateDate()" required>
                     </div>
                     <div class="d-flex gap-2">
-                        <a th:href="@{/staff/rentals}" type="reset" class="btn btn-danger">Back</a>
+                        <a th:href="@{/staff/rentals}"  class="btn btn-danger">Back</a>
+                        <a th:href="@{/staff/delete-rental/{id}(id=${borrowIndex.borrowIndexId})}"  class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this borrow index?');">Delete</a>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </form>

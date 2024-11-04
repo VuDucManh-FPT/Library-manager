@@ -52,11 +52,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/library/signup","/library/**","/oauth2/**","/static/**").permitAll()
+                        .requestMatchers("/library/**","/oauth2/**","/static/**").permitAll()
                         .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                         .requestMatchers("/staff/**").hasAnyAuthority("STAFF")
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Thêm bộ lọc JWT
 
                 // oauth2
@@ -71,7 +71,8 @@ public class SecurityConfig {
             @Override
             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                 // Kiểm tra xem authentication có phải là OAuth2AuthenticationToken không
-                if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+                if (authentication instanceof OAuth2AuthenticationToken) {
+                    OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
 
                     // Lấy email từ các thuộc tính của người dùng
 
@@ -119,12 +120,12 @@ public class SecurityConfig {
                         return;
                     }
                     if (adminOpt.isPresent()) {
-                        handleRedirectBasedOnAccountFlags(true, false, response, "ADMIN");
+                        Admin admin = adminOpt.get();
+                        response.sendRedirect("/admin/accounts");
                         return;
                     }else {
                         log.warn("User '{}' not found in the system after OAuth2 login.", email);
                         response.sendRedirect("/library/login?error=user-not-found");
-                        return;
                     }
                 } else {
                     log.warn("Authentication is not an instance of OAuth2AuthenticationToken.");
@@ -132,22 +133,21 @@ public class SecurityConfig {
                 }
             }
             private void handleRedirectBasedOnAccountFlags(boolean isActive, boolean isBanned, HttpServletResponse response, String role) throws IOException {
-                if (!response.isCommitted()) {
-                    if (!isActive && isBanned) {
-                        response.sendRedirect("/library/login?error=system-error");
-                    } else if (!isActive) {
-                        response.sendRedirect("/library/profile");
-                    } else if (isBanned) {
-                        response.sendRedirect("/library/login?error=account-banned");
-                    } else {
-                        // Redirect based on role
-                        if (role.equals("STUDENT")) {
-                            response.sendRedirect("/library/home");
-                        } else if (role.equals("STAFF")) {
-                            response.sendRedirect("/staff/rentals");
-                        } else if (role.equals("ADMIN")) {
-                            response.sendRedirect("/admin/staffs");
-                        }
+                if (!isActive && isBanned) {
+                    // Both inactive and banned
+                    response.sendRedirect("/library/login?error=system-error");
+                } else if (!isActive) {
+                    // Inactive account
+                    response.sendRedirect("/library/active");
+                } else if (isBanned) {
+                    // Banned account
+                    response.sendRedirect("/library/login?error=account-banned");
+                } else {
+                    // Redirect based on role
+                    if (role.equals("STUDENT")) {
+                        response.sendRedirect("/library/home");
+                    } else if (role.equals("STAFF")) {
+                        response.sendRedirect("/staff/rentals");
                     }
                 }
             }
