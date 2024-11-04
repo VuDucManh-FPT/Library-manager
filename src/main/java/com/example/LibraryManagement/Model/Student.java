@@ -44,7 +44,7 @@ public class Student {
     @Column(name = "gender")
     private String gender;
     @Column(name ="age")
-    private int age;
+    private Integer age;
 
 
 }

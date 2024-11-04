@@ -48,6 +48,7 @@ public class AuthController {
     @PostMapping("login")
     public String login(Model model, @ModelAttribute LoginRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
         String token = authService.login(model, request, response);
+        System.out.println("Token: " + token);
         if (token.equals("Bad credentials")) {
             model.addAttribute("error", "Password is not correct!");
             model.addAttribute("user", request);

@@ -3,15 +3,21 @@ package com.example.LibraryManagement.Controller.Admin;
 import com.example.LibraryManagement.Model.Role;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Service.AdminService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -19,6 +25,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AccountController {
     private final AdminService adminService;
+    private final StaffRepository staffRepository;
+
     @GetMapping("students")
     public String getAllStudentAccount(Model model) {
         List<Student> students = adminService.getAllStudents();
@@ -41,7 +49,7 @@ public class AccountController {
     @GetMapping("/student/register")
     public String registerStudent(Model model) {
         model.addAttribute("user", new Student());
-        return "Admin/staff-add";
+        return "Admin/student-add";
     }
     @PostMapping("/student/register")
     public String registerStudent(@Valid @ModelAttribute("student") Student student, RedirectAttributes redirectAttributes, BindingResult result, Model model) {
@@ -83,12 +91,38 @@ public class AccountController {
     @PostMapping("/staff/update/{id}")
     public String updateStaff(@PathVariable("id") Integer staffId,
                               @ModelAttribute("staff") Staff staff,
+                              BindingResult result,
                               RedirectAttributes redirectAttributes) {
-        // Gọi phương thức service để cập nhật thông tin nhân viên
-        adminService.updateStaff(staffId, staff);
+        if (result.hasErrors()) {
+            return "Admin/staff-update";
+        }
+
+        Staff existingStaff = adminService.findStaffById(staffId);
+        if (existingStaff == null) {
+            redirectAttributes.addFlashAttribute("error", "Staff not found.");
+            return "redirect:/admin/staffs";
+        }
+
+        staff.setAvatar("user.png");
+
+        existingStaff.setStaffName(staff.getStaffName());
+        existingStaff.setStaffEmail(staff.getStaffEmail());
+        existingStaff.setPhoneNumber(staff.getPhoneNumber());
+        existingStaff.setAddress(staff.getAddress());
+        existingStaff.setGender(staff.getGender());
+        existingStaff.setDob(staff.getDob());
+        existingStaff.setAge(staff.getAge());
+        existingStaff.setActive(staff.isActive());
+        existingStaff.setIsban(staff.isIsban());
+        existingStaff.setAvatar(staff.getAvatar());
+
+        adminService.updateStaff(staffId,existingStaff);
+
         redirectAttributes.addFlashAttribute("success", "Staff information updated successfully.");
         return "redirect:/admin/staffs";
     }
+
+
 
 
 
