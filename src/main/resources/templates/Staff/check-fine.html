@@ -674,9 +674,11 @@
                                th:value="${borrowFine.value}"
                                class="form-control p-2 bg-white border" required>
                     </div>
+                    <input type="hidden" id="status" name="status" value="Unpaid">
                     <div class="d-flex gap-2">
                         <a th:href="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}"  class="btn btn-danger">Back</a>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary" onclick="document.getElementById('status').value='Unpaid'">Save</button>
+                        <button type="submit" class="btn btn-success" onclick="document.getElementById('status').value='Paid'">Paid</button>
                     </div>
                 </form>
 

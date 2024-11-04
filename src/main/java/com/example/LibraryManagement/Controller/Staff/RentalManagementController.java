@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,12 @@ public class RentalManagementController {
     @GetMapping("rentals")
     public String getAllBorrowIndex(Model model) {
         List<BorrowIndex> borrowIndexList = borrowIndexService.getAllBorrowIndex();
+        borrowIndexList.forEach(borrowIndex -> {
+            BorrowFine borrowFine = borrowFineRepository.getBorrowFineByBorrowIndex(borrowIndex);
+            if (borrowFine != null) {
+                borrowIndex.setFines(List.of(borrowFine));
+            }
+        });
         model.addAttribute("borrowIndexes", borrowIndexList);
         return "Staff/rentals";
     }
@@ -177,35 +185,65 @@ public class RentalManagementController {
             borrowIndexRepository.save(existingBorrowIndex);
 
             float value = 0;
+            float valueDam = 0;
+            float valueLost = 0;
+            String late ="";
+            String dam ="";
+            String lost ="";
             BookCondition conditionBefore = existingBorrowIndex.getConditionBefore();
             BookCondition conditionAfter = existingBorrowIndex.getConditionAfter();
             Book book = existingBorrowIndex.getBook();
+            LocalDate estimateDate = existingBorrowIndex.getEstimateDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate returnDate = completeRentalRequest.getReturnDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (returnDate.isAfter(estimateDate)) {
+                long daysLate = ChronoUnit.DAYS.between(estimateDate, returnDate);
+                value += daysLate * 5000;
+                float valueLate = value;
+                late = "Return late: " +valueLate;
+            }
             if (conditionBefore != null && conditionAfter != null) {
-                int conditionDifference = conditionAfter.getBookConditionId() - conditionBefore.getBookConditionId() ;
-                if (conditionDifference > 0) {
-                    value += conditionDifference * 15000; // 15000 cho mỗi mức giảm
+                if (conditionAfter.getBookConditionId() != 6){
+                    int conditionDifference = conditionAfter.getBookConditionId() - conditionBefore.getBookConditionId() ;
+                    if (conditionDifference > 0) {
+                        value += conditionDifference * 15000; // 15000 cho mỗi mức giảm
+                        valueDam += conditionDifference * 15000;;
+                        dam = "Level of damage the book: " + valueDam;
+                    }
                 }
                 if (conditionAfter.getBookConditionId() == 6) {
                     float price = book.getPrice();
                     switch (conditionBefore.getBookConditionId()) {
-                        case 1: value += price; break;
-                        case 2: value += price * 85 / 100; break;
-                        case 3: value += price * 70 / 100; break;
-                        case 4: value += price * 55 / 100; break;
-                        case 5: value += price * 40 / 100; break;
+                        case 1: value += price; value += price; break;
+                        case 2: value += price * 85 / 100; valueLost += price * 85 / 100; break;
+                        case 3: value += price * 70 / 100; valueLost += price * 70 / 100; break;
+                        case 4: value += price * 55 / 100; valueLost += price * 55 / 100; break;
+                        case 5: value += price * 40 / 100; valueLost += price * 40 / 100; break;
                         default: break;
                     }
+                    lost = "Lost book: " + valueLost;
                 }
                 if (value > 0) {
-                    BorrowFine borrowFine = new BorrowFine();
-                    borrowFine.setBorrowIndex(existingBorrowIndex);
-                    borrowFine.setReason("Fine of condition return book or late return.");
-                    borrowFine.setStatus("Unpaid");
-                    borrowFine.setValue((int) value);
+                    Optional<BorrowFine> existingFineOpt = Optional.ofNullable(borrowFineRepository.getBorrowFineByBorrowIndex(existingBorrowIndex));
+
+                    BorrowFine borrowFine;
+                    if (existingFineOpt.isPresent()) {
+                        borrowFine = existingFineOpt.get();
+                        borrowFine.setValue((int) value);
+                        borrowFine.setReason(late+""+dam+""+lost);
+                        borrowFine.setStatus("Unpaid");
+                    } else {
+                        borrowFine = new BorrowFine();
+                        borrowFine.setBorrowIndex(existingBorrowIndex);
+                        borrowFine.setReason(late+""+dam+""+lost);
+                        borrowFine.setStatus("Unpaid");
+                        borrowFine.setValue((int) value);
+                    }
+
                     borrowFineRepository.save(borrowFine);
-                    redirectAttributes.addFlashAttribute("success", "Fine created successfully! Please check the information.");
-                    return "redirect:/staff/check-fine/"+ borrowIndexId;
+                    redirectAttributes.addFlashAttribute("success", "Fine created/updated successfully! Please check the information.");
+                    return "redirect:/staff/check-fine/" + borrowIndexId;
                 }
+
                 redirectAttributes.addFlashAttribute("success", "Rental complete successfully!");
             }
         }else {
@@ -240,7 +278,7 @@ public class RentalManagementController {
     }
     @PostMapping("/check-fine/{id}")
     public String checkFine(@PathVariable("id") Integer borrowIndexId,
-                                  @ModelAttribute FineRequest fineRequest,
+                                  @ModelAttribute FineRequest fineRequest,@RequestParam("status") String status,
                                   RedirectAttributes redirectAttributes) {
         Optional<BorrowIndex> borrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
@@ -249,10 +287,14 @@ public class RentalManagementController {
             BorrowFine borrowFine = borrowIndexService.getBorrowFineByBorrowIndex(borrowIndex);
             borrowFine.setBorrowIndex(borrowIndex);
             borrowFine.setReason(fineRequest.getReason());
-            borrowFine.setStatus("Unpaid");
+            borrowFine.setStatus(status.equals("Paid") ? "Paid" : "Unpaid");
             borrowFine.setValue(fineRequest.getValue());
             borrowFineRepository.save(borrowFine);
-            redirectAttributes.addFlashAttribute("success", "Borrow complete successfully! And there is fine added please purchase for it.");
+            if (status.equals("Paid")) {
+                redirectAttributes.addFlashAttribute("success", "Fine marked as Paid successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("success", "Borrow complete successfully! Please proceed with fine payment.");
+            }
             return "redirect:/staff/rentals";
         } else {
             redirectAttributes.addFlashAttribute("error", "Borrow Index not found!");

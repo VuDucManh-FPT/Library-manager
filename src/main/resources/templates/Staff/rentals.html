@@ -671,11 +671,22 @@
                             <td th:text="${borrowIndex.returnDate != null ? #dates.format(borrowIndex.returnDate, 'dd/MM/yyyy') : 'Not yet returned'}"></td>
                             <td>
                                 <div class="d-flex gap-1 align-items-center list-user-action">
-                                    <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Edit" th:href="@{/staff/update-rental/{id}(id=${borrowIndex.borrowIndexId})}">
+                                    <a class="bg-success-subtle rounded"
+                                       th:if="${borrowIndex.returnDate == null}"
+                                       data-toggle="tooltip" data-placement="top" title="Edit" th:href="@{/staff/update-rental/{id}(id=${borrowIndex.borrowIndexId})}">
                                         <i class="ph ph-pencil-simple text-success custom-ph-icons"></i>
                                     </a>
-                                    <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Complete" th:href="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}">
-                                        <i class="ph ph-trash text-danger custom-ph-icons"></i>
+                                    <a class="bg-success-subtle rounded"
+                                       th:if="${borrowIndex.returnDate == null}"
+                                       data-toggle="tooltip" data-placement="top" title="Complete Rental"
+                                       th:href="@{/staff/complete-rental/{id}(id=${borrowIndex.borrowIndexId})}">
+                                        <i class="ph ph-check text-primary custom-ph-icons"></i>
+                                    </a>
+                                    <a class="bg-success-subtle rounded"
+                                       th:if="${borrowIndex.returnDate != null and !#lists.isEmpty(borrowIndex.fines) and borrowIndex.fines[0].status == 'Unpaid'}"
+                                       data-toggle="tooltip" data-placement="top" title="Mark as Paid"
+                                       th:href="@{/staff/check-fine/{id}(id=${borrowIndex.borrowIndexId})}">
+                                        <i class="ph ph-currency-dollar text-success custom-ph-icons"></i>
                                     </a>
                                 </div>
                             </td>

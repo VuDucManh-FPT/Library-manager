@@ -264,6 +264,20 @@ public class AuthController {
         }
         return "";
     }
+    @GetMapping("/library/signup")
+    public String showSignUpForm(Model model) {
+        model.addAttribute("student", new Student());
+        return "Home/sign-up";
+    }
+    @PostMapping("/library/signup")
+    public String registerStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
+        student.setActive(true);
+        student.setIsban(false);
+        studentRepository.save(student);
+
+        redirectAttributes.addFlashAttribute("message", "Register successful!.");
+        return "redirect:/library/login";
+    }
 
     @GetMapping("/active")
     public String showActivationPage(Model model) {
