@@ -108,18 +108,7 @@
                            <div class="profile-img-edit position-relative">
                                <img src="../../static/BookSto/assets/images/avatars/user.png" alt="profile-pic"
                                     class="theme-color-default-img profile-pic rounded avatar-100" loading="lazy">
-                               <div class="upload-icone bg-primary">
-                                   <input class="file-upload" type="file" accept="image/*">
-                               </div>
-                           </div>
-                           <div class="img-extension mt-3">
-                               <div class="d-inline-block align-items-center">
-                                   <span>Only</span>
-                                   <a href="javascript:void(0);">.jpg</a>
-                                   <a href="javascript:void(0);">.png</a>
-                                   <a href="javascript:void(0);">.jpeg</a>
-                                   <span>allowed</span>
-                               </div>
+
                            </div>
                        </div>
                    </div>
@@ -154,8 +143,8 @@
                                    <span id="newPasswordStatus" class="status"></span>
                                </div>
                                <div class="form-group col-md-6">
-                                   <input id="passwordConfirm" type="password" class="form-control" placeholder="Password again" name="passwordConfirm" required>
-                                   <span toggle="#passwordConfirm" class="fa fa-fw fa-eye field-icon toggle-password"></span><br/>
+                                   <input id="password" type="password" class="form-control" placeholder="Password again" name="password" required>
+                                   <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password" onclick="togglePasswordVisibility('password', this)"></span><br/>
                                </div>
                                <div class="form-group col-md-6">
                                    <span id="confirmPasswordStatus" class="status"></span>
@@ -255,60 +244,20 @@
     <script src="../../static/BookSto/cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="../../static/BookSto/cdn.amcharts.com/lib/4/themes/animated.js"></script>
     <script>
-        function validatePassword() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('passwordConfirm').value;
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const iconElement = icon;
 
-            const passwordPattern = /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}/;
-
-            const newPasswordStatus = document.getElementById('newPasswordStatus');
-            const confirmPasswordStatus = document.getElementById('confirmPasswordStatus');
-
-            newPasswordStatus.style.display = 'none';
-            confirmPasswordStatus.style.display = 'none';
-
-            if (!passwordPattern.test(password)) {
-                newPasswordStatus.className = 'status invalid';
-                newPasswordStatus.textContent = 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.';
-                newPasswordStatus.style.display = 'inline-block';
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('fa-eye');
+                iconElement.classList.add('fa-eye-slash');
             } else {
-                newPasswordStatus.className = 'status valid';
-                newPasswordStatus.textContent = '✓';
-                newPasswordStatus.style.display = 'inline-block';
-            }
-
-            if (confirmPassword !== password) {
-                confirmPasswordStatus.className = 'status invalid';
-                confirmPasswordStatus.textContent = 'Passwords do not match.';
-                confirmPasswordStatus.style.display = 'inline-block';
-            } else if (confirmPassword.length === 0) {
-                confirmPasswordStatus.style.display = 'none';
-            } else {
-                confirmPasswordStatus.className = 'status valid';
-                confirmPasswordStatus.textContent = '✓';
-                confirmPasswordStatus.style.display = 'inline-block';
-            }
-
-            return passwordPattern.test(password) && confirmPassword === password;
-        }
-
-        function preventSpace(event) {
-            if (event.key === ' ') {
-                event.preventDefault();
+                input.type = 'password';
+                iconElement.classList.remove('fa-eye-slash');
+                iconElement.classList.add('fa-eye');
             }
         }
-
-        document.getElementById('password').addEventListener('input', validatePassword);
-        document.getElementById('password').addEventListener('keydown', preventSpace);
-        document.getElementById('passwordConfirm').addEventListener('input', validatePassword);
-        document.getElementById('passwordConfirm').addEventListener('keydown', preventSpace);
-
-        document.getElementById('change-new-pass-form').addEventListener('submit', function(event) {
-            if (!validatePassword()) {
-                event.preventDefault();
-                alert('Please correct the errors in the form before submitting.');
-            }
-        });
     </script>
     <!--Widget Chart -->
     <!--Custom js -->

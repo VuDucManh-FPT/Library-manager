@@ -244,6 +244,10 @@ public class AuthController {
 
         if (isActivated) {
             String token = jwtProvider.getJwtFromCookies(request);
+            if (token == null || token.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "JWT token is missing. Please log in again.");
+                return "redirect:/library/login";
+            }
             String email = jwtProvider.getEmail(token);
 
             // Kiểm tra vai trò của người dùng
@@ -264,12 +268,12 @@ public class AuthController {
         }
         return "";
     }
-    @GetMapping("/library/signup")
+    @GetMapping("/signup")
     public String showSignUpForm(Model model) {
         model.addAttribute("student", new Student());
         return "Home/sign-up";
     }
-    @PostMapping("/library/signup")
+    @PostMapping("/signup")
     public String registerStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
         student.setActive(true);
         student.setIsban(false);
@@ -281,9 +285,9 @@ public class AuthController {
 
     @GetMapping("/active")
     public String showActivationPage(Model model) {
-        // Add any necessary attributes to the model if needed
         return "/Home/active-acount";
     }
+
 
 
 }

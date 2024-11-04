@@ -48,6 +48,28 @@ public class AuthServiceImpl implements AuthService {
 
             // Check if only inactive
             if (!((Student) user).isActive()) {
+                try {
+                    // Authenticate user
+                    Authentication authentication = authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    email,
+                                    request.getPassword()
+                            )
+                    );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    String token = jwtProvider.generateToken(authentication);
+
+                    // Create JWT cookie
+                    ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
+
+                    // Add cookie to the response
+                    jwtProvider.addCookieToResponse(response, jwtCookie);
+                } catch (UsernameNotFoundException e) {
+                    return "Bad credentials";
+                } catch (BadCredentialsException ex) {
+                    return "Bad credentials";
+                }
                 return "Your account is inactive!";
             }
 
@@ -66,6 +88,28 @@ public class AuthServiceImpl implements AuthService {
 
             // Check if only inactive
             if (!((Staff) user).isActive()) {
+                try {
+                    // Authenticate user
+                    Authentication authentication = authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    email,
+                                    request.getPassword()
+                            )
+                    );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    String token = jwtProvider.generateToken(authentication);
+
+                    // Create JWT cookie
+                    ResponseCookie jwtCookie = jwtProvider.generateJwtCookie(user);
+
+                    // Add cookie to the response
+                    jwtProvider.addCookieToResponse(response, jwtCookie);
+                } catch (UsernameNotFoundException e) {
+                    return "Bad credentials";
+                } catch (BadCredentialsException ex) {
+                    return "Bad credentials";
+                }
                 return "Your account is inactive!";
             }
 

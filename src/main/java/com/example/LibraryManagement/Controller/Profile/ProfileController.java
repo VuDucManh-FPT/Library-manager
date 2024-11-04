@@ -66,7 +66,7 @@ public class ProfileController {
 
     @PostMapping("/update-profile")
     public String updateProfile(@RequestParam("fullName") String fullName,
-                                @RequestParam("dob") Date dob,
+                                @RequestParam("dob") LocalDate dob,
                                 @RequestParam("phoneNumber") String phoneNumber,
                                 @RequestParam("address") String address,
                                 @RequestParam("avatar") MultipartFile avatarFile,
