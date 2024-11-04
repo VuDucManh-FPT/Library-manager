@@ -691,8 +691,7 @@
                             <option value="">Select Condition</option>
                             <th:block th:each="bookCondition : ${bookConditionList}">
                                 <option th:value="${bookCondition.bookConditionId}"
-                                        th:text="${bookCondition.detail}"
-                                        th:selected="${bookCondition.bookConditionId == borrowIndex.conditionAfter.bookConditionId}">
+                                        th:text="${bookCondition.detail}">
                                 </option>
                             </th:block>
                         </select>

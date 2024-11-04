@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Library - Sign up</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../../static/AuthenPage/css/style.css">
+
+</head>
+<body class="img js-fullheight" style="background-image: url('/static/AuthenPage/images/bg.jpg');">
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-wrap p-0">
+                    <h3 class="mb-4 text-center">Sign up</h3>
+                    <form th:action="@{/library/signup}" method="post" th:object="${student}">
+                        <p style="color: red" th:text="${error}"></p>
+                        <p style="color: green" th:text="${message}"></p>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Full Name" name="studentName" th:field="*{studentName}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Email" name="studentEmail" th:field="*{studentEmail}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input id="password-field" type="password" class="form-control" placeholder="Password" name="password" th:field="*{password}" required>
+                            <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password" onclick="togglePasswordVisibility('password', this)"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="date" class="form-control" placeholder="Date of Birth" name="dob" th:field="*{dob}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Phone Number" name="phoneNumber" th:field="*{phoneNumber}">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Address" name="address" th:field="*{address}">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender:</label><br>
+                            <div>
+                                <label>
+                                    <input type="radio" th:field="*{gender}" value="Male" required> Male
+                                </label>
+                                <label>
+                                    <input type="radio" th:field="*{gender}" value="Female" required> Female
+                                </label>
+                                <label>
+                                    <input type="radio" th:field="*{gender}" value="Other" required> Other
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="form-control btn btn-primary submit px-3">Sign Up</button>
+                        </div>
+
+                        <div class="form-group d-md-flex">
+                            <div class="w-50 text-md-right">
+                                <a th:href="@{/library/login}" style="color: #fff">Already have an account?</a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="../../static/AuthenPage/js/jquery.min.js"></script>
+<script src="../../static/AuthenPage/js/popper.js"></script>
+<script src="../../static/AuthenPage/js/bootstrap.min.js"></script>
+<script src="../../static/AuthenPage/js/main.js"></script>
+<script>
+    function togglePasswordVisibility(inputId, icon) {
+        const input = document.getElementById(inputId);
+        const iconElement = icon;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconElement.classList.remove('fa-eye');
+            iconElement.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            iconElement.classList.remove('fa-eye-slash');
+            iconElement.classList.add('fa-eye');
+        }
+    }
+</script>
+</body>
+</html>
+

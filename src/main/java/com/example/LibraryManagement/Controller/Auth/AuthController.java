@@ -48,6 +48,7 @@ public class AuthController {
     @PostMapping("login")
     public String login(Model model, @ModelAttribute LoginRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
         String token = authService.login(model, request, response);
+        System.out.println("Token: " + token);
         if (token.equals("Bad credentials")) {
             model.addAttribute("error", "Password is not correct!");
             model.addAttribute("user", request);
@@ -74,9 +75,16 @@ public class AuthController {
         }
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal == null) {
+            System.out.println("principal is null");
+        }
         String role = "";
+        String email ="";
         if (principal instanceof UserDetails) {
             role = ((UserDetails) principal).getAuthorities().toString();
+            email =((UserDetails) principal).getUsername().toString();
+
+            System.out.println("email:"+email);
         } else {
             // Xử lý nếu principal không phải là UserDetails hoặc String
             throw new IllegalStateException("Unexpected principal type: " + principal.getClass());
@@ -255,6 +263,20 @@ public class AuthController {
             return "redirect:/library/active";
         }
         return "";
+    }
+    @GetMapping("/library/signup")
+    public String showSignUpForm(Model model) {
+        model.addAttribute("student", new Student());
+        return "Home/sign-up";
+    }
+    @PostMapping("/library/signup")
+    public String registerStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
+        student.setActive(true);
+        student.setIsban(false);
+        studentRepository.save(student);
+
+        redirectAttributes.addFlashAttribute("message", "Register successful!.");
+        return "redirect:/library/login";
     }
 
     @GetMapping("/active")
