@@ -7,9 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -82,4 +81,22 @@ public class BorrowIndexServiceImpl implements BorrowIndexService{
         }
         return new ArrayList<>();
     }
+
+    @Override
+    public List<BorrowIndex> findBorrowIndexNearEstimateTime() {
+        Date now = new Date();
+
+        // Tạo thời gian 1 ngày trước và 1 ngày sau
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+        cal.add(Calendar.DATE, -1);
+        Date oneDayBefore = cal.getTime();
+
+        cal.setTime(now);
+        cal.add(Calendar.DATE, 1);
+        Date oneDayAfter = cal.getTime();
+
+        return borrowIndexRepository.findBorrowIndexNearEstimateTime(oneDayBefore, oneDayAfter);
+    }
+
 }

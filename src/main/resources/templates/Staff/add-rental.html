@@ -652,7 +652,6 @@
                     <div class="form-group">
                         <label for="studentID">Student:</label>
                         <select id="studentID" name="studentID" class="select2-basic-single" required>
-                            <option value="">Select Student</option>
                             <!-- Sử dụng Thymeleaf để render danh sách sinh viên -->
                             <th:block th:each="student : ${studentList}">
                                 <option th:value="${student.studentId}"
@@ -663,8 +662,7 @@
                     </div>
                     <div class="form-group">
                         <label for="bookID">Book ID:</label>
-                        <select id="bookID" name="bookID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
+                        <select id="bookID" name="bookID" class="select2-basic-single" placeholder="Select the book" required >
                             <th:block th:each="book : ${bookList}">
                                 <option th:value="${book.bookId}"
                                         th:text="${book.bookName}">

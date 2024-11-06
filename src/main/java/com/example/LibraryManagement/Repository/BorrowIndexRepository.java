@@ -5,8 +5,10 @@ import com.example.LibraryManagement.Model.BorrowIndex;
 import com.example.LibraryManagement.Model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -21,4 +23,7 @@ public interface BorrowIndexRepository extends JpaRepository<BorrowIndex, Intege
     List<BorrowIndex> findByStudentAndReturnDateIsNotNull(Student student);
     boolean existsBorrowIndexByBook(Book book);
     List<BorrowIndex> findByStudent(Student student);
+    @Query("SELECT b FROM BorrowIndex b WHERE b.estimateDate BETWEEN :startDate AND :endDate AND b.startDate IS NULL")
+    List<BorrowIndex> findBorrowIndexNearEstimateTime(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
 }

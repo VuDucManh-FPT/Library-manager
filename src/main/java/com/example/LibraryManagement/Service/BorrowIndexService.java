@@ -15,4 +15,5 @@ public interface BorrowIndexService {
     BorrowFine getBorrowFineByBorrowIndex(BorrowIndex borrowIndex);
     List<BorrowIndex> findCurrentBorrowIndex(HttpServletRequest request);
     List<BorrowIndex> findBorrowIndexHistory(HttpServletRequest request);
+    List<BorrowIndex> findBorrowIndexNearEstimateTime();
 }

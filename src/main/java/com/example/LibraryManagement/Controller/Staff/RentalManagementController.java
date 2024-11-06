@@ -279,7 +279,7 @@ public class RentalManagementController {
 
     }
     @GetMapping("/check-fine/{id}")
-    public String checkFine(@PathVariable("id") Integer borrowIndexId, Model model) {
+    public String checkFine(@PathVariable("id") Integer borrowIndexId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Optional<BorrowIndex> borrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
         if (borrowIndexOpt.isPresent()) {
@@ -291,6 +291,9 @@ public class RentalManagementController {
 
             if (borrowFineOpt.isPresent()) {
                 BorrowFine borrowFine = borrowFineOpt.get();
+                VNPayResponse vnPayResponse = paymentService.createVnPayPayment(request, (int) borrowFine.getValue(), (long) borrowFine.getBorrowFineId());
+                String paymentUrl = vnPayResponse.getPaymentUrl();
+                model.addAttribute("paymentUrl", paymentUrl);
                 model.addAttribute("borrowFine", borrowFine);
             } else {
                 model.addAttribute("borrowFine", null);
@@ -298,7 +301,7 @@ public class RentalManagementController {
 
             return "Staff/check-fine";
         } else {
-            model.addAttribute("error", "Borrow Index not found!");
+            redirectAttributes.addFlashAttribute("error", "Borrow Index not found!");
             return "redirect:/staff/rentals";
         }
     }
