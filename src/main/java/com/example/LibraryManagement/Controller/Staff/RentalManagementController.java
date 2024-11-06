@@ -41,6 +41,14 @@ public class RentalManagementController {
             if (borrowFine != null) {
                 borrowIndex.setFines(List.of(borrowFine));
             }
+            Book book = borrowIndex.getBook();
+            if (book != null) {
+                if (book.getBookImages() != null && !book.getBookImages().isEmpty()) {
+                    book.setFirstImageName(book.getBookImages().get(0).getImageURL());
+                } else {
+                    book.setFirstImageName("nullI.png");
+                }
+            }
         });
         model.addAttribute("borrowIndexes", borrowIndexList);
         return "Staff/rentals";
@@ -153,7 +161,7 @@ public class RentalManagementController {
 
         return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
     }
-    @PostMapping("/delete-retntal/{id}")
+    @GetMapping("/delete-rental/{id}")
     public String deleteRental(@PathVariable("id") Integer borrowIndexId, Model model){
         try {
             borrowIndexRepository.deleteById(borrowIndexId);

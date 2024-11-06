@@ -53,4 +53,9 @@ public class Book {
     private Set<Author> authors = new HashSet<>();
     @JoinColumn(name = "price")
     private float price;
+    @OneToMany(mappedBy = "book")
+    @ToString.Exclude
+    private List<ImportDetail> importDetails;
+    @Transient
+    private String firstImageName;
 }

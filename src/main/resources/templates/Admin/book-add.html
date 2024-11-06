@@ -3,13 +3,15 @@
 <html lang="en" class="theme-fs-sm" data-bs-theme-color="default" dir="ltr"
       xmlns:th="http://www.thymeleaf.org">
 
+
+<!-- Mirrored from templates.iqonic.design/booksto-dist/html/admin/author.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:00 GMT -->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title data-setting="app_name" data-rightJoin=" Book store management system">Booksto | Staff Management
+    <title data-setting="app_name" data-rightJoin=" Book store management system">Booksto Book store management
         system</title>
     <meta name="description"
-        content="Booksto">
+        content="Booksto is a revolutionary Bootstrap Admin Dashboard Template and UI Components Library. The Admin Dashboard Template and UI Component features 8 modules.">
     <meta name="keywords"
         content="premium, admin, dashboard, template, bootstrap 5, clean ui, Booksto, admin dashboard,responsive dashboard, optimized dashboard,">
     <meta name="author" content="Iqonic Design">
@@ -32,162 +34,136 @@
     <meta name="google_font_api" content="AIzaSyBG58yNdAjc20_8jAvLNSVi9E4Xhwjau_k">
     <!-- Favicon -->
     <link rel="shortcut icon" href="../../static/BookSto/assets/images/logo-mini.png" />
-    
+
     <!-- Library / Plugin Css Build -->
     <link rel="stylesheet" href="../../static/BookSto/assets/css/core/libs.min.css" />
-    
+
     <!-- flaticon css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/flaticon/css/flaticon.css" />
-    
+
     <!-- font-awesome css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/font-awesome/css/font-awesome.min.css" />
 
     <!-- Sweetlaert2 css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/sweetalert2/dist/sweetalert2.min.css">
-    
-    
+
+
     <!-- booksto Design System Css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/css/booksto.min5438.css?v=1.2.0" />
-    
+
     <!-- Custom Css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/css/custom.min5438.css?v=1.2.0" />
-    
+
     <!-- RTL Css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/css/rtl.min5438.css?v=1.2.0" />
-    
+
     <!-- Customizer Css -->
     <link rel="stylesheet" href="../../static/BookSto/assets/css/customizer.min5438.css?v=1.2.0" />
-    
+
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    
-    
+
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap"
-        rel="stylesheet">
-    
-    
+          rel="stylesheet">
+
+
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/remixicon/fonts/remixicon.css" />
-    
+
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/dripicons/webfont/webfont.css" />
-    
+
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/ionicons/css/ionicons.min.css" />
-    
+
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/line-awesome/css/line-awesome.min.css" />
-    
+
     <!-- Phosphor icons  -->
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/regular/style.css"></link>
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/duotone/style.css"></link>
     <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/fill/style.css"></link>
 
+
 </head>
 
 <body class="  ">
-<!-- loader Start -->
-<div id="loading">
-    <div class="loader simple-loader">
-        <div class="loader-body">
-            <img src="../../static/BookSto/assets/images/loader.gif" alt="loader" class="light-loader img-fluid " width="200">
-        </div>
-    </div>    </div>
-<!-- loader END -->
-<aside class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar"
-       data-sidebar="responsive">
-    <div th:insert="fragments/sidebarAdmin :: sidebarAdmin"></div>
+    <!-- loader Start -->
+    <div id="loading">
+        <div class="loader simple-loader">
+            <div class="loader-body">
+                <img src="../../static/images/loader.gif" alt="loader" class="light-loader img-fluid " width="200">
+            </div>
+        </div>    </div>
+    <!-- loader END -->
+    <aside class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar"
+        data-sidebar="responsive">
+        <div th:insert="fragments/sidebarAdmin :: sidebarAdmin"></div>
 
-</aside>
-<main class="main-content">
+
+    </aside>    <main class="main-content">
         <div class="position-sticky top-0 z-3">
-    <!--Nav Start-->
+            <!--Nav Start-->
             <div th:insert="fragments/navbarAdmin :: navbarAdmin"></div>
-
+            <!--Nav End-->
         </div>
         <div class="content-inner container-fluid pb-0" id="page_layout">
-
-<div class="row ">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-                <div class="header-title">
-                    <h4 class="card-title">Staff List</h4>
-                </div>
-                <div class="d-flex gap-2 p-3">
-                    <a class="btn btn-primary" th:href="@{/admin/staff/register}" role="button">Add</a>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="custom-table-effect table-responsive custom-table-search user-table">
-                    <table class=" mb-0 table table-bordered" id="datatable" data-toggle="data-table1">
-                        <thead class="">
-                        <tr class="bg-white">
-                            <th scope="col" class="border-bottom bg-primary text-white">Profile</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Name </th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Contact</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Email</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Role</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Status</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Ban</th>
-                            <th scope="col" class="border-bottom bg-primary text-white">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="staff : ${staffs}">
-                            <td><img th:src="@{'/static/BookSto/assets/images/avatars/' + ${staff.avatar}}"
-                                     class="rounded img-fluid avatar-40" alt=""></td>
-                            <td th:text="${staff.staffName}"></td>
-                            <td th:text="${staff.phoneNumber}"></td>
-                            <td th:text="${staff.staffEmail}"></td>
-                            <td th:text="${staff.role.roleName}"></td>
-                            <!-- Checkbox cho trạng thái Active -->
-                            <td>
-                                <input type="checkbox" id="activeSwitch_${staff.id}" class="checkboxs"
-                                       th:checked="${staff.active == true}"
-                                       data-staff-id="${staff.id}"
-                                       disabled>
-                                <label for="activeSwitch_${staff.id}" class="toggles text-white bg-primary border-primary">
-                                    <p class="texts ps-1">
-                                        &nbsp;&nbsp;
-                                    </p>
-                                </label>
-                            </td>
-                            <td>
-                                <input type="checkbox" id="banSwitch_${staff.id}" class="checkboxs"
-                                       th:checked="${staff.isban == true}"
-                                       data-staff-id="${staff.id}"
-                                       disabled>
-                                <label for="banSwitch_${staff.id}" class="toggles text-white bg-primary border-primary">
-                                    <p class="texts ps-1">
-                                        &nbsp;&nbsp;
-                                    </p>
-                                </label>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <a class="btn btn-warning-subtle px-1 py-1 rounded d-flex"
-                                       data-toggle="tooltip" data-placement="top" title="Edit"
-                                       th:href="@{/admin/staff/update/{id}(id=${staff.staffId})}">
-                                        <i class="ph ph-pencil-simple"></i>
-                                    </a>
-                                    <a class="btn btn-danger-subtle px-1 py-1 rounded d-flex"
-                                       data-toggle="tooltip" data-placement="top" title="Delete" th:href="@{/admin/staff/delete/{id}(id=${staff.staffId})}"
-                                       onclick="return confirm('Are you sure you want to delete this staff member?');">
-                                        <i class="ph ph-trash"></i>
-                                    </a>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center position-relative">
+                            <div class="iq-header-title">
+                                <h4 class="mb-0">Add New Books</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/book/add}" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label>Book Name:</label>
+                                    <input type="text" name="bookName" class="form-control p-2 bg-white border" th:value="${book.bookName}" required>
                                 </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+
+                                <div class="form-group">
+                                    <label for="publisherId">Book Publisher:</label>
+                                    <select id="publisherId" name="publisherId" class="select2-basic-single" required>
+                                        <th:block th:each="publisher : ${publishers}">
+                                            <option th:value="${publisher.publisherId}" th:text="${publisher.publisherName}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Image:</label>
+                                    <input type="file" name="file" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Price:</label>
+                                    <input type="number" name="price" class="form-control p-2 bg-white border" th:value="${book.price}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Quantity:</label>
+                                    <input type="number" name="quantity" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Description:</label>
+                                    <textarea name="bookDescription" class="form-control bg-white border" th:text="${book.bookDescription}" required></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="importDate">Import Date:</label>
+                                    <input type="date" id="importDate" name="importDate" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="reset" class="btn btn-danger">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-
-
 
         </div>
         <!-- Footer Section Start -->
@@ -202,18 +178,9 @@
           </div>
         </footer>
         <!-- Footer Section End -->    </main>
-    
-    <a class="btn btn-fixed-end btn-warning btn-icon btn-setting" id="settingbutton" data-bs-toggle="offcanvas"
-        data-bs-target="#live-customizer" role="button" aria-controls="live-customizer">
-        <svg class="icon-24 animated-rotate" width="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-                d="M20.8064 7.62361L20.184 6.54352C19.6574 5.6296 18.4905 5.31432 17.5753 5.83872V5.83872C17.1397 6.09534 16.6198 6.16815 16.1305 6.04109C15.6411 5.91402 15.2224 5.59752 14.9666 5.16137C14.8021 4.88415 14.7137 4.56839 14.7103 4.24604V4.24604C14.7251 3.72922 14.5302 3.2284 14.1698 2.85767C13.8094 2.48694 13.3143 2.27786 12.7973 2.27808H11.5433C11.0367 2.27807 10.5511 2.47991 10.1938 2.83895C9.83644 3.19798 9.63693 3.68459 9.63937 4.19112V4.19112C9.62435 5.23693 8.77224 6.07681 7.72632 6.0767C7.40397 6.07336 7.08821 5.98494 6.81099 5.82041V5.82041C5.89582 5.29601 4.72887 5.61129 4.20229 6.52522L3.5341 7.62361C3.00817 8.53639 3.31916 9.70261 4.22975 10.2323V10.2323C4.82166 10.574 5.18629 11.2056 5.18629 11.8891C5.18629 12.5725 4.82166 13.2041 4.22975 13.5458V13.5458C3.32031 14.0719 3.00898 15.2353 3.5341 16.1454V16.1454L4.16568 17.2346C4.4124 17.6798 4.82636 18.0083 5.31595 18.1474C5.80554 18.2866 6.3304 18.2249 6.77438 17.976V17.976C7.21084 17.7213 7.73094 17.6516 8.2191 17.7822C8.70725 17.9128 9.12299 18.233 9.37392 18.6717C9.53845 18.9489 9.62686 19.2646 9.63021 19.587V19.587C9.63021 20.6435 10.4867 21.5 11.5433 21.5H12.7973C13.8502 21.5001 14.7053 20.6491 14.7103 19.5962V19.5962C14.7079 19.088 14.9086 18.6 15.2679 18.2407C15.6272 17.8814 16.1152 17.6807 16.6233 17.6831C16.9449 17.6917 17.2594 17.7798 17.5387 17.9394V17.9394C18.4515 18.4653 19.6177 18.1544 20.1474 17.2438V17.2438L20.8064 16.1454C21.0615 15.7075 21.1315 15.186 21.001 14.6964C20.8704 14.2067 20.55 13.7894 20.1108 13.5367V13.5367C19.6715 13.284 19.3511 12.8666 19.2206 12.3769C19.09 11.8873 19.16 11.3658 19.4151 10.928C19.581 10.6383 19.8211 10.3982 20.1108 10.2323V10.2323C21.0159 9.70289 21.3262 8.54349 20.8064 7.63277V7.63277V7.62361Z"
-                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <circle cx="12.1747" cy="11.8891" r="2.63616" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                stroke-linejoin="round"></circle>
-        </svg>
-    </a>    <!-- Live Customizer end -->
     <!-- Wrapper End-->
+
+
     <!-- Library Bundle Script -->
     <script src="../../static/BookSto/assets/js/core/libs.min.js"></script>
     <!-- Plugin Scripts -->
@@ -251,7 +218,7 @@
     <!-- Hopeui Script -->
     <script src="../../static/BookSto/assets/js/booksto5438.js?v=1.2.0" defer></script>
     <script src="../../static/BookSto/assets/js/booksto-advance5438.js?v=1.2.0" defer></script>
-    
+
     <script src="../../static/BookSto/assets/js/sidebar5438.js?v=1.2.0" defer></script>
 
     <script src="../../static/BookSto/assets/js/plugins/select2.js" defer></script>
@@ -270,15 +237,41 @@
     <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/core.js"></script>
     <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/themes/animated.js"></script>
-    
     <!--Widget Chart -->
     
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dateInput = document.getElementById("importDate");
+            const today = new Date();
 
+            // Định dạng ngày hiện tại thành yyyy-MM-dd
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            // Ghép thành chuỗi ngày theo định dạng yyyy-MM-dd
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+            // Đặt giá trị cho input
+            dateInput.value = formattedDate;
+        });
+        (function() {
+            "use strict";
+
+            // Khởi tạo Select2 cho lựa chọn đơn sinh viên
+            $("#publisherId").select2({
+                width: '100%',                     // Đảm bảo Select2 chiếm toàn bộ chiều rộng
+                placeholder: 'Select a student',   // Placeholder cho dropdown
+                allowClear: true                   // Cho phép người dùng xóa lựa chọn
+            });
+
+            // Gắn thêm class 'wide' cho Select2 của sinh viên
+            $('#publisherId').next('.select2-container').addClass('wide');
+        })();
     </script>
     <!--Custom js -->
 </body>
 
 
-<!-- Mirrored from templates.iqonic.design/booksto-dist/html/admin/books.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:00 GMT -->
+<!-- Mirrored from templates.iqonic.design/booksto-dist/html/admin/author.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:00 GMT -->
 </html>

@@ -132,7 +132,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="student : ${students}">
-                            <td><img th:src="@{'../../static/BookSto/assets/images/avtar/' + ${student.avatar}}"
+                            <td><img th:src="@{'/static/BookSto/assets/images/avatars/' + ${student.avatar}}"
                                      class="rounded img-fluid avatar-40" alt=""></td>
                             <td th:text="${student.studentName}"></td>
                             <td th:text="${student.phoneNumber}"></td>

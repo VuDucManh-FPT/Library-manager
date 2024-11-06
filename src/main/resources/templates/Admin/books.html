@@ -124,7 +124,6 @@
                                         <th scope="col" class="border-bottom bg-primary text-white">No</th>
                                         <th scope="col" class="border-bottom bg-primary text-white">Book Image</th>
                                         <th scope="col" class="border-bottom bg-primary text-white">Book Name</th>
-                                        <th scope="col" class="border-bottom bg-primary text-white">Book Author</th>
                                         <th scope="col" class="border-bottom bg-primary text-white description-column">Book
                                             Description</th>
                                         <th scope="col" class="border-bottom bg-primary text-white">Book Price</th>
@@ -133,30 +132,29 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="book : ${books}" >
+                                    <tr th:each="book : ${books}">
                                         <td th:text="${book.bookId}"></td>
-                                        <td><img th:src="@{/assets/images/browse-books/{avatar}(avatar=${book.bookImages[0].imageURL })}" class="img-fluid rounded"
-                                                 alt=""></td>
-                                        <td th:text="${book.bookName}"></td>
-                                        <td th:text="${book.authors[0]}"></td>
-                                        <td></td>
-                                        <td class="description-column">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed rhoncus non elit a
-                                            scelerisque. <br>Etiam feugiat luctus est, vel commodo odio rhoncus sit amet.
+                                        <td>
+                                            <img th:src="@{/static/BookSto/assets/images/book-dec/{imageName}(imageName=${book.firstImageName})}"
+                                                 class="img-fluid rounded" alt="">
                                         </td>
-                                        <td>$89</td>
+                                        <td th:text="${book.bookName}"></td>
+                                        <td class="description-column" th:text="${book.bookDescription}"></td>
+                                        <td th:text="${book.price}"></td>
+                                        <td th:text="${bookImportDates[book.bookId] != null ? #dates.format(bookImportDates[book.bookId], 'yyyy-MM-dd') : 'No Information'}"></td>
+
+                                        <td>
                                             <div class="d-flex gap-1 align-items-center list-user-action">
-                                                <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top"
-                                                   title="Edit" href="#">
+                                                <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Edit" href="#">
                                                     <i class="ph ph-pencil-simple text-success custom-ph-icons"></i>
                                                 </a>
-                                                <a class="bg-danger-subtle delete-btn rounded" data-toggle="tooltip"
-                                                   data-placement="top" title="Delete" href="#">
+                                                <a class="bg-danger-subtle delete-btn rounded" data-toggle="tooltip" data-placement="top" title="Delete" href="#">
                                                     <i class="ph ph-trash text-danger custom-ph-icons"></i>
                                                 </a>
                                             </div>
                                         </td>
                                     </tr>
+
                                     </tbody>
                                 </table>
                             </div>
