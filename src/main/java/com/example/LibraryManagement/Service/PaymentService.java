@@ -19,7 +19,7 @@ public class PaymentService {
 
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));  // Sử dụng giá trị `amount` đã tính toán
-        vnpParamsMap.put("vnp_OrderInfo", "Thanh toán khoản phạt. ID: " + borrowFineId);  // Đưa ID vào nội dung đơn hàng
+        vnpParamsMap.put("vnp_OrderInfo", "Pay fine for the fine. ID: " + borrowFineId);  // Đưa ID vào nội dung đơn hàng
 
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
