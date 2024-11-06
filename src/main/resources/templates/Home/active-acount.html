@@ -95,7 +95,7 @@
     <main class="main-content">
 <div>
    <div class="row">
-       <form th:action="@{/library/active}" method="post" enctype="multipart/form-data">
+       <form th:action="@{/library/active}" method="post" enctype="multipart/form-data" id="active-form">
            <div class="col-xl-3 col-lg-4">
                <div class="card">
                    <div class="card-header d-flex justify-content-between mb-0">
@@ -151,11 +151,11 @@
                                    <input type="date" class="form-control" id="dob" name="dob" required>
                                </div>
                                <div class="form-group col-md-6">
-                                   <span id="newPasswordStatus" class="status"></span>
-                               </div>
-                               <div class="form-group col-md-6">
-                                   <input id="passwordConfirm" type="password" class="form-control" placeholder="Password again" name="passwordConfirm" required>
-                                   <span toggle="#passwordConfirm" class="fa fa-fw fa-eye field-icon toggle-password"></span><br/>
+                                   <input id="password" type="password" class="form-control" placeholder="Password again" name="password" required>
+                                   <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span><br/>
+\                                   <div class="form-group col-md-6">
+                                       <span id="newPasswordStatus" class="status"></span>
+                                   </div>
                                </div>
                                <div class="form-group col-md-6">
                                    <span id="confirmPasswordStatus" class="status"></span>
@@ -272,15 +272,12 @@
     <script>
         function validatePassword() {
             const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('passwordConfirm').value;
 
             const passwordPattern = /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}/;
 
             const newPasswordStatus = document.getElementById('newPasswordStatus');
-            const confirmPasswordStatus = document.getElementById('confirmPasswordStatus');
 
             newPasswordStatus.style.display = 'none';
-            confirmPasswordStatus.style.display = 'none';
 
             if (!passwordPattern.test(password)) {
                 newPasswordStatus.className = 'status invalid';
@@ -292,19 +289,7 @@
                 newPasswordStatus.style.display = 'inline-block';
             }
 
-            if (confirmPassword !== password) {
-                confirmPasswordStatus.className = 'status invalid';
-                confirmPasswordStatus.textContent = 'Passwords do not match.';
-                confirmPasswordStatus.style.display = 'inline-block';
-            } else if (confirmPassword.length === 0) {
-                confirmPasswordStatus.style.display = 'none';
-            } else {
-                confirmPasswordStatus.className = 'status valid';
-                confirmPasswordStatus.textContent = '✓';
-                confirmPasswordStatus.style.display = 'inline-block';
-            }
-
-            return passwordPattern.test(password) && confirmPassword === password;
+            return passwordPattern.test(password);
         }
 
         function preventSpace(event) {
@@ -315,10 +300,8 @@
 
         document.getElementById('password').addEventListener('input', validatePassword);
         document.getElementById('password').addEventListener('keydown', preventSpace);
-        document.getElementById('passwordConfirm').addEventListener('input', validatePassword);
-        document.getElementById('passwordConfirm').addEventListener('keydown', preventSpace);
 
-        document.getElementById('change-new-pass-form').addEventListener('submit', function(event) {
+        document.getElementById('active-form').addEventListener('submit', function(event) {
             if (!validatePassword()) {
                 event.preventDefault();
                 alert('Please correct the errors in the form before submitting.');

@@ -3,7 +3,10 @@ package com.example.LibraryManagement.Controller.Staff;
 import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.*;
 import com.example.LibraryManagement.Request.*;
+import com.example.LibraryManagement.Response.VNPayResponse;
 import com.example.LibraryManagement.Service.BorrowIndexService;
+import com.example.LibraryManagement.Service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.http.HttpRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -32,6 +36,7 @@ public class RentalManagementController {
     private final BookRepository bookRepository;
     private final BorrowIndexRepository borrowIndexRepository;
     private final BorrowFineRepository borrowFineRepository;
+    private final PaymentService paymentService;
 
     @GetMapping("rentals")
     public String getAllBorrowIndex(Model model) {
@@ -185,8 +190,8 @@ public class RentalManagementController {
     }
     @PostMapping("/complete-rental/{id}")
     public String completeRental(@PathVariable("id") Integer borrowIndexId,
-                               @ModelAttribute CompleteRentalRequest completeRentalRequest,
-                               RedirectAttributes redirectAttributes) {
+                                 @ModelAttribute CompleteRentalRequest completeRentalRequest,
+                                 RedirectAttributes redirectAttributes, HttpServletRequest request) {
         // Lấy thông tin bản ghi BorrowIndex hiện tại dựa trên ID
         Optional<BorrowIndex> existingBorrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
@@ -258,6 +263,9 @@ public class RentalManagementController {
                     }
 
                     borrowFineRepository.save(borrowFine);
+                    VNPayResponse vnPayResponse = paymentService.createVnPayPayment(request, (int) value, (long) borrowFine.getBorrowFineId());
+                    String paymentUrl = vnPayResponse.getPaymentUrl();
+                    redirectAttributes.addFlashAttribute("paymentUrl", paymentUrl);
                     redirectAttributes.addFlashAttribute("success", "Fine created/updated successfully! Please check the information.");
                     return "redirect:/staff/check-fine/" + borrowIndexId;
                 }

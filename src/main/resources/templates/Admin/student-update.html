@@ -1,7 +1,6 @@
 
 <!doctype html>
-<html lang="en" class="theme-fs-sm" data-bs-theme-color="default" dir="ltr"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" class="theme-fs-sm" data-bs-theme-color="default" dir="ltr">
 
 
 <!-- Mirrored from templates.iqonic.design/booksto-dist/html/user/user-add.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:07 GMT -->
@@ -82,7 +81,6 @@
     <link rel="stylesheet" th:href="@{/static/BookSto/assets/vendor/phosphor-icons/Fonts/duotone/style.css}"></link>
     <link rel="stylesheet" th:href="@{/static/BookSto/assets/vendor/phosphor-icons/Fonts/fill/style.css}"></link>
 
-
 </head>
 
 <body class="  ">
@@ -109,81 +107,75 @@
         <div class="content-inner container-fluid pb-0" id="page_layout">
 <div>
    <div class="row">
-       <form th:action="@{/admin/staff/update/{id}(id=${staff.staffId})}" th:object="${staff}" method="post" enctype="multipart/form-data">
-           <div class="form-group row align-items-center">
-               <div class="col-md-12">
-                   <div class="profile-img-edit1">
-                       <img class="profile-pic1" th:src="@{/static/BookSto/assets/images/avatars/{avatar}(avatar=${staff.avatar})}" alt="profile-pic" loading="lazy">
+       <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+       <form th:action="@{/admin/student/update/{id}(id=${student.studentId})}" th:object="${student}" method="post" enctype="multipart/form-data">
+           <div class="col-xl-3 col-lg-4">
+               <div class="card">
+                   <div class="card-header d-flex justify-content-between mb-0">
+                       <div class="header-title">
+                           <h4 class="card-title">Add New Student</h4>
+                       </div>
                    </div>
                </div>
            </div>
-           <div class="row align-items-center">
-               <div class="form-group col-sm-6">
-                   <label class="form-label">User  Role:</label>
-                   <select name="role.roleId" class="form-control" required>
-                       <option value="">Select Role</option>
-                       <option th:each="role : ${roles}"
-                               th:value="${role.roleId}"
-                               th:text="${role.roleName}"
-                               th:selected="${role.roleId == staff.role.roleId}"></option>
-                   </select>
-               </div>
-               <div class="form-group col-sm-6">
-                   <input type="hidden" class="form-control" id="fid" name="staffId" th:value="${staff.staffId}" required>
-                   <label for="fname" class="form-label">Full Name:</label>
-                   <input type="text" class="form-control" id="fname" name="staffName" th:value="${staff.staffName}" placeholder="Enter full name" required>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label for="email" class="form-label">Email:</label>
-                   <input type="email" class="form-control" id="email" name="staffEmail" th:value="${staff.staffEmail}" placeholder="example@example.com" required>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label for="phone" class="form-label">Phone Number:</label>
-                   <input type="text" class="form-control" id="phone" name="phoneNumber" th:value="${staff.phoneNumber}" placeholder="123-456-7890" required>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label for="address" class="form-label">Address:</label>
-                   <input type="text" class="form-control" id="address" name="address" th:value="${staff.address}" placeholder="123 Main St" required>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label class="form-label d-block">Gender:</label>
-                   <div class="form-check form-check-inline">
-                       <input required class="form-check-input" type="radio" name="gender" id="genderMale" th:value="Male" th:checked="${staff.gender == 'Male'}">
-                       <label class="form-check-label" for="genderMale"> Male</label>
-                   </div>
-                   <div class="form-check form-check-inline">
-                       <input class="form-check-input" type="radio" name="gender" id="genderFemale" th:value="Female" th:checked="${staff.gender == 'Female'}">
-                       <label class="form-check-label" for="genderFemale"> Female</label>
-                   </div>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label for="dob" class="form-label">Date Of Birth:</label>
-                   <input type="date" class="form-control" id="dob" name="dob" th:value="${#dates.format(staff.dob, 'yyyy-MM-dd')}" required>
-               </div>
-               <div class="form-group col-sm-6">
-                   <label for="age" class="form-label">Age:</label>
-                   <input type="number" class="form-control" id="age" name="age" th:value="${staff.age}" placeholder="Age" required>
-               </div>
-               <div class="form-group col-sm-12">
-                   <label class="form-label">Active:</label>
-                   <div class="form-check form-check-inline">
-                       <input class="form-check-input" type="checkbox" name="active" th:value="true" th:checked="${staff.active}">
-                       <label class="form-check-label"> Active</label>
-                   </div>
-                   <div class="form-check form-check-inline">
-                       <input class="form-check-input" type="checkbox" name="isban" th:value="true" th:checked="${staff.isban}">
-                       <label class="form-check-label"> Banned</label>
+           <div class="col-xl-9 col-lg-8">
+               <div class="card">
+                   <div class="card-body">
+                       <div class="row">
+                           <div class="form-group col-md-6">
+                               <label class="form-label" for="fname">Name:</label>
+                               <input type="text" class="form-control" id="fname" name="studentName" th:value="${student.studentName}" placeholder="Name" required>
+                           </div>
+                           <div class="form-group col-md-6">
+                               <label class="form-label" for="email">Email:</label>
+                               <input type="email" class="form-control" id="email" name="studentEmail" th:value="${student.studentEmail}"  placeholder="Email" required>
+                           </div>
+                           <div class="form-group col-md-6">
+                               <label class="form-label" for="address">Address:</label>
+                               <input type="text" class="form-control" id="address" name="address" th:value="${student.address}" placeholder="Address" required>
+                           </div>
+                           <div class="form-group col-md-6">
+                               <label class="form-label" for="phone">Phone number:</label>
+                               <input type="text" class="form-control" id="phone" name="phoneNumber" th:value="${student.phoneNumber}" placeholder="Phone number" required>
+                           </div>
+                           <div class="form-group col-sm-6">
+                               <label class="form-label d-block">Gender:</label>
+                               <div class="form-check form-check-inline">
+                                   <input required class="form-check-input" type="radio" name="gender" id="genderMale" th:value="Male" th:checked="${student.gender == 'Male'}">
+                                   <label class="form-check-label" for="genderMale"> Male</label>
+                               </div>
+                               <div class="form-check form-check-inline">
+                                   <input class="form-check-input" type="radio" name="gender" id="genderFemale" th:value="Female" th:checked="${student.gender == 'Female'}">
+                                   <label class="form-check-label" for="genderFemale"> Female</label>
+                               </div>
+                           </div>
+                           <div class="form-group col-md-6">
+                               <label class="form-label" for="dob">Date of Birth:</label>
+                               <input type="date" class="form-control" id="dob" name="dob" th:value="${#dates.format(student.dob, 'yyyy-MM-dd')}" required>
+                           </div>
+                           <div class="form-group col-sm-12">
+                               <label class="form-label">Active:</label>
+                               <div class="form-check form-check-inline">
+                                   <input class="form-check-input" type="checkbox" name="active" th:value="true" th:checked="${student.active}">
+                                   <label class="form-check-label"> Active</label>
+                               </div>
+                               <div class="form-check form-check-inline">
+                                   <input class="form-check-input" type="checkbox" name="isban" th:value="true" th:checked="${student.isban}">
+                                   <label class="form-check-label"> Banned</label>
+                               </div>
+                           </div>
+                           <div class="form-group">
+                               <button type="submit" class="btn btn-primary">Save</button>
+                               <a th:href="@{/admin/students}" class="btn btn-danger">Cancel</a>
+                           </div>
+                       </div>
                    </div>
                </div>
            </div>
-           <button type="submit" class="btn btn-primary">Save</button>
-           <button type="reset" class="btn btn-danger">Cancel</button>
        </form>
 
-
    </div>
-        </div>
-        </div>
+</div></div>
         <!-- Footer Section Start -->
         <footer class="footer">
           <div class="footer-body">
@@ -208,6 +200,7 @@
         </svg>
     </a>    <!-- Live Customizer end -->
     <!-- Wrapper End-->
+
 
 
     <!-- Library Bundle Script -->
@@ -266,7 +259,6 @@
     <script th:src="@{/static/BookSto/assets/cdn.amcharts.com/lib/4/core.js}"></script>
     <script th:src="@{/static/BookSto/assets/cdn.amcharts.com/lib/4/charts.js}"></script>
     <script th:src="@{/static/BookSto/assets/cdn.amcharts.com/lib/4/themes/animated.js}"></script>
-    <!--Widget Chart -->
 
     <!--Widget Chart -->
     <!--Custom js -->

@@ -1,8 +1,10 @@
 package com.example.LibraryManagement.Service;
 
+import com.example.LibraryManagement.Model.BorrowIndex;
 import com.example.LibraryManagement.Model.Role;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Repository.BorrowIndexRepository;
 import com.example.LibraryManagement.Repository.RoleRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import com.example.LibraryManagement.Repository.StudentRepository;
@@ -16,6 +18,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
+    private final BorrowIndexRepository borrowIndexRepository;
     private StaffRepository staffRepository;
     private StudentRepository studentRepository;
     private RoleRepository roleRepository;
@@ -69,15 +72,30 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Staff deleteStaffById(int staffId) {
+    public Staff banStaffById(int staffId) {
         Staff staff = staffRepository.findById(staffId).orElse(null);
         staff.setIsban(true);
         return staffRepository.save(staff);
     }
+    @Override
+    public Student banStudentById(int studentId) {
+        Student student = studentRepository.findById(studentId).orElse(null);
+        student.setIsban(true);
+        return studentRepository.save(student);
+    }
 
     @Override
-    public Staff updateStaff(int staffId, Staff staff) {
-        staff = staffRepository.findById(staffId).orElse(null);
+    public void deleteStudentById(int studentId) {
+        Student student = studentRepository.findById(studentId).orElse(null);
+        List<BorrowIndex> borrowIndices = borrowIndexRepository.findByStudent(student);
+        if(!borrowIndices.isEmpty()) {
+            borrowIndexRepository.deleteAll(borrowIndices);
+        }
+        studentRepository.delete(student);
+    }
+
+    @Override
+    public Staff updateStaff(Staff staff) {
         return staffRepository.save(staff);
     }
 
@@ -107,6 +125,16 @@ public class AdminServiceImpl implements AdminService {
         request.setEmail(save.getStudentEmail());
         service.sendMail(request, htmlContent, subject);
         return "Added Successfully";
+    }
+
+    @Override
+    public Student updateStudent(Student studentId) {
+        return studentRepository.save(studentId);
+    }
+
+    @Override
+    public Student findStudentById(int studentId) {
+        return studentRepository.findById(studentId).orElse(null);
     }
 
     public static String generateRandomString() {

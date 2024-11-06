@@ -12,7 +12,11 @@ public interface AdminService {
     List<Role> getAllRoles();
     String saveStaff(Staff staff);
     Staff findStaffById(int staffId);
-    Staff deleteStaffById(int staffId);
-    Staff updateStaff(int staffId, Staff staff);
+    Staff banStaffById(int staffId);
+    Staff updateStaff(Staff staff);
     String saveStudent(Student student);
+    Student updateStudent(Student studentId);
+    Student findStudentById(int studentId);
+    Student banStudentById(int studentId);
+    void deleteStudentById(int studentId);
 }

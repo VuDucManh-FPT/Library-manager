@@ -1,5 +1,6 @@
 package com.example.LibraryManagement.Repository;
 
+import com.example.LibraryManagement.Model.Book;
 import com.example.LibraryManagement.Model.BorrowIndex;
 import com.example.LibraryManagement.Model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface BorrowIndexRepository extends JpaRepository<BorrowIndex, Intege
     List<BorrowIndex> findAllBorrowIndex();
     List<BorrowIndex> findByStudentAndReturnDateIsNull(Student student);
     List<BorrowIndex> findByStudentAndReturnDateIsNotNull(Student student);
+    boolean existsBorrowIndexByBook(Book book);
+    List<BorrowIndex> findByStudent(Student student);
 }

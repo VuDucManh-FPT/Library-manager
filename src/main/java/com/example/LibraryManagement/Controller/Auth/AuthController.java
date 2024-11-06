@@ -281,7 +281,6 @@ public class AuthController {
 
     @GetMapping("/active")
     public String showActivationPage(Model model) {
-        // Add any necessary attributes to the model if needed
         model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "/Home/active-acount";
     }

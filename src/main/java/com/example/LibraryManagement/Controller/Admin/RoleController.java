@@ -1,6 +1,7 @@
 package com.example.LibraryManagement.Controller.Admin;
 
 import com.example.LibraryManagement.Model.Role;
+import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Repository.RoleRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
 import lombok.AllArgsConstructor;
@@ -10,12 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
 @AllArgsConstructor
 public class RoleController {
     private final RoleRepository roleRepository;
+    private final StaffRepository staffRepository;
     @GetMapping("roles")
     public String roles(Model model) {
         List<Role> roles = roleRepository.findAll();
@@ -56,6 +59,18 @@ public class RoleController {
         role.setDescription(description);
         roleRepository.save(role);
         redirectAttributes.addFlashAttribute("success", "Role edited successfully!");
+        return "redirect:/admin/roles";
+    }
+    @PostMapping("/role/delete/{id}")
+    public String delete(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role Id:" + id));
+        if (staffRepository.existsStaffByRoleRoleName(role.getRoleName())) {
+            redirectAttributes.addAttribute("error", "A staff have assigned role to this role!");
+            return "redirect:/admin/roles";
+        }
+        roleRepository.delete(role);
+        redirectAttributes.addFlashAttribute("success", "Role deleted successfully!");
         return "redirect:/admin/roles";
     }
 
