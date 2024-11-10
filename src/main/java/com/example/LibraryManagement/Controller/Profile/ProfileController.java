@@ -3,6 +3,7 @@ package com.example.LibraryManagement.Controller.Profile;
 import com.example.LibraryManagement.Model.Admin;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Security.JwtProvider;
 import com.example.LibraryManagement.Service.ProfileService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -21,10 +22,12 @@ import java.util.Optional;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/profile")
     public String showProfilePage(Model model, HttpServletRequest request) {
-        String email = profileService.getUserEmailFromCookie(request);
+        String token = jwtProvider.getJwtFromCookies(request);
+        String email = jwtProvider.getEmail(token);
         Optional<Object> userOpt = profileService.getUserByEmail(email);
 
         if (userOpt.isPresent()) {
@@ -40,12 +43,13 @@ public class ProfileController {
         }
 
         model.addAttribute("error", "User not found");
-        return "/error";
+        return "/home";
     }
 
     @GetMapping("/update-profile")
     public String showProfileUpdate(Model model, HttpServletRequest request) {
-        String email = profileService.getUserEmailFromCookie(request);
+        String token = jwtProvider.getJwtFromCookies(request);
+        String email = jwtProvider.getEmail(token);
         Optional<Object> userOpt = profileService.getUserByEmail(email);
 
         if (userOpt.isPresent()) {
@@ -74,7 +78,8 @@ public class ProfileController {
                                 @RequestParam("gender") String gender,
                                 HttpServletRequest request) {
 
-        String email = profileService.getUserEmailFromCookie(request);
+        String token = jwtProvider.getJwtFromCookies(request);
+        String email = jwtProvider.getEmail(token);
         String avatarUrl = profileService.handleAvatarUpload(avatarFile);
 
         profileService.getUserByEmail(email).ifPresent(user -> {

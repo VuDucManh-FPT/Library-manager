@@ -2,13 +2,17 @@ package com.example.LibraryManagement.Controller.Admin;
 
 import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.*;
+import com.example.LibraryManagement.Response.NavbarResponse;
 import com.example.LibraryManagement.Service.BookService;
+import com.example.LibraryManagement.Service.ServiceImpl;
 import com.example.LibraryManagement.Utils.FileUploadUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -26,9 +30,10 @@ public class BookController {
     private ImportDetailRepository importDetailRepository;
     private ProviderRepository providerRepository;
     private BorrowIndexRepository borrowIndexRepository;
+    private ServiceImpl serviceImpl;
 
     @GetMapping("books")
-    public String books(Model model) {
+    public String books(Model model, HttpServletRequest request) {
         List<Book> books = bookRepository.findAll();
         Map<Integer, Date> bookImportDates = new HashMap<>();
 
@@ -41,15 +46,23 @@ public class BookController {
             if (book.getBookImages() != null && !book.getBookImages().isEmpty()) {
                 book.setFirstImageName(book.getBookImages().get(0).getImageURL());
             } else {
-                book.setFirstImageName("nullI.png");
+                book.setFirstImageName("02.jpg");
             }
         }
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("bookImportDates", bookImportDates);
         model.addAttribute("books", books);
         return "Admin/books";
     }
     @GetMapping("/book/add")
-    public String addBook(Model model) {
+    public String addBook(Model model, HttpServletRequest request) {
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("publishers", publisherRepository.findAll());
         model.addAttribute("book", new Book());
         return "Admin/book-add";
@@ -62,11 +75,11 @@ public class BookController {
             @RequestParam("quantity") int quantity,
             @RequestParam("price") float price,
             @RequestParam("importDate") String importDateStr,
-            Model model) throws ParseException {
+            Model model, RedirectAttributes redirectAttributes) throws ParseException {
 
         if (bookRepository.existsByBookName(book.getBookName())) {
             model.addAttribute("error", "A book with the same name already exists.");
-            return "redirect:/admin//book/add";
+            return "redirect:/admin/book/add";
         }
         Publisher publisher = publisherRepository.findById(Math.toIntExact(publisherId)).orElseThrow(() -> new RuntimeException("Publisher not found"));
         book.setPublisher(publisher);
@@ -115,8 +128,8 @@ public class BookController {
             bookImportRepository.save(bookImport);
 
             // Thông báo thành công
-            model.addAttribute("success", "Add book successfully");
-
+            redirectAttributes.addFlashAttribute("success", "Add book successfully");
+            return "redirect:/admin/books";
         } catch (IOException e) {
             e.printStackTrace();
             model.addAttribute("error", "Error occurred while storing the image!");
@@ -124,7 +137,7 @@ public class BookController {
         return "redirect:/admin/books";
     }
     @GetMapping("/book/edit/{id}")
-    public String editBook(@PathVariable("id") Long bookId, Model model) {
+    public String editBook(@PathVariable("id") Long bookId, Model model, HttpServletRequest request) {
         Book book = bookRepository.findById(Math.toIntExact(bookId))
                 .orElseThrow(() -> new RuntimeException("Book not found"));
         if (book.getBookImages() != null && !book.getBookImages().isEmpty()) {
@@ -134,6 +147,10 @@ public class BookController {
         }
         ImportDetail importDetail = importDetailRepository.findByBook(book);
         BookImport bookImport = importDetail.getBookImport();
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("book", book);
         model.addAttribute("publishers", publisherRepository.findAll());
         model.addAttribute("bookImport", bookImport);
@@ -148,6 +165,8 @@ public class BookController {
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam("quantity") int quantity,
             @RequestParam("price") float price,
+            @RequestParam("active") boolean active,
+            @RequestParam("bookDescription") String bookDescription,
             @RequestParam("importDate") String importDateStr,
             Model model) throws ParseException {
 
@@ -156,7 +175,8 @@ public class BookController {
 
         existingBook.setBookName(book.getBookName());
         existingBook.setPrice(price);
-
+        existingBook.setActive(active);
+        existingBook.setBookDescription(bookDescription);
         Publisher publisher = publisherRepository.findById(Math.toIntExact(publisherId))
                 .orElseThrow(() -> new RuntimeException("Publisher not found"));
         existingBook.setPublisher(publisher);
@@ -175,7 +195,7 @@ public class BookController {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                model.addAttribute("errorMessage", "Error occurred while storing the image!");
+                model.addAttribute("error", "Error occurred while storing the image!");
                 return "Admin/book-edit";
             }
         }
@@ -199,27 +219,27 @@ public class BookController {
         return "redirect:/admin/books";
     }
     @GetMapping("/book/delete/{id}")
-    public String deleteBook(@PathVariable("id") Long bookId, Model model) {
+    public String deleteBook(@PathVariable("id") Long bookId, Model model, RedirectAttributes redirectAttributes) {
         Book book = bookRepository.findById(Math.toIntExact(bookId))
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
         if (borrowIndexRepository.existsBorrowIndexByBook(book)) {
-            model.addAttribute("error", "Cannot delete the book because it has borrow records.");
+            redirectAttributes.addFlashAttribute("error", "Cannot delete the book because it has borrow records.");
             return "redirect:/admin/books";
         }
-        List<ImportDetail> importDetails = book.getImportDetails();
-        if (importDetails != null && !importDetails.isEmpty()) {
-            importDetailRepository.deleteAll(importDetails);
-        }
-
-        for (ImportDetail importDetail : importDetails) {
-            BookImport bookImport = importDetail.getBookImport();
-            if (bookImport != null) {
-                bookImportRepository.delete(bookImport);
-            }
-        }
-        bookRepository.delete(book);
-        model.addAttribute("success", "Book deleted successfully.");
+//        List<ImportDetail> importDetails = book.getImportDetails();
+//        if (importDetails != null && !importDetails.isEmpty()) {
+//            importDetailRepository.deleteAll(importDetails);
+//        }
+//
+//        for (ImportDetail importDetail : importDetails) {
+//            BookImport bookImport = importDetail.getBookImport();
+//            if (bookImport != null) {
+//                bookImportRepository.delete(bookImport);
+//            }
+//        }
+        bookService.setInActiveBook(book);
+        redirectAttributes.addFlashAttribute("success", "Book deleted successfully from the rental's book list.");
         return "redirect:/admin/books";
     }
 }

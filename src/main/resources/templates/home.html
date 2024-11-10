@@ -7,14 +7,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title data-setting="app_name" data-rightJoin=" Book store management system">Booksto Book store management
+    <title data-setting="app_name" data-rightJoin=" | Home">Booksto | Home
         system</title>
-    <meta name="description"
-          content="Booksto is a revolutionary Bootstrap Admin Dashboard Template and UI Components Library. The Admin Dashboard Template and UI Component features 8 modules.">
-    <meta name="keywords"
-          content="premium, admin, dashboard, template, bootstrap 5, clean ui, Booksto, admin dashboard,responsive dashboard, optimized dashboard,">
-    <meta name="author" content="Iqonic Design">
-    <meta name="DC.title" content="Booksto Book store management system">
+
 
     <script>
         (function () {
@@ -100,13 +95,22 @@
 <div id="loading">
     <div class="loader simple-loader">
         <div class="loader-body">
-            <img src="../static/images/loader.gif" alt="loader" class="light-loader img-fluid " width="200">
+            <img th:src="@{/static/BookSto/assets/images/loader.gif}" alt="loader" class="light-loader img-fluid " width="200">
         </div>
     </div>    </div>
 <!-- loader END -->
-<div th:replace="fragment/util :: navbar"></div>
+<aside class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar"
+       data-sidebar="responsive">
+    <div th:replace="fragments/sidebarStudent :: sidebarStudent"></div>
+
+
+</aside>
    <main class="main-content">
-       <div th:replace="fragment/util :: header"></div>
+       <div class="position-sticky top-0 z-3">
+           <!--Nav Start-->
+           <div th:insert="fragments/navbarStudent :: navbarStudent"></div>
+           <!--Nav End-->
+       </div>
     <div class="content-inner container-fluid pb-0" id="page_layout">
 
 

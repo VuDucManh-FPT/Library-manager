@@ -58,4 +58,6 @@ public class Book {
     private List<ImportDetail> importDetails;
     @Transient
     private String firstImageName;
+    @JoinColumn(name = "isActive", nullable = true)
+    private boolean isActive;
 }

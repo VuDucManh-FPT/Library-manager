@@ -3,9 +3,12 @@ package com.example.LibraryManagement.Controller.Staff;
 import com.example.LibraryManagement.Model.*;
 import com.example.LibraryManagement.Repository.*;
 import com.example.LibraryManagement.Request.*;
+import com.example.LibraryManagement.Response.NavbarResponse;
 import com.example.LibraryManagement.Response.VNPayResponse;
+import com.example.LibraryManagement.Security.JwtProvider;
 import com.example.LibraryManagement.Service.BorrowIndexService;
 import com.example.LibraryManagement.Service.PaymentService;
+import com.example.LibraryManagement.Service.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.http.HttpRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -37,9 +39,11 @@ public class RentalManagementController {
     private final BorrowIndexRepository borrowIndexRepository;
     private final BorrowFineRepository borrowFineRepository;
     private final PaymentService paymentService;
+    private final ServiceImpl serviceImpl;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("rentals")
-    public String getAllBorrowIndex(Model model) {
+    public String getAllBorrowIndex(Model model, HttpServletRequest request) {
         List<BorrowIndex> borrowIndexList = borrowIndexService.getAllBorrowIndex();
         borrowIndexList.forEach(borrowIndex -> {
             BorrowFine borrowFine = borrowFineRepository.getBorrowFineByBorrowIndex(borrowIndex);
@@ -51,15 +55,19 @@ public class RentalManagementController {
                 if (book.getBookImages() != null && !book.getBookImages().isEmpty()) {
                     book.setFirstImageName(book.getBookImages().get(0).getImageURL());
                 } else {
-                    book.setFirstImageName("nullI.png");
+                    book.setFirstImageName("03.jpg");
                 }
             }
         });
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("borrowIndexes", borrowIndexList);
         return "Staff/rentals";
     }
     @GetMapping("add-rental")
-    public String addRental(Model model) {
+    public String addRental(Model model, HttpServletRequest request) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = "";
         if (principal instanceof UserDetails) {
@@ -78,7 +86,11 @@ public class RentalManagementController {
         }
         List<Student> studentList = borrowIndexService.getAllStudents();
         List<BookCondition> bookConditionList = borrowIndexService.getAllBookConditionsAdd();
-        List<Book> bookList = borrowIndexService.getAllBooks();
+        List<Book> bookList = borrowIndexService.getAllBooksActive();
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("studentList", studentList);
         model.addAttribute("bookConditionList", bookConditionList);
         model.addAttribute("bookList", bookList);
@@ -101,7 +113,16 @@ public class RentalManagementController {
         Optional<Student> studentOpt = studentRepository.findById(studentId);
         Optional<Book> bookOpt = bookRepository.findById(bookId);
         Optional<BookCondition> conditionBeforeOpt = bookConditionRepository.findById(conditionBeforeId);
-
+        List<BorrowIndex> borrowIndices = borrowIndexRepository.findByStudent(studentOpt.get());
+        if (borrowIndices.size()>2) {
+            redirectAttributes.addFlashAttribute("error", "This student had borrow 3 book! Please return before borrowing new one.");
+            return "redirect:/staff/rentals" ;
+        }
+        Optional<BorrowFine> borrowFine  = Optional.ofNullable(borrowFineRepository.findByBorrowIndexStudentAndStatus(studentOpt, "Unpaid"));
+        if(borrowFine.isPresent()){
+            redirectAttributes.addFlashAttribute("error", "This student had borrow fine! Please pay before borrowing new one.");
+            return "redirect:/staff/check-fine/" + borrowFine.get().getBorrowIndex().getBorrowIndexId();
+        }
         if (staffOpt.isPresent() && studentOpt.isPresent() && bookOpt.isPresent() && conditionBeforeOpt.isPresent()) {
             // Thiết lập các thuộc tính cho BorrowIndex
             newBorrow.setStaff(staffOpt.get());
@@ -113,11 +134,10 @@ public class RentalManagementController {
 
             // Lưu vào cơ sở dữ liệu
             borrowIndexRepository.save(newBorrow);
-
+//            borrowIndexService.updateBookAfterCreateBorrowIndex(bookOpt.get());
             // Thông báo thành công
             redirectAttributes.addFlashAttribute("success", "Rental created successfully!");
         } else {
-            // Thông báo lỗi nếu có dữ liệu không hợp lệ
             redirectAttributes.addFlashAttribute("error", "Invalid data. Please try again.");
         }
 
@@ -139,7 +159,10 @@ public class RentalManagementController {
     @PostMapping("/update-rental/{id}")
     public String updateRental(@PathVariable("id") Integer borrowIndexId,
                                @ModelAttribute UpdateRentalRequest updateRentalRequest,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        String token = jwtProvider.getJwtFromCookies(request);
+        String email = jwtProvider.getEmail(token);
+        Optional<Staff> updateStaff = staffRepository.findByStaffEmail(email);
         // Lấy thông tin bản ghi BorrowIndex hiện tại dựa trên ID
         Optional<BorrowIndex> existingBorrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
@@ -153,7 +176,7 @@ public class RentalManagementController {
             existingBorrowIndex.setConditionBefore(bookConditionRepository.findById(updateRentalRequest.getConditionBeforeID()).orElse(null));
             existingBorrowIndex.setEstimateDate(updateRentalRequest.getEstimateDate());
             existingBorrowIndex.setStartDate(updateRentalRequest.getStartDate()); // Nếu có trường này trong yêu cầu
-
+            existingBorrowIndex.setUpdateStaff(updateStaff.get());
             // Lưu thay đổi vào cơ sở dữ liệu
             borrowIndexRepository.save(existingBorrowIndex);
 
@@ -177,11 +200,16 @@ public class RentalManagementController {
         return "redirect:/staff/rentals";
     }
     @GetMapping("/complete-rental/{id}")
-    public String completeRental(@PathVariable("id") Integer borrowIndexId, Model model){
+    public String completeRental(@PathVariable("id") Integer borrowIndexId, Model model, HttpServletRequest request){
         List<Student> studentList = borrowIndexService.getAllStudents();
         BorrowIndex borrowIndex = borrowIndexService.getBorrowIndexById(borrowIndexId);
         List<BookCondition> bookConditionList =  borrowIndexService.getAllBookConditionsComplete(borrowIndex.getConditionBefore().getBookConditionId());
         List<Book> bookList = borrowIndexService.getAllBooks();
+
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("studentList", studentList);
         model.addAttribute("bookConditionList", bookConditionList);
         model.addAttribute("bookList", bookList);
@@ -192,6 +220,9 @@ public class RentalManagementController {
     public String completeRental(@PathVariable("id") Integer borrowIndexId,
                                  @ModelAttribute CompleteRentalRequest completeRentalRequest,
                                  RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        String token = jwtProvider.getJwtFromCookies(request);
+        String email = jwtProvider.getEmail(token);
+        Optional<Staff> completeStaff = staffRepository.findByStaffEmail(email);
         // Lấy thông tin bản ghi BorrowIndex hiện tại dựa trên ID
         Optional<BorrowIndex> existingBorrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
 
@@ -205,6 +236,7 @@ public class RentalManagementController {
             existingBorrowIndex.setConditionAfter(bookConditionRepository.findById(completeRentalRequest.getConditionAfterID()).orElse(null));
             existingBorrowIndex.setEstimateDate(completeRentalRequest.getEstimateDate());
             existingBorrowIndex.setReturnDate(completeRentalRequest.getReturnDate());
+            existingBorrowIndex.setCompleteStaff(completeStaff.get());
             borrowIndexRepository.save(existingBorrowIndex);
 
             float value = 0;
@@ -234,13 +266,12 @@ public class RentalManagementController {
                     }
                 }
                 if (conditionAfter.getBookConditionId() == 6) {
-                    float price = book.getPrice();
                     switch (conditionBefore.getBookConditionId()) {
-                        case 1: value += price; value += price; break;
-                        case 2: value += price * 85 / 100; valueLost += price * 85 / 100; break;
-                        case 3: value += price * 70 / 100; valueLost += price * 70 / 100; break;
-                        case 4: value += price * 55 / 100; valueLost += price * 55 / 100; break;
-                        case 5: value += price * 40 / 100; valueLost += price * 40 / 100; break;
+                        case 1: value += book.getPrice(); valueLost = value; break;
+                        case 2: value += book.getPrice() * 85 / 100; valueLost = value; break;
+                        case 3: value += book.getPrice() * 70 / 100; valueLost = value; break;
+                        case 4: value += book.getPrice() * 55 / 100; valueLost = value; break;
+                        case 5: value += book.getPrice() * 40 / 100; valueLost = value; break;
                         default: break;
                     }
                     lost = "Lost book: " + valueLost;
@@ -252,12 +283,12 @@ public class RentalManagementController {
                     if (existingFineOpt.isPresent()) {
                         borrowFine = existingFineOpt.get();
                         borrowFine.setValue((int) value);
-                        borrowFine.setReason(late+""+dam+""+lost);
+                        borrowFine.setReason(late+" "+dam+" "+lost);
                         borrowFine.setStatus("Unpaid");
                     } else {
                         borrowFine = new BorrowFine();
                         borrowFine.setBorrowIndex(existingBorrowIndex);
-                        borrowFine.setReason(late+""+dam+""+lost);
+                        borrowFine.setReason(late+" "+dam+" "+lost);
                         borrowFine.setStatus("Unpaid");
                         borrowFine.setValue((int) value);
                     }
@@ -269,7 +300,10 @@ public class RentalManagementController {
                     redirectAttributes.addFlashAttribute("success", "Fine created/updated successfully! Please check the information.");
                     return "redirect:/staff/check-fine/" + borrowIndexId;
                 }
-
+                BorrowFine borrowFine = borrowFineRepository.getBorrowFineByBorrowIndex(existingBorrowIndex);
+                if (borrowFine!=null){
+                    borrowFineRepository.delete(borrowFine);
+                }
                 redirectAttributes.addFlashAttribute("success", "Rental complete successfully!");
             }
         }else {
@@ -281,6 +315,7 @@ public class RentalManagementController {
     @GetMapping("/check-fine/{id}")
     public String checkFine(@PathVariable("id") Integer borrowIndexId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Optional<BorrowIndex> borrowIndexOpt = borrowIndexRepository.findById(borrowIndexId);
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
 
         if (borrowIndexOpt.isPresent()) {
             BorrowIndex borrowIndex = borrowIndexOpt.get();
@@ -298,7 +333,9 @@ public class RentalManagementController {
             } else {
                 model.addAttribute("borrowFine", null);
             }
-
+            model.addAttribute("email", navbarData.email);
+            model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+            model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
             return "Staff/check-fine";
         } else {
             redirectAttributes.addFlashAttribute("error", "Borrow Index not found!");

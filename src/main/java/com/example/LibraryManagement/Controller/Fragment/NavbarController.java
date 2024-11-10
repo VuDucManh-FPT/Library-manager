@@ -1,6 +1,7 @@
 package com.example.LibraryManagement.Controller.Fragment;
 
 import com.example.LibraryManagement.Model.BorrowIndex;
+import com.example.LibraryManagement.Request.ForgotPassRequest;
 import com.example.LibraryManagement.Response.BorrowIndexNotifyResponse;
 import com.example.LibraryManagement.Security.JwtProvider;
 import com.example.LibraryManagement.Service.BorrowIndexService;
@@ -12,12 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Controller
@@ -35,22 +39,18 @@ public class NavbarController {
         List<BorrowIndexNotifyResponse> borrowIndexResponses = borrowIndices.stream()
                 .map(borrowIndex -> {
                     Date estimatedDate = borrowIndex.getEstimateDate();
-                    LocalDate currentDate = LocalDate.now();
-                    long daysDifference = ChronoUnit.DAYS.between((Temporal) currentDate, (Temporal) estimatedDate);
-
-                    String statusColor = "black";
-                    if (daysDifference == 1) {
-                        statusColor = "yellow";
-                    } else if (daysDifference < 0) {
-                        statusColor = "red";
+                    Date currentDate = new Date();
+                    long timeDifference = currentDate.getTime()-estimatedDate.getTime();
+                    long daysDifference = TimeUnit.MILLISECONDS.toDays(timeDifference);
+                    if(currentDate.after(estimatedDate)){
+                        daysDifference = -daysDifference;
                     }
-
                     return BorrowIndexNotifyResponse.builder()
                             .estimatedReturnDate(estimatedDate)
-                            .statusColor(statusColor)
-                            .daysRemaining(Math.abs(daysDifference))
+                            .daysRemaining(daysDifference)
                             .bookName(borrowIndex.getBook().getBookName())
                             .studentName(borrowIndex.getStudent().getStudentName())
+                            .studentEmail(borrowIndex.getStudent().getStudentEmail())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -59,5 +59,30 @@ public class NavbarController {
         model.addAttribute("borrowIndexResponses", borrowIndexResponses);
         model.addAttribute("numberOfBorrowedIndexes", numberOfBorrowedIndexes);
         return "fragments/navbarAdmin";
+    }
+    @GetMapping("/notify/sendMailNotification")
+    public String sendMailNotification(@RequestParam("studentEmail") String studentEmail,
+                                       @RequestParam("bookName") String bookName,
+                                       @RequestParam("daysRemaining") int daysRemaining,
+                                       RedirectAttributes redirectAttributes) {
+        ForgotPassRequest forgotPassRequest = new ForgotPassRequest();
+        forgotPassRequest.setEmail(studentEmail);
+        String subject = "Borrowing Deadline Notification";
+        String message = "Dear student,\n\n"
+                + "This is a reminder that the book '" + bookName + "' is due for return."
+                + "\nYou have " + daysRemaining + " day(s) remaining.";
+
+        if (daysRemaining <= 0) {
+            message = "Dear student,\n\nYou have exceeded the return deadline for the book '" + bookName + "'. Please return it as soon as possible.";
+        }
+
+        try {
+            serviceImpl.sendMail(forgotPassRequest, subject, message);
+            redirectAttributes.addFlashAttribute("success", "Notification email sent successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to send notification email.");
+        }
+
+        return "redirect:/admin/staffs";
     }
 }

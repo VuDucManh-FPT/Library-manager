@@ -4,7 +4,11 @@ import com.example.LibraryManagement.Model.Role;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Repository.RoleRepository;
 import com.example.LibraryManagement.Repository.StaffRepository;
+import com.example.LibraryManagement.Response.NavbarResponse;
+import com.example.LibraryManagement.Service.ServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.jackson.JsonMixinModuleEntries;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +23,26 @@ import java.util.Optional;
 public class RoleController {
     private final RoleRepository roleRepository;
     private final StaffRepository staffRepository;
+    private final ServiceImpl serviceImpl;
+    private final JsonMixinModuleEntries jsonMixinModuleEntries;
+
     @GetMapping("roles")
-    public String roles(Model model) {
+    public String roles(Model model, HttpServletRequest request) {
         List<Role> roles = roleRepository.findAll();
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("roles", roles);
         return "Admin/roles";
     }
     @GetMapping("/role/add")
-    public String showAddRoleForm(Model model) {
+    public String showAddRoleForm(Model model, HttpServletRequest request) {
         model.addAttribute("role", new Role());
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         return "Admin/role-add";
     }
 
@@ -42,9 +57,13 @@ public class RoleController {
         return "redirect:/admin/roles";
     }
     @GetMapping("/role/edit/{id}")
-    public String showEditRoleForm(@PathVariable int id, Model model) {
+    public String showEditRoleForm(@PathVariable int id, Model model, HttpServletRequest request) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid role Id:" + id));
+        NavbarResponse navbarData = serviceImpl.getNavbarAdminData(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("role", role);
         return "Admin/role-edit";
     }
@@ -61,12 +80,12 @@ public class RoleController {
         redirectAttributes.addFlashAttribute("success", "Role edited successfully!");
         return "redirect:/admin/roles";
     }
-    @PostMapping("/role/delete/{id}")
+    @GetMapping("/role/delete/{id}")
     public String delete(@PathVariable int id, RedirectAttributes redirectAttributes) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid role Id:" + id));
         if (staffRepository.existsStaffByRoleRoleName(role.getRoleName())) {
-            redirectAttributes.addAttribute("error", "A staff have assigned role to this role!");
+            redirectAttributes.addFlashAttribute("error", "There are staff have assigned role to this role!");
             return "redirect:/admin/roles";
         }
         roleRepository.delete(role);

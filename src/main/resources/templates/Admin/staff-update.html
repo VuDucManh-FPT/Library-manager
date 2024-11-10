@@ -108,6 +108,8 @@
         </div>
         <div class="content-inner container-fluid pb-0" id="page_layout">
 <div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
    <div class="row">
        <form th:action="@{/admin/staff/update/{id}(id=${staff.staffId})}" th:object="${staff}" method="post" enctype="multipart/form-data">
            <div class="form-group row align-items-center">
@@ -118,6 +120,9 @@
                </div>
            </div>
            <div class="row align-items-center">
+               <div class="form-group col-md-6">
+                   <input type="file" id="file" name="file" class="form-control" />
+               </div>
                <div class="form-group col-sm-6">
                    <label class="form-label">User  Role:</label>
                    <select name="role.roleId" class="form-control" required>
@@ -131,7 +136,7 @@
                <div class="form-group col-sm-6">
                    <input type="hidden" class="form-control" id="fid" name="staffId" th:value="${staff.staffId}" required>
                    <label for="fname" class="form-label">Full Name:</label>
-                   <input type="text" class="form-control" id="fname" name="staffName" th:value="${staff.staffName}" placeholder="Enter full name" required>
+                   <input title="Only letters and spaces are allowed" pattern="^[a-zA-Z\s]*$" type="text" class="form-control" id="fname" name="staffName" th:value="${staff.staffName}" placeholder="Enter full name" required>
                </div>
                <div class="form-group col-sm-6">
                    <label for="email" class="form-label">Email:</label>
@@ -139,7 +144,7 @@
                </div>
                <div class="form-group col-sm-6">
                    <label for="phone" class="form-label">Phone Number:</label>
-                   <input type="text" class="form-control" id="phone" name="phoneNumber" th:value="${staff.phoneNumber}" placeholder="123-456-7890" required>
+                   <input pattern="^\d{10}$" title="Only 10 digits are allowed" type="text" class="form-control" id="phone" name="phoneNumber" th:value="${staff.phoneNumber}" placeholder="123-456-7890" required>
                </div>
                <div class="form-group col-sm-6">
                    <label for="address" class="form-label">Address:</label>
@@ -177,7 +182,7 @@
                </div>
            </div>
            <button type="submit" class="btn btn-primary">Save</button>
-           <button type="reset" class="btn btn-danger">Cancel</button>
+           <a th:href="@{/admin/staffs}" class="btn btn-danger">Cancel</a>
        </form>
 
 

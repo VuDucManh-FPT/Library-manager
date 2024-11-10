@@ -1,0 +1,86 @@
+<div th:fragment="sidebarStaff">
+    <div class="sidebar-header d-flex align-items-center justify-content-start position-relative">
+        <a href="" class="navbar-brand">
+            <!--Logo start-->
+            <div class="logo-main ">
+
+                <img class="logo-normal img-fluid "
+                     th:src="@{/static/images/logo.png}" height="30" alt="logo">
+                <img class="logo-color img-fluid "
+                     th:src="@{/static/images/logo-white.png}" height="30" alt="logo">
+                <img class="logo-mini img-fluid"
+                     th:src="@{/static/images/logo-mini.png}" alt="logo">
+                <img class="logo-mini-white img-fluid"
+                     th:src="@{/static/images/logo-mini-white.png}" alt="logo">
+
+            </div>
+            <!--logo End-->        </a>
+        <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
+            <i class="icon">
+                <svg class="icon-20 icon-arrow" width="20" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5 19L8.5 12L15.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+            </i>
+        </div>
+    </div>
+    <div class="sidebar-body pt-0 pb-3 data-scrollbar">
+        <div class="sidebar-list">
+            <!-- Sidebar Menu Start -->
+            <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
+
+                <li class="nav-item iq-drop">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#Staff"
+                       role="button" aria-expanded="false">
+                        <i class="icon" data-bs-toggle="tooltip" title="Staff"
+                           data-bs-placement="right">
+                            <i class="ph-duotone ph-user-circle-gear"></i>
+                        </i>
+                        <span class="item-name">Staff</span>
+                        <i class="right-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18"
+                                 class="icon-18" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </i>
+                    </a>
+                    <ul class="sub-nav collapse" id="Staff" data-bs-parent="#sidebar-menu">
+                        <li class="nav-item">
+                            <a
+                                    class="nav-link "
+                                    aria-current="page"
+                                    href="#">
+                                <i class="icon" data-bs-toggle="tooltip" title="Dashboard"
+                                   data-bs-placement="right">
+                                    <i class="ph-duotone ph-gauge"></i>
+                                </i>
+                                <i class="sidenav-mini-icon" data-bs-toggle="tooltip"
+                                   title="Admin Dashboard"
+                                   data-bs-placement="right">D</i>
+                                <span class="item-name">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                    class="nav-link "
+                                    aria-current="page"
+                                    th:href="@{/staff/rentals}">
+                                <i class="icon" data-bs-toggle="tooltip" title="Rental List"
+                                   data-bs-placement="right">
+                                    <i class="ph-duotone ph-book-bookmark"></i>
+                                </i>
+                                <i class="sidenav-mini-icon" data-bs-toggle="tooltip"
+                                   title="Role" data-bs-placement="right">R</i>
+                                <span class="item-name">Rentals</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+
+            <!-- Sidebar Menu End -->        </div>
+    </div></div>

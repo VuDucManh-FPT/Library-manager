@@ -53,6 +53,7 @@ public class AdminServiceImpl implements AdminService {
         if (staff.getAvatar() == null || staff.getAvatar().isEmpty()) {
             staff.setAvatar("user.png");
         }
+        staff.setActive(true);
         Staff savedStaff = staffRepository.save(staff);
 
         // Gửi email xác nhận
@@ -113,6 +114,7 @@ public class AdminServiceImpl implements AdminService {
         if (student.getAvatar() == null || student.getAvatar().isEmpty()) {
             student.setAvatar("user.png");
         }
+        student.setActive(true);
         Student save = studentRepository.save(student);
 
         // Gửi email xác nhận

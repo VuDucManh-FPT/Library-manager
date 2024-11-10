@@ -15,4 +15,10 @@ public class BookServiceImpl implements BookService{
     public List<Book> getTop12Book() {
         return bookRepository.findTop12();
     }
+
+    @Override
+    public void setInActiveBook(Book book) {
+        book.setActive(false);
+        bookRepository.save(book);
+    }
 }

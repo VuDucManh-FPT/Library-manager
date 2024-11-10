@@ -109,6 +109,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="card">
+                        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                         <div class="card-header d-flex justify-content-between align-items-center position-relative">
                             <div class="iq-header-title">
                                 <h4 class="mb-0">Add New Books</h4>

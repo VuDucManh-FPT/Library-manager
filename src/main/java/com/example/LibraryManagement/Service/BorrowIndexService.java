@@ -16,4 +16,7 @@ public interface BorrowIndexService {
     List<BorrowIndex> findCurrentBorrowIndex(HttpServletRequest request);
     List<BorrowIndex> findBorrowIndexHistory(HttpServletRequest request);
     List<BorrowIndex> findBorrowIndexNearEstimateTime();
+    List<BorrowIndex> findBorrowIndexNearEstimateTimeByStudent(String studentEmail);
+    List<Book> getAllBooksActive();
+    Book updateBookAfterCreateBorrowIndex(Book book);
 }

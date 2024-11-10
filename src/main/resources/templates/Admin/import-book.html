@@ -1,0 +1,277 @@
+
+<!doctype html>
+<html lang="en" class="theme-fs-sm" data-bs-theme-color="default" dir="ltr"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- Mirrored from templates.iqonic.design/booksto-dist/html/admin/author.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:00 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title data-setting="app_name" data-rightJoin=" Book store management system">Booksto Book store management
+        system</title>
+    <meta name="description"
+        content="Booksto is a revolutionary Bootstrap Admin Dashboard Template and UI Components Library. The Admin Dashboard Template and UI Component features 8 modules.">
+    <meta name="keywords"
+        content="premium, admin, dashboard, template, bootstrap 5, clean ui, Booksto, admin dashboard,responsive dashboard, optimized dashboard,">
+    <meta name="author" content="Iqonic Design">
+    <meta name="DC.title" content="Booksto Book store management system">
+
+    <script>
+        (function () {
+            const savedTheme = sessionStorage.getItem('booksto');
+
+            if (savedTheme) {
+                const settings = JSON.parse(savedTheme);
+                const themeScheme = settings.setting.theme_scheme.value;
+                document.documentElement.setAttribute('data-bs-theme', themeScheme);
+            }
+        })();
+    </script>
+
+    <meta name="setting_options" content='{&quot;saveLocal&quot;:&quot;sessionStorage&quot;,&quot;storeKey&quot;:&quot;booksto&quot;,&quot;setting&quot;:{&quot;app_name&quot;:{&quot;value&quot;:&quot;Booksto&quot;},&quot;theme_scheme_direction&quot;:{&quot;value&quot;:&quot;ltr&quot;},&quot;theme_scheme&quot;:{&quot;value&quot;:&quot;light&quot;},&quot;theme_style_appearance&quot;:{&quot;value&quot;:[&quot;theme-default&quot;]},&quot;theme_color&quot;:{&quot;value&quot;:&quot;default&quot;},&quot;theme_transition&quot;:{&quot;value&quot;:&quot;theme-with-animation&quot;},&quot;theme_font_size&quot;:{&quot;value&quot;:&quot;theme-fs-md&quot;},&quot;page_layout&quot;:{&quot;value&quot;:&quot;container-fluid&quot;},&quot;header_navbar&quot;:{&quot;value&quot;:&quot;default&quot;},&quot;header_banner&quot;:{&quot;value&quot;:&quot;default&quot;},&quot;sidebar_color&quot;:{&quot;value&quot;:&quot;sidebar-white&quot;},&quot;card_color&quot;:{&quot;value&quot;:&quot;card-default&quot;},&quot;sidebar_type&quot;:{&quot;value&quot;:[]},&quot;sidebar_menu_style&quot;:{&quot;value&quot;:&quot;text-hover&quot;},&quot;footer&quot;:{&quot;value&quot;:&quot;default&quot;},&quot;body_font_family&quot;:{&quot;value&quot;:null},&quot;heading_font_family&quot;:{&quot;value&quot;:null}}}'>
+    <!-- Google Font Api KEY-->
+    <meta name="google_font_api" content="AIzaSyBG58yNdAjc20_8jAvLNSVi9E4Xhwjau_k">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../static/BookSto/assets/images/logo-mini.png" />
+
+    <!-- Library / Plugin Css Build -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/css/core/libs.min.css" />
+
+    <!-- flaticon css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/flaticon/css/flaticon.css" />
+
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/font-awesome/css/font-awesome.min.css" />
+
+    <!-- Sweetlaert2 css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/sweetalert2/dist/sweetalert2.min.css">
+
+
+    <!-- booksto Design System Css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/css/booksto.min5438.css?v=1.2.0" />
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/css/custom.min5438.css?v=1.2.0" />
+
+    <!-- RTL Css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/css/rtl.min5438.css?v=1.2.0" />
+
+    <!-- Customizer Css -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/css/customizer.min5438.css?v=1.2.0" />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap"
+          rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/remixicon/fonts/remixicon.css" />
+
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/dripicons/webfont/webfont.css" />
+
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/ionicons/css/ionicons.min.css" />
+
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/line-awesome/css/line-awesome.min.css" />
+
+    <!-- Phosphor icons  -->
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/regular/style.css"></link>
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/duotone/style.css"></link>
+    <link rel="stylesheet" href="../../static/BookSto/assets/vendor/phosphor-icons/Fonts/fill/style.css"></link>
+
+
+</head>
+
+<body class="  ">
+    <!-- loader Start -->
+    <div id="loading">
+        <div class="loader simple-loader">
+            <div class="loader-body">
+                <img src="../../static/images/loader.gif" alt="loader" class="light-loader img-fluid " width="200">
+            </div>
+        </div>    </div>
+    <!-- loader END -->
+    <aside class="sidebar sidebar-base " id="first-tour" data-toggle="main-sidebar"
+        data-sidebar="responsive">
+        <div th:insert="fragments/sidebarAdmin :: sidebarAdmin"></div>
+
+
+    </aside>    <main class="main-content">
+        <div class="position-sticky top-0 z-3">
+            <!--Nav Start-->
+            <div th:insert="fragments/navbarAdmin :: navbarAdmin"></div>
+            <!--Nav End-->
+        </div>
+        <div class="content-inner container-fluid pb-0" id="page_layout">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center position-relative">
+                            <div class="iq-header-title">
+                                <h4 class="mb-0">Add New Books</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/admin/import-book}" method="POST">
+                                <div class="form-group">
+                                    <label>Book Name:</label>
+                                    <input type="text" name="bookName" class="form-control p-2 bg-white border" th:value="${book.bookName}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="publisherId">Book Publisher:</label>
+                                    <select id="publisherId" name="publisherId" class="select2-basic-single" required>
+                                        <th:block th:each="publisher : ${publishers}">
+                                            <option th:value="${publisher.publisherId}" th:text="${publisher.publisherName}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Image:</label>
+                                    <input type="file" name="file" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Price:</label>
+                                    <input type="number" name="price" class="form-control p-2 bg-white border" th:value="${book.price}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Quantity:</label>
+                                    <input type="number" name="quantity" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Book Description:</label>
+                                    <textarea name="bookDescription" class="form-control bg-white border" th:text="${book.bookDescription}" required></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="importDate">Import Date:</label>
+                                    <input type="date" id="importDate" name="importDate" class="form-control p-2 bg-white border" required>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/admin/books}" class="btn btn-danger">Back</a>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Footer Section Start -->
+        <footer class="footer">
+          <div class="footer-body">
+            <ul class="left-panel list-inline mb-0 p-0">
+              <li class="list-inline-item fw-500"><a class="footer-link" href="../extra-pages/privacy-policy.html">Privacy
+                  Policy</a></li>
+              <li class="list-inline-item fw-500"><a class="footer-link" href="../extra-pages/terms-of-service.html">Terms
+                  of Use</a></li>
+            </ul>
+          </div>
+        </footer>
+        <!-- Footer Section End -->    </main>
+    <!-- Wrapper End-->
+
+
+    <!-- Library Bundle Script -->
+    <script src="../../static/BookSto/assets/js/core/libs.min.js"></script>
+    <!-- Plugin Scripts -->
+
+    <!-- Slider-tab Script -->
+    <script src="../../static/BookSto/assets/js/plugins/slider-tabs.js"></script>
+
+    <!-- Sweet-alert Script -->
+    <script src="../../static/BookSto/assets/vendor/sweetalert2/dist/sweetalert2.min.js" async></script>
+    <script src="../../static/BookSto/assets/js/plugins/sweet-alert.js" defer></script>
+
+    <!-- Lodash Utility -->
+    <script src="../../static/BookSto/assets/vendor/lodash/lodash.min.js"></script>
+    <!-- Utilities Functions -->
+    <script src="../../static/BookSto/assets/js/iqonic-script/utility.min.js"></script>
+    <!-- Settings Script -->
+    <script src="../../static/BookSto/assets/js/iqonic-script/setting.min.js"></script>
+    <!-- Settings Init Script -->
+    <script src="../../static/BookSto/assets/js/setting-init.js"></script>
+    <!-- External Library Bundle Script -->
+    <script src="../../static/BookSto/assets/js/core/external.min.js"></script>
+    <!-- Dashboard Script -->
+    <script src="../../static/BookSto/assets/js/Charts/dashboard.js" defer></script>
+
+    <!-- All Plugins Script -->
+
+    <!-- Sweet-alert Script -->
+    <script src="../../static/BookSto/assets/vendor/sweetalert2/dist/sweetalert2.min.js" async></script>
+    <script src="../../static/BookSto/assets/js/plugins/sweet-alert.js" defer></script>
+
+    <!-- All charts Script -->
+
+    <script src="../../static/BookSto/assets/js/vertical_slider.js" defer></script>
+
+    <!-- Hopeui Script -->
+    <script src="../../static/BookSto/assets/js/booksto5438.js?v=1.2.0" defer></script>
+    <script src="../../static/BookSto/assets/js/booksto-advance5438.js?v=1.2.0" defer></script>
+
+    <script src="../../static/BookSto/assets/js/sidebar5438.js?v=1.2.0" defer></script>
+
+    <script src="../../static/BookSto/assets/js/plugins/select2.js" defer></script>
+    <script src="../../static/BookSto/assets/js/Setting/enchanter.js" defer></script>
+
+    <!--morris chart -->
+    <script src="../../static/BookSto/assets/cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="../../static/BookSto/assets/cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+
+    <!--highcharts chart -->
+    <script src="../../static/BookSto/assets/code.highcharts.com/highcharts.html"></script>
+    <script src="../../static/BookSto/assets/code.highcharts.com/highcharts-more.html"></script>
+    <script src="../../static/BookSto/assets/code.highcharts.com/modules/exporting.html"></script>
+
+    <!--Am chart -->
+    <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="../../static/BookSto/assets/cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <!--Widget Chart -->
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dateInput = document.getElementById("importDate");
+            const today = new Date();
+
+            // Định dạng ngày hiện tại thành yyyy-MM-dd
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            // Ghép thành chuỗi ngày theo định dạng yyyy-MM-dd
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+            // Đặt giá trị cho input
+            dateInput.value = formattedDate;
+        });
+        (function() {
+            "use strict";
+
+            // Khởi tạo Select2 cho lựa chọn đơn sinh viên
+            $("#publisherId").select2({
+                width: '100%',                     // Đảm bảo Select2 chiếm toàn bộ chiều rộng
+                placeholder: 'Select a student',   // Placeholder cho dropdown
+                allowClear: true                   // Cho phép người dùng xóa lựa chọn
+            });
+
+            // Gắn thêm class 'wide' cho Select2 của sinh viên
+            $('#publisherId').next('.select2-container').addClass('wide');
+        })();
+    </script>
+    <!--Custom js -->
+</body>
+
+
+<!-- Mirrored from templates.iqonic.design/booksto-dist/html/admin/author.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 08 Oct 2024 05:28:00 GMT -->
+</html>

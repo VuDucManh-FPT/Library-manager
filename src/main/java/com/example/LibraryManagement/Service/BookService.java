@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface BookService {
     List<Book> getTop12Book();
+    void setInActiveBook(Book book);
 }

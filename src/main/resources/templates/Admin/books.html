@@ -107,14 +107,15 @@
             <div class="row ">
                 <div class="col-sm-12">
                     <div class="card">
+                        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                         <div class="card-header d-flex justify-content-between align-items-center position-relative">
-                            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
                             <div class="iq-header-title">
                                 <h4 class="mb-0">Book Lists</h4>
                             </div>
                             <div class="iq-card-header-toolbar d-flex align-items-center">
-                                <a th:href="@{/admin/book-add}" class="btn btn-primary view-more">Add New Book</a>
+                                <a th:href="@{/admin/book/add}" class="btn btn-primary view-more">Add New Book</a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -138,7 +139,7 @@
                                         <td th:text="${book.bookId}"></td>
                                         <td>
                                             <img th:src="@{/static/BookSto/assets/images/book-dec/{imageName}(imageName=${book.firstImageName})}"
-                                                 class="img-fluid rounded" alt="">
+                                                 class="img-fluid rounded" alt="" width="80">
                                         </td>
                                         <td th:text="${book.bookName}"></td>
                                         <td class="description-column" th:text="${book.bookDescription}"></td>
@@ -152,6 +153,9 @@
                                                 </a>
                                                 <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Delete" th:href="@{/admin/book/delete/{id}(id=${book.bookId})}" onclick="return confirm('Are you sure you want to delete this book?');">
                                                     <i class="ph ph-trash text-danger custom-ph-icons"></i>
+                                                </a>
+                                                <a class="bg-success-subtle rounded" data-toggle="tooltip" data-placement="top" title="Import more of this book" th:href="@{/admin/book/delete/{id}(id=${book.bookId})}">
+                                                    <i class="ph ph-note-pencil text-success custom-ph-icons"></i>
                                                 </a>
                                             </div>
                                         </td>

@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,7 @@ public class BorrowIndex {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int borrowIndexId;
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "studentID",nullable = false,foreignKey = @ForeignKey(name = "FK_BookIndex_Student"))
     private Student student;
     @ManyToOne
@@ -40,5 +42,16 @@ public class BorrowIndex {
     @OneToMany(mappedBy = "borrowIndex")
     private List<BookFeedBack> feedbacks;
     @OneToMany(mappedBy = "borrowIndex")
+    @ToString.Exclude
     private List<BorrowFine> fines;
+    @ManyToOne
+    @JoinColumn(name = "updateStaffId", nullable = true, foreignKey = @ForeignKey(name = "FK_BorrowIndex_UpdateStaff"))
+    @ToString.Exclude
+    private Staff updateStaff;
+
+    @ManyToOne
+    @JoinColumn(name = "completeStaffId", nullable = true, foreignKey = @ForeignKey(name = "FK_BorrowIndex_CompleteStaff"))
+    @ToString.Exclude
+    private Staff completeStaff;
+
 }

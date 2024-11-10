@@ -23,4 +23,5 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findTopByGenres(@Param("genres") Set<Genre> genres, @Param("bookId") Integer bookId, Pageable pageable);
     boolean existsByBookName(String name);
 
+    List<Book> findByIsActiveIsTrue();
 }

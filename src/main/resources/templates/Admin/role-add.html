@@ -120,7 +120,7 @@
                             <form th:action="@{/admin/role/add}" method="POST" th:object="${role}">
                                 <div class="form-group">
                                     <label>Role Name:</label>
-                                    <input type="text" name="roleName"  class="form-control p-2 bg-white border" required>
+                                    <input title="Only letters and spaces are allowed" pattern="^[a-zA-Z\s]*$" type="text" name="roleName"  class="form-control p-2 bg-white border" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Role Description:</label>
@@ -129,6 +129,7 @@
 
                                 <div class="d-flex gap-2">
                                     <a th:href="@{/admin/roles}" class="btn btn-danger">Back</a>
+                                    <button type="reset" class="btn btn-danger">Reset</button>
                                     <button type="submit" class="btn btn-primary">Save</button>
                                 </div>
 

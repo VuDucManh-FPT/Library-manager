@@ -23,7 +23,12 @@ public interface BorrowIndexRepository extends JpaRepository<BorrowIndex, Intege
     List<BorrowIndex> findByStudentAndReturnDateIsNotNull(Student student);
     boolean existsBorrowIndexByBook(Book book);
     List<BorrowIndex> findByStudent(Student student);
-    @Query("SELECT b FROM BorrowIndex b WHERE b.estimateDate BETWEEN :startDate AND :endDate AND b.startDate IS NULL")
+    @Query("SELECT b FROM BorrowIndex b WHERE b.estimateDate BETWEEN :startDate AND :endDate AND b.returnDate IS NULL")
     List<BorrowIndex> findBorrowIndexNearEstimateTime(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query("SELECT b FROM BorrowIndex b WHERE b.estimateDate BETWEEN :startDate AND :endDate AND b.returnDate IS NULL AND b.student.studentEmail = :studentEmail")
+    List<BorrowIndex> findBorrowIndexNearEstimateTimeAndByStudentEmail(
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("studentEmail") String studentEmail);
 
 }

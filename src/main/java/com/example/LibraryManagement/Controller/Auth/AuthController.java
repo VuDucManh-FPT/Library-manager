@@ -8,6 +8,7 @@ import com.example.LibraryManagement.Security.JwtProvider;
 import com.example.LibraryManagement.Service.AuthService;
 import com.example.LibraryManagement.Service.ServiceImpl;
 import com.example.LibraryManagement.Service.StudentServiceImpl;
+import com.example.LibraryManagement.Utils.FileUploadUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,8 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +51,6 @@ public class AuthController {
     @PostMapping("login")
     public String login(Model model, @ModelAttribute LoginRequest request, HttpServletResponse response,RedirectAttributes redirectAttributes) {
         String token = authService.login(model, request, response);
-        System.out.println("Token: " + token);
         if (token.equals("Bad credentials")) {
             model.addAttribute("error", "Password is not correct!");
             model.addAttribute("user", request);
@@ -99,7 +101,81 @@ public class AuthController {
         }
         return "redirect:/library/home";
     }
+    @PostMapping("/active")
+    public String activateAccount(@ModelAttribute ActiveRequest activationRequest,HttpServletRequest request,
+                                  RedirectAttributes redirectAttributes, Model model, @RequestParam("file") MultipartFile file) {
+        String uploadDir = "src/main/resources/static/BookSto/assets/images/avatars";
+        try {
+            if (!file.isEmpty()) {
+                String fileName = file.getOriginalFilename();
+                FileUploadUtil.saveFile(uploadDir, fileName, file);
+                activationRequest.setProfileImage(fileName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addAttribute("error", "Error occurred while storing the image!");
+            return "redirect:/library/login";
+        }
+        boolean isActivated = authService.activateAccount(activationRequest);
 
+        if (isActivated) {
+            String token = jwtProvider.getJwtFromCookies(request);
+            String email = jwtProvider.getEmail(token);
+
+            // Kiểm tra vai trò của người dùng
+            Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
+            Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+            Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
+
+            if (studentOpt.isPresent()) {
+                return "redirect:/library/home";
+            } else if (staffOpt.isPresent()) {
+                return "redirect:/staff/rentals";
+            } else if (adminOpt.isPresent()) {
+                return "redirect:/admin/staffs";
+            }
+        } else {
+            model.addAttribute("user", activationRequest);
+            model.addAttribute("error", "Failed to activate account. Please try again.");
+            return "/Home/active-acount";
+        }
+        return "redirect:/library/login";
+    }
+    @GetMapping("/active")
+    public String showActivationPage(Model model,RedirectAttributes redirectAttributes) {
+        LoginRequest loginRequest = (LoginRequest) model.asMap().get("user");
+        if (loginRequest != null) {
+            String email = loginRequest.getEmail();
+            Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
+            Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
+            ActiveRequest activeRequest = new ActiveRequest();
+            if (studentOpt.isPresent()) {
+                Student student = studentOpt.get();
+                activeRequest.setName(student.getStudentName());
+                activeRequest.setEmail(student.getStudentEmail());
+                activeRequest.setAddress(student.getAddress());
+                activeRequest.setPhoneNumber(student.getPhoneNumber());
+                activeRequest.setDob(student.getDob());
+                model.addAttribute("user", activeRequest);
+                return "/Home/active-acount";
+            }
+            if (staffOpt.isPresent()) {
+                Staff staff = staffOpt.get();
+                activeRequest.setName(staff.getStaffName());
+                activeRequest.setEmail(staff.getStaffEmail());
+                activeRequest.setAddress(staff.getAddress());
+                activeRequest.setPhoneNumber(staff.getPhoneNumber());
+                activeRequest.setDob(staff.getDob());
+                model.addAttribute("user", activeRequest);
+                return "/Home/active-acount";
+            }
+        }
+        if (loginRequest != null) {
+            redirectAttributes.addFlashAttribute("error", "Some thing wrong please login again.");
+            return "redirect:/library/login";
+        }
+        return "/Home/active-acount";
+    }
     @GetMapping("login")
     public String signIn(Model model, HttpServletRequest request,@RequestParam(value = "error", required = false) String error) {
         // Kiểm tra nếu có token JWT trong cookie
@@ -236,40 +312,13 @@ public class AuthController {
         redirectAttributes.addFlashAttribute("message", "Password had changed successful!");
         return "redirect:/library/login";
     }
-    @PostMapping("/active")
-    public String activateAccount(@ModelAttribute ActiveRequest activationRequest,HttpServletRequest request,
-                                  RedirectAttributes redirectAttributes) {
 
-        boolean isActivated = authService.activateAccount(activationRequest);
-
-        if (isActivated) {
-            String token = jwtProvider.getJwtFromCookies(request);
-            String email = jwtProvider.getEmail(token);
-
-            // Kiểm tra vai trò của người dùng
-            Optional<Student> studentOpt = studentRepository.findByStudentEmail(email);
-            Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
-            Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
-
-            if (studentOpt.isPresent()) {
-                return "redirect:/library/home";
-            } else if (staffOpt.isPresent()) {
-                return "redirect:/staff/rentals";
-            } else if (adminOpt.isPresent()) {
-                return "redirect:/admin/staffs";
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to activate account. Please try again.");
-            return "redirect:/library/active";
-        }
-        return "";
-    }
-    @GetMapping("/library/signup")
+    @GetMapping("signup")
     public String showSignUpForm(Model model) {
         model.addAttribute("student", new Student());
         return "Home/sign-up";
     }
-    @PostMapping("/library/signup")
+    @PostMapping("signup")
     public String registerStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
         student.setActive(true);
         student.setIsban(false);
@@ -279,11 +328,7 @@ public class AuthController {
         return "redirect:/library/login";
     }
 
-    @GetMapping("/active")
-    public String showActivationPage(Model model) {
-        model.addAttribute("user", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return "/Home/active-acount";
-    }
+
 
 
 }

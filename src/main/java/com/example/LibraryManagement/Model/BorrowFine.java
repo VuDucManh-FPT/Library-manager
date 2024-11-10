@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 @Entity
 @Table(name = "BorrowFine")
 @Data
@@ -14,6 +16,7 @@ public class BorrowFine {
     private int borrowFineId;
     @ManyToOne
     @JoinColumn(name = "borrowIndexID", nullable = false,foreignKey = @ForeignKey(name = "FK_BorrowFine_BorrowIndex"))
+    @ToString.Exclude
     private BorrowIndex borrowIndex;
     @Column(name = "reason")
     private String reason;

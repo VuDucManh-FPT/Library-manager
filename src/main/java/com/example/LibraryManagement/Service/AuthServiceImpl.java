@@ -102,7 +102,6 @@ public class AuthServiceImpl implements AuthService {
         } catch (BadCredentialsException ex) {
             return "Bad credentials";
         }
-
         return "Login successful";
     }
     @Override
@@ -117,6 +116,9 @@ public class AuthServiceImpl implements AuthService {
             student.setAddress(activationRequest.getAddress());
             student.setPhoneNumber(activationRequest.getPhoneNumber());
             student.setDob(activationRequest.getDob());
+            student.setActive(true);
+            student.setPassword(activationRequest.getPasswordConfirm());
+            student.setAvatar(activationRequest.getProfileImage());
             studentRepository.save(student);
             return true;
         }
@@ -126,6 +128,9 @@ public class AuthServiceImpl implements AuthService {
             staff.setAddress(activationRequest.getAddress());
             staff.setPhoneNumber(activationRequest.getPhoneNumber());
             staff.setDob(activationRequest.getDob());
+            staff.setActive(true);
+            staff.setStaffPassword(activationRequest.getPasswordConfirm());
+            staff.setAvatar(activationRequest.getProfileImage());
             staffRepository.save(staff);
         }
         return false;
