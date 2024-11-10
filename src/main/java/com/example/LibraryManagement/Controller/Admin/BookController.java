@@ -210,7 +210,7 @@ public class BookController {
         importDetail.setQuantity(quantity);
         importDetail.setPrice((int) (price * quantity));
         importDetail.setVat(0);
-
+        existingBook.setActive(true);
         bookRepository.save(existingBook);
         bookImportRepository.save(bookImport);
 

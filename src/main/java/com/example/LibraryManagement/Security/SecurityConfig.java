@@ -93,6 +93,7 @@ public class SecurityConfig {
                     Optional<Staff> staffOpt = staffRepository.findByStaffEmail(email);
                     Optional<Admin> adminOpt = adminRepository.findAdminByEmail(email);
 
+
                     if (studentOpt.isPresent()) {
                         Student student = studentOpt.get();
                         if (!StringUtils.hasText(student.getStudentName()) || !StringUtils.hasText(student.getAvatar())) {
