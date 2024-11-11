@@ -125,7 +125,6 @@
                     <div class="form-group">
                         <label for="studentID">Student:</label>
                         <select id="studentID" name="studentID" class="select2-basic-single" required>
-                            <option value="">Select Student</option>
                             <th:block th:each="student : ${studentList}">
                                 <option th:value="${student.studentId}"
                                         th:text="${student.studentEmail}"
@@ -137,7 +136,6 @@
                     <div class="form-group">
                         <label for="bookID">Book:</label>
                         <select id="bookID" name="bookID" class="select2-basic-single" required>
-                            <option value="">Select Book</option>
                             <th:block th:each="book : ${bookList}">
                                 <option th:value="${book.bookId}"
                                         th:text="${book.bookName}"
@@ -149,7 +147,6 @@
                     <div class="form-group">
                         <label for="conditionBeforeID">Condition Before:</label>
                         <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" required>
-                            <option value="">Select Condition</option>
                             <th:block th:each="bookCondition : ${bookConditionList}">
                                 <option th:value="${bookCondition.bookConditionId}"
                                         th:text="${bookCondition.detail}"

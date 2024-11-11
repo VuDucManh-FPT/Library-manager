@@ -30,5 +30,4 @@ public interface BorrowIndexRepository extends JpaRepository<BorrowIndex, Intege
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             @Param("studentEmail") String studentEmail);
-
 }

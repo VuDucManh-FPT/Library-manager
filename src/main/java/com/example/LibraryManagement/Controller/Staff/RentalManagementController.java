@@ -113,7 +113,7 @@ public class RentalManagementController {
         Optional<Student> studentOpt = studentRepository.findById(studentId);
         Optional<Book> bookOpt = bookRepository.findById(bookId);
         Optional<BookCondition> conditionBeforeOpt = bookConditionRepository.findById(conditionBeforeId);
-        List<BorrowIndex> borrowIndices = borrowIndexRepository.findByStudent(studentOpt.get());
+        List<BorrowIndex> borrowIndices = borrowIndexRepository.findByStudentAndReturnDateIsNull(studentOpt.get());
         if (borrowIndices.size()>2) {
             redirectAttributes.addFlashAttribute("error", "This student had borrow 3 book! Please return before borrowing new one.");
             return "redirect:/staff/rentals" ;
@@ -254,7 +254,7 @@ public class RentalManagementController {
                 long daysLate = ChronoUnit.DAYS.between(estimateDate, returnDate);
                 value += daysLate * 5000;
                 float valueLate = value;
-                late = "Return late: " +valueLate;
+                late = "Return late: " +valueLate +" |";
             }
             if (conditionBefore != null && conditionAfter != null) {
                 if (conditionAfter.getBookConditionId() != 6){
@@ -262,7 +262,7 @@ public class RentalManagementController {
                     if (conditionDifference > 0) {
                         value += conditionDifference * 15000; // 15000 cho mỗi mức giảm
                         valueDam += conditionDifference * 15000;;
-                        dam = "Level of damage the book: " + valueDam;
+                        dam = "Level of damage the book: " + valueDam +" |";
                     }
                 }
                 if (conditionAfter.getBookConditionId() == 6) {
@@ -274,7 +274,7 @@ public class RentalManagementController {
                         case 5: value += book.getPrice() * 40 / 100; valueLost = value; break;
                         default: break;
                     }
-                    lost = "Lost book: " + valueLost;
+                    lost = "Lost book: " + valueLost+" |";
                 }
                 if (value > 0) {
                     Optional<BorrowFine> existingFineOpt = Optional.ofNullable(borrowFineRepository.getBorrowFineByBorrowIndex(existingBorrowIndex));
