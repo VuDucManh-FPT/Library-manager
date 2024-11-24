@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -80,18 +81,23 @@ public class ServiceImpl implements com.example.LibraryManagement.Service.Servic
         List<BorrowIndexNotifyResponse> borrowIndexResponses = borrowIndices.stream()
                 .map(borrowIndex -> {
                     Date estimatedDate = borrowIndex.getEstimateDate();
-                    Date currentDate = new Date();
+                    Date notNormaizedDate  = new Date();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(notNormaizedDate);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    Date currentDate = calendar.getTime();
                     long timeDifference = currentDate.getTime() - estimatedDate.getTime();
                     long daysDifference = TimeUnit.MILLISECONDS.toDays(timeDifference);
-                    if (currentDate.after(estimatedDate)) {
-                        daysDifference = -daysDifference;
-                    }
                     return BorrowIndexNotifyResponse.builder()
                             .estimatedReturnDate(estimatedDate)
                             .daysRemaining(daysDifference)
                             .bookName(borrowIndex.getBook().getBookName())
                             .studentName(borrowIndex.getStudent().getStudentName())
                             .studentEmail(borrowIndex.getStudent().getStudentEmail())
+                            .studentAvatar(borrowIndex.getStudent().getAvatar())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -119,6 +125,7 @@ public class ServiceImpl implements com.example.LibraryManagement.Service.Servic
                             .bookName(borrowIndex.getBook().getBookName())
                             .studentName(borrowIndex.getStudent().getStudentName())
                             .studentEmail(borrowIndex.getStudent().getStudentEmail())
+                            .studentAvatar(borrowIndex.getStudent().getAvatar())
                             .build();
                 })
                 .collect(Collectors.toList());

@@ -136,7 +136,7 @@ public class RentalManagementController {
             borrowIndexRepository.save(newBorrow);
 //            borrowIndexService.updateBookAfterCreateBorrowIndex(bookOpt.get());
             // Thông báo thành công
-            redirectAttributes.addFlashAttribute("success", "Rental created successfully!");
+            redirectAttributes.addFlashAttribute("success", "Borrow created successfully!");
         } else {
             redirectAttributes.addFlashAttribute("error", "Invalid data. Please try again.");
         }
@@ -181,10 +181,10 @@ public class RentalManagementController {
             borrowIndexRepository.save(existingBorrowIndex);
 
             // Thông báo thành công
-            redirectAttributes.addFlashAttribute("success", "Rental updated successfully!");
+            redirectAttributes.addFlashAttribute("success", "Borrow updated successfully!");
         } else {
             // Thông báo lỗi nếu không tìm thấy bản ghi
-            redirectAttributes.addFlashAttribute("error", "Rental not found!");
+            redirectAttributes.addFlashAttribute("error", "Borrow not found!");
         }
 
         return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
@@ -193,9 +193,9 @@ public class RentalManagementController {
     public String deleteRental(@PathVariable("id") Integer borrowIndexId, Model model){
         try {
             borrowIndexRepository.deleteById(borrowIndexId);
-            model.addAttribute("success", "Rental deleted successfully.");
+            model.addAttribute("success", "Borrow deleted successfully.");
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to delete rental: " + e.getMessage());
+            model.addAttribute("error", "Failed to delete borrow: " + e.getMessage());
         }
         return "redirect:/staff/rentals";
     }
@@ -304,10 +304,10 @@ public class RentalManagementController {
                 if (borrowFine!=null){
                     borrowFineRepository.delete(borrowFine);
                 }
-                redirectAttributes.addFlashAttribute("success", "Rental complete successfully!");
+                redirectAttributes.addFlashAttribute("success", "Borrow complete successfully!");
             }
         }else {
-            redirectAttributes.addFlashAttribute("error", "Rental not found!");
+            redirectAttributes.addFlashAttribute("error", "Borrow not found!");
         }
         return "redirect:/staff/rentals";
 

@@ -18,4 +18,5 @@ public class BorrowIndexNotifyResponse {
     private String bookName;
     private String studentName;
     private String studentEmail;
+    private String studentAvatar;
 }

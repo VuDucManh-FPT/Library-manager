@@ -239,7 +239,7 @@ public class BookController {
 //            }
 //        }
         bookService.setInActiveBook(book);
-        redirectAttributes.addFlashAttribute("success", "Book deleted successfully from the rental's book list.");
+        redirectAttributes.addFlashAttribute("success", "Book deleted successfully from the book list when create borrow.");
         return "redirect:/admin/books";
     }
 }
