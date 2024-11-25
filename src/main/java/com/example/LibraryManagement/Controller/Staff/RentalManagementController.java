@@ -190,10 +190,10 @@ public class RentalManagementController {
         return "redirect:/staff/rentals"; // Điều hướng lại đến danh sách rentals
     }
     @GetMapping("/delete-rental/{id}")
-    public String deleteRental(@PathVariable("id") Integer borrowIndexId, Model model){
+    public String deleteRental(@PathVariable("id") Integer borrowIndexId, Model model, RedirectAttributes redirectAttributes){
         try {
             borrowIndexRepository.deleteById(borrowIndexId);
-            model.addAttribute("success", "Borrow deleted successfully.");
+            redirectAttributes.addFlashAttribute("success", "Borrow deleted successfully.");
         } catch (Exception e) {
             model.addAttribute("error", "Failed to delete borrow: " + e.getMessage());
         }

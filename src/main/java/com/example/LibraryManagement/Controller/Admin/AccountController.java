@@ -101,6 +101,7 @@ public class AccountController {
             redirectAttributes.addFlashAttribute("error", "Email already exists in staffs.");
             return "redirect:/admin/student/register";
         }
+        redirectAttributes.addFlashAttribute("success", "Student register successfully.");
         return "redirect:/admin/students";
     }
     @PostMapping("/staff/register")
