@@ -240,6 +240,12 @@
 
     <!--Widget Chart -->
     <!--Custom js -->
+<script>
+    // Lấy ngày hiện tại
+    const today = new Date().toISOString().split('T')[0];
+    // Gán ngày hiện tại vào thuộc tính "max" của input date
+    document.getElementById('dob').setAttribute('max', today);
+</script>
 </body>
 
 

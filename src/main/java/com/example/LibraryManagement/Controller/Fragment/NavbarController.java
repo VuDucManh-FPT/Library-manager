@@ -51,6 +51,7 @@ public class NavbarController {
                             .bookName(borrowIndex.getBook().getBookName())
                             .studentName(borrowIndex.getStudent().getStudentName())
                             .studentEmail(borrowIndex.getStudent().getStudentEmail())
+                            .studentAvatar(borrowIndex.getStudent().getAvatar())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -77,7 +78,7 @@ public class NavbarController {
         }
 
         try {
-            serviceImpl.sendMail(forgotPassRequest, subject, message);
+            serviceImpl.sendMail(forgotPassRequest, message, subject);
             redirectAttributes.addFlashAttribute("success", "Notification email sent successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to send notification email.");

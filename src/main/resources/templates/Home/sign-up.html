@@ -33,11 +33,11 @@
 
                         <div class="form-group">
                             <input id="password-field" type="password" class="form-control" placeholder="Password" name="password" th:field="*{password}" required>
-                            <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password" onclick="togglePasswordVisibility('password', this)"></span>
+                            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
 
                         <div class="form-group">
-                            <input type="date" class="form-control" placeholder="Date of Birth" name="dob" th:field="*{dob}" required>
+                            <input type="date" class="form-control" id="dob" placeholder="Date of Birth" name="dob" th:field="*{dob}" required>
                         </div>
 
                         <div class="form-group">
@@ -83,20 +83,10 @@
 <script src="../../static/AuthenPage/js/bootstrap.min.js"></script>
 <script src="../../static/AuthenPage/js/main.js"></script>
 <script>
-    function togglePasswordVisibility(inputId, icon) {
-        const input = document.getElementById(inputId);
-        const iconElement = icon;
-
-        if (input.type === 'password') {
-            input.type = 'text';
-            iconElement.classList.remove('fa-eye');
-            iconElement.classList.add('fa-eye-slash');
-        } else {
-            input.type = 'password';
-            iconElement.classList.remove('fa-eye-slash');
-            iconElement.classList.add('fa-eye');
-        }
-    }
+    // Lấy ngày hiện tại
+    const today = new Date().toISOString().split('T')[0];
+    // Gán ngày hiện tại vào thuộc tính "max" của input date
+    document.getElementById('dob').setAttribute('max', today);
 </script>
 </body>
 </html>

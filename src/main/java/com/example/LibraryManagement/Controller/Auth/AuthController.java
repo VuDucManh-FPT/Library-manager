@@ -6,6 +6,7 @@ import com.example.LibraryManagement.Request.*;
 import com.example.LibraryManagement.Security.JwtConstants;
 import com.example.LibraryManagement.Security.JwtProvider;
 import com.example.LibraryManagement.Service.AuthService;
+import com.example.LibraryManagement.Service.Service;
 import com.example.LibraryManagement.Service.ServiceImpl;
 import com.example.LibraryManagement.Service.StudentServiceImpl;
 import com.example.LibraryManagement.Utils.FileUploadUtil;
@@ -37,6 +38,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final ServiceImpl serviceImpl;
     private final JwtProvider jwtProvider;
+    private final Service service;
 
     @GetMapping("logout")
     public String logout(HttpServletResponse response, RedirectAttributes redirectAttributes) {
@@ -239,14 +241,16 @@ public class AuthController {
         Optional<Student> student = studentRepository.findByStudentEmail(forgotPassRequest.getEmail());
         Optional<Staff> staff = staffRepository.findByStaffEmail(forgotPassRequest.getEmail());
         Optional<Admin> admin = adminRepository.findAdminByEmail(forgotPassRequest.getEmail());
+        String subject = "Forgot Password";
+        String htmlContent = "Your OTP is: "+serviceImpl.generateRandom8DigitNumber();
         if (student.isPresent()) {
-            output = serviceImpl.sendMail(forgotPassRequest,"Your OTP is "+serviceImpl.generateRandom8DigitNumber(), "Forgot Password" );
+            output = serviceImpl.sendMail(forgotPassRequest,htmlContent, subject);
         }
         if (staff.isPresent()) {
-            output = serviceImpl.sendMail(forgotPassRequest,"Your OTP is "+serviceImpl.generateRandom8DigitNumber(), "Forgot Password" );
+            output = serviceImpl.sendMail(forgotPassRequest,htmlContent, subject);
         }
         if (admin.isPresent()) {
-            output = serviceImpl.sendMail(forgotPassRequest,"Your OTP is "+serviceImpl.generateRandom8DigitNumber(), "Forgot Password" );
+            output = serviceImpl.sendMail(forgotPassRequest,htmlContent, subject);
         }
         redirectAttributes.addFlashAttribute("email", forgotPassRequest.getEmail());
         String otp = String.valueOf(serviceImpl.generateRandom8DigitNumber());
@@ -320,6 +324,11 @@ public class AuthController {
     }
     @PostMapping("signup")
     public String registerStudent(@ModelAttribute Student student, RedirectAttributes redirectAttributes) {
+        if (studentRepository.existsStudentByStudentEmail(student.getStudentEmail())) {
+            redirectAttributes.addFlashAttribute("message", "Email already in use. Please try another one.!.");
+            return "redirect:/library/sign-up";
+        }
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
         student.setActive(true);
         student.setIsban(false);
         studentRepository.save(student);

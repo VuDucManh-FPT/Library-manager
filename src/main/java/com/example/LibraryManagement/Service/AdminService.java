@@ -3,6 +3,7 @@ package com.example.LibraryManagement.Service;
 import com.example.LibraryManagement.Model.Role;
 import com.example.LibraryManagement.Model.Staff;
 import com.example.LibraryManagement.Model.Student;
+import com.example.LibraryManagement.Response.BorrowFineAdminDashResponse;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface AdminService {
     Student findStudentById(int studentId);
     Student banStudentById(int studentId);
     void deleteStudentById(int studentId);
+    BorrowFineAdminDashResponse getAllBorrowFineForDashAdmin();
 }

@@ -5,10 +5,12 @@ import com.example.LibraryManagement.Model.BorrowFine;
 import com.example.LibraryManagement.Model.BorrowIndex;
 import com.example.LibraryManagement.Repository.BorrowFineRepository;
 import com.example.LibraryManagement.Response.HistoryLoanResponse;
+import com.example.LibraryManagement.Response.NavbarResponse;
 import com.example.LibraryManagement.Response.VNPayResponse;
 import com.example.LibraryManagement.Service.BorrowIndexService;
 import com.example.LibraryManagement.Service.BorrowIndexServiceImpl;
 import com.example.LibraryManagement.Service.PaymentService;
+import com.example.LibraryManagement.Service.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,14 @@ public class LoanController {
     private final BorrowIndexService borrowIndexService;
     private final BorrowFineRepository borrowFineRepository;
     private final PaymentService paymentService;
+    private final ServiceImpl serviceImpl;
     @GetMapping("/LoanBorrowing")
     public String getCurrentLoans(HttpServletRequest request, Model model) {
         List<BorrowIndex> currentLoans = borrowIndexService.findCurrentBorrowIndex(request);
+        NavbarResponse navbarData = serviceImpl.getNavbarStudent(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("currentLoans", currentLoans);
         return "/StudentBorrow/LoanBorrowing";
     }
@@ -61,7 +68,10 @@ public class LoanController {
 
             loanHistory.add(new HistoryLoanResponse(borrowIndex, paymentUrl));
         });
-
+        NavbarResponse navbarData = serviceImpl.getNavbarStudent(request);
+        model.addAttribute("email", navbarData.email);
+        model.addAttribute("borrowIndexResponses", navbarData.borrowIndexResponses);
+        model.addAttribute("numberOfBorrowedIndexes", navbarData.numberOfBorrowedIndexes);
         model.addAttribute("loanHistory", loanHistory);
         return "/StudentBorrow/HistoryBorrowing";
     }

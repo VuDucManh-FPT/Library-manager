@@ -1,14 +1,9 @@
 package com.example.LibraryManagement.Service;
 
-import com.example.LibraryManagement.Model.BorrowIndex;
-import com.example.LibraryManagement.Model.Role;
-import com.example.LibraryManagement.Model.Staff;
-import com.example.LibraryManagement.Model.Student;
-import com.example.LibraryManagement.Repository.BorrowIndexRepository;
-import com.example.LibraryManagement.Repository.RoleRepository;
-import com.example.LibraryManagement.Repository.StaffRepository;
-import com.example.LibraryManagement.Repository.StudentRepository;
+import com.example.LibraryManagement.Model.*;
+import com.example.LibraryManagement.Repository.*;
 import com.example.LibraryManagement.Request.ForgotPassRequest;
+import com.example.LibraryManagement.Response.BorrowFineAdminDashResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
     private final BorrowIndexRepository borrowIndexRepository;
+    private final BorrowFineRepository borrowFineRepository;
     private StaffRepository staffRepository;
     private StudentRepository studentRepository;
     private RoleRepository roleRepository;
@@ -96,6 +92,44 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public BorrowFineAdminDashResponse getAllBorrowFineForDashAdmin() {
+        List<BorrowFine> borrowFines = borrowFineRepository.findAll();
+        if (!borrowFines.isEmpty()) {
+            BorrowFine borrowFine = borrowFines.get(0);
+
+            String reason = borrowFine.getReason();
+
+            double lateFine = 0;
+            double lostFine = 0;
+            double damageFine = 0;
+
+            if (reason != null && !reason.isEmpty()) {
+                String[] parts = reason.split("\\|");
+                for (String part : parts) {
+                    part = part.trim(); // Xóa khoảng trắng đầu và cuối
+                    if (part.startsWith("Return late:")) {
+                        lateFine = Double.parseDouble(part.replace("Return late:", "").trim());
+                    } else if (part.startsWith("Lost book:")) {
+                        lostFine = Double.parseDouble(part.replace("Lost book:", "").trim());
+                    } else if (part.startsWith("Level of damage the book:")) {
+                        damageFine = Double.parseDouble(part.replace("Level of damage the book:", "").trim());
+                    }
+                }
+            }
+
+            BorrowFineAdminDashResponse response = BorrowFineAdminDashResponse.builder()
+                    .borrowFine(borrowFine)
+                    .lateFine(lateFine)
+                    .lostFine(lostFine)
+                    .damageFine(damageFine)
+                    .build();
+            return response;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Staff updateStaff(Staff staff) {
         return staffRepository.save(staff);
     }
@@ -151,5 +185,6 @@ public class AdminServiceImpl implements AdminService {
 
         return sb.toString();
     }
+
 
 }

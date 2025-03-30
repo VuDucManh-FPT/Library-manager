@@ -112,7 +112,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center position-relative">
                 <div class="iq-header-title">
-                    <h4 class="mb-0">Complete rental</h4>
+                    <h4 class="mb-0">Complete borrow</h4>
                 </div>
             </div>
             <div class="card-body">
@@ -124,8 +124,7 @@
                     </div>
                     <div class="form-group">
                         <label for="studentID">Student:</label>
-                        <select id="studentID" name="studentID" class="select2-basic-single" required>
-                            <option value="">Select Student</option>
+                        <select id="studentID" name="studentID" class="select2-basic-single" >
                             <th:block th:each="student : ${studentList}">
                                 <option th:value="${student.studentId}"
                                         th:text="${student.studentEmail}"
@@ -136,7 +135,7 @@
                     </div>
                     <div class="form-group">
                         <label for="bookID">Book:</label>
-                        <select id="bookID" name="bookID" class="select2-basic-single" required>
+                        <select id="bookID" name="bookID" class="select2-basic-single" >
                             <option value="">Select Book</option>
                             <th:block th:each="book : ${bookList}">
                                 <option th:value="${book.bookId}"
@@ -148,7 +147,7 @@
                     </div>
                     <div class="form-group">
                         <label for="conditionBeforeID">Condition Before:</label>
-                        <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" required>
+                        <select id="conditionBeforeID" name="conditionBeforeID" class="select2-basic-single" disabled>
                             <option value="">Select Condition</option>
                             <th:block th:each="bookCondition : ${bookConditionList}">
                                 <option th:value="${bookCondition.bookConditionId}"
